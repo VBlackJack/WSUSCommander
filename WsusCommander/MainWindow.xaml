@@ -1,0 +1,1023 @@
+<Window x:Class="WsusCommander.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:p="clr-namespace:WsusCommander.Properties"
+        xmlns:vm="clr-namespace:WsusCommander.ViewModels"
+        xmlns:converters="clr-namespace:WsusCommander.Converters"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=vm:MainViewModel, IsDesignTimeCreatable=False}"
+        Title="{x:Static p:Resources.AppTitle}"
+        Icon="/Resources/app.ico"
+        Height="800"
+        Width="1200"
+        MinHeight="600"
+        MinWidth="900"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F5F5">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisibility"/>
+
+        <!-- Shared Button Style -->
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="MinWidth" Value="100"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#BDC3C7"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.9"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Small Button Style -->
+        <Style x:Key="SmallButtonStyle" TargetType="Button" BasedOn="{StaticResource ActionButtonStyle}">
+            <Setter Property="MinWidth" Value="80"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="FontSize" Value="11"/>
+        </Style>
+
+        <!-- Toggle Button Style for Auto-Refresh -->
+        <Style x:Key="ToggleButtonStyle" TargetType="ToggleButton">
+            <Setter Property="MinWidth" Value="120"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#7F8C8D"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#27AE60"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.9"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Search TextBox Style -->
+        <Style x:Key="SearchTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+
+        <!-- Health Status Colors -->
+        <SolidColorBrush x:Key="HealthyBrush" Color="#27AE60"/>
+        <SolidColorBrush x:Key="DegradedBrush" Color="#F39C12"/>
+        <SolidColorBrush x:Key="UnhealthyBrush" Color="#E74C3C"/>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ==================== LOGIN VIEW ==================== -->
+        <Grid Grid.Row="0"
+              Visibility="{Binding IsConnected, Converter={StaticResource InverseBoolToVisibility}}">
+            <StackPanel VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Margin="20">
+
+                <!-- Header -->
+                <TextBlock Text="{x:Static p:Resources.AppTitle}"
+                           FontSize="32"
+                           FontWeight="Bold"
+                           Foreground="#2C3E50"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,20"
+                           AutomationProperties.Name="{x:Static p:Resources.AppTitle}"/>
+
+                <!-- User Info -->
+                <TextBlock Text="{Binding CurrentUser.DisplayName}"
+                           FontSize="14"
+                           Foreground="#7F8C8D"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,10"
+                           Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibility}}"/>
+
+                <TextBlock FontSize="12"
+                           Foreground="#27AE60"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,30"
+                           Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibility}}">
+                    <Run Text="{x:Static p:Resources.RoleViewer}"/>
+                    <Run Text=": "/>
+                    <Run Text="{Binding CurrentUser.Role}"/>
+                </TextBlock>
+
+                <!-- Connect Button -->
+                <Button Content="{x:Static p:Resources.BtnConnect}"
+                        Command="{Binding ConnectWsusCommand}"
+                        HorizontalAlignment="Center"
+                        MinWidth="220"
+                        Padding="24,14"
+                        FontSize="15"
+                        Background="#3498DB"
+                        Style="{StaticResource ActionButtonStyle}"
+                        AutomationProperties.Name="{x:Static p:Resources.BtnConnect}"/>
+
+                <!-- Loading Indicator (Login) -->
+                <ProgressBar IsIndeterminate="True"
+                             Height="4"
+                             Width="220"
+                             Margin="0,20,0,0"
+                             Visibility="{Binding IsConnecting, Converter={StaticResource BoolToVisibility}}"
+                             Foreground="#3498DB"
+                             Background="#ECF0F1"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- ==================== DASHBOARD VIEW ==================== -->
+        <Grid Grid.Row="0"
+              Visibility="{Binding IsConnected, Converter={StaticResource BoolToVisibility}}"
+              Margin="20,20,20,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Dashboard Header -->
+            <Grid Grid.Row="0" Margin="0,0,0,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Title and Server Info -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="{x:Static p:Resources.AppTitle}"
+                               FontSize="24"
+                               FontWeight="Bold"
+                               Foreground="#2C3E50"
+                               VerticalAlignment="Center"/>
+                    <TextBlock Text="{x:Static p:Resources.LblServerVersion}"
+                               FontSize="12"
+                               Foreground="#7F8C8D"
+                               VerticalAlignment="Center"
+                               Margin="20,0,5,0"/>
+                    <TextBlock Text="{Binding ServerVersion}"
+                               FontSize="12"
+                               Foreground="#27AE60"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Action Buttons -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Export Menu -->
+                    <Menu Background="Transparent" VerticalAlignment="Center" Margin="0,0,10,0">
+                        <MenuItem Header="{x:Static p:Resources.BtnExport}"
+                                  Background="#9B59B6"
+                                  Foreground="White"
+                                  Padding="12,8"
+                                  FontSize="12">
+                            <MenuItem Header="{x:Static p:Resources.ExportFormatCsv}"
+                                      Command="{Binding ExportUpdatesCommand}"
+                                      AutomationProperties.Name="{x:Static p:Resources.ExportFormatCsv}"/>
+                            <MenuItem Header="{x:Static p:Resources.ExportFormatJson}"
+                                      Command="{Binding ExportUpdatesCommand}"
+                                      AutomationProperties.Name="{x:Static p:Resources.ExportFormatJson}"/>
+                            <Separator/>
+                            <MenuItem Header="{x:Static p:Resources.TabComputers}"
+                                      Command="{Binding ExportComputersCommand}"/>
+                        </MenuItem>
+                    </Menu>
+
+                    <!-- Auto-Refresh Toggle -->
+                    <ToggleButton Content="{x:Static p:Resources.BtnAutoRefresh}"
+                                  IsChecked="{Binding IsAutoRefreshEnabled}"
+                                  Command="{Binding ToggleAutoRefreshCommand}"
+                                  Style="{StaticResource ToggleButtonStyle}"
+                                  Margin="0,0,10,0"
+                                  AutomationProperties.Name="{x:Static p:Resources.BtnAutoRefresh}"/>
+
+                    <!-- Refresh Button -->
+                    <Button Content="{x:Static p:Resources.BtnRefresh}"
+                            Command="{Binding RefreshUpdatesCommand}"
+                            Background="#27AE60"
+                            Style="{StaticResource ActionButtonStyle}"
+                            AutomationProperties.Name="{x:Static p:Resources.BtnRefresh}"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Sync Status and Computer Groups Panel -->
+            <Grid Grid.Row="1" Margin="0,0,0,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Sync Status -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="{x:Static p:Resources.LblSyncStatus}"
+                               FontSize="12"
+                               Foreground="#7F8C8D"
+                               VerticalAlignment="Center"
+                               Margin="0,0,5,0"/>
+                    <TextBlock FontSize="12"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center"
+                               Margin="0,0,15,0">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text" Value="{Binding SyncStatus.Status}"/>
+                                <Setter Property="Foreground" Value="#27AE60"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SyncStatus.IsSyncing}" Value="True">
+                                        <Setter Property="Foreground" Value="#3498DB"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <TextBlock Text="{x:Static p:Resources.LblLastSync}"
+                               FontSize="12"
+                               Foreground="#7F8C8D"
+                               VerticalAlignment="Center"
+                               Margin="0,0,5,0"/>
+                    <TextBlock Text="{Binding SyncStatus.LastSyncTime, StringFormat=g}"
+                               FontSize="12"
+                               Foreground="#2C3E50"
+                               VerticalAlignment="Center"
+                               Margin="0,0,15,0"/>
+
+                    <!-- Sync Now Button -->
+                    <Button Content="{x:Static p:Resources.BtnStartSync}"
+                            Command="{Binding StartSyncCommand}"
+                            Background="#9B59B6"
+                            Style="{StaticResource SmallButtonStyle}"
+                            AutomationProperties.Name="{x:Static p:Resources.BtnStartSync}"/>
+                </StackPanel>
+
+                <!-- Computer Groups Selector -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="{x:Static p:Resources.LblComputerGroups}"
+                               FontSize="12"
+                               Foreground="#7F8C8D"
+                               VerticalAlignment="Center"
+                               Margin="0,0,10,0"/>
+                    <ComboBox ItemsSource="{Binding ComputerGroups}"
+                              SelectedItem="{Binding SelectedComputerGroup}"
+                              DisplayMemberPath="Name"
+                              MinWidth="200"
+                              Padding="8,6"
+                              FontSize="12"
+                              AutomationProperties.Name="{x:Static p:Resources.LblComputerGroups}"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Search and Filter Bar -->
+            <Border Grid.Row="2" Background="White" CornerRadius="4" Padding="15,10" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Search Box -->
+                    <TextBox Grid.Column="0"
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource SearchTextBoxStyle}"
+                             Margin="0,0,10,0"
+                             AutomationProperties.Name="{x:Static p:Resources.LblSearch}">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Return" Command="{Binding ApplySearchCommand}"/>
+                        </TextBox.InputBindings>
+                    </TextBox>
+
+                    <!-- Classification Filter -->
+                    <ComboBox Grid.Column="1"
+                              ItemsSource="{Binding Classifications}"
+                              SelectedItem="{Binding SelectedClassification}"
+                              MinWidth="150"
+                              Padding="8,6"
+                              FontSize="12"
+                              Margin="0,0,10,0"
+                              AutomationProperties.Name="{x:Static p:Resources.LblFilter}">
+                        <ComboBox.Style>
+                            <Style TargetType="ComboBox">
+                                <Style.Triggers>
+                                    <Trigger Property="SelectedItem" Value="{x:Null}">
+                                        <Setter Property="Background" Value="#ECF0F1"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ComboBox.Style>
+                    </ComboBox>
+
+                    <!-- Approval Status Filter -->
+                    <ComboBox Grid.Column="2"
+                              ItemsSource="{Binding ApprovalFilters}"
+                              SelectedItem="{Binding SelectedApprovalFilter}"
+                              MinWidth="120"
+                              Padding="8,6"
+                              FontSize="12"
+                              Margin="0,0,10,0"
+                              AutomationProperties.Name="{x:Static p:Resources.LblFilter}"/>
+
+                    <!-- Clear Filter Button -->
+                    <Button Grid.Column="3"
+                            Content="{x:Static p:Resources.BtnClearFilter}"
+                            Command="{Binding ClearFiltersCommand}"
+                            Background="#95A5A6"
+                            Style="{StaticResource SmallButtonStyle}"
+                            Margin="0,0,10,0"
+                            AutomationProperties.Name="{x:Static p:Resources.BtnClearFilter}"/>
+
+                    <!-- Bulk Operations Buttons -->
+                    <StackPanel Grid.Column="4" Orientation="Horizontal">
+                        <Button Content="{x:Static p:Resources.BtnBulkApprove}"
+                                Command="{Binding BulkApproveCommand}"
+                                Background="#27AE60"
+                                Style="{StaticResource SmallButtonStyle}"
+                                Margin="0,0,5,0"
+                                Visibility="{Binding CanUserApprove, Converter={StaticResource BoolToVisibility}}"
+                                AutomationProperties.Name="{x:Static p:Resources.BtnBulkApprove}"/>
+                        <Button Content="{x:Static p:Resources.BtnBulkDecline}"
+                                Command="{Binding BulkDeclineCommand}"
+                                Background="#E74C3C"
+                                Style="{StaticResource SmallButtonStyle}"
+                                Visibility="{Binding CanUserDecline, Converter={StaticResource BoolToVisibility}}"
+                                AutomationProperties.Name="{x:Static p:Resources.BtnBulkDecline}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Bulk Operation Progress -->
+            <Grid Grid.Row="3" Margin="0,0,0,10" Visibility="{Binding IsBulkOperationRunning, Converter={StaticResource BoolToVisibility}}">
+                <ProgressBar Value="{Binding BulkProgress}"
+                             Maximum="100"
+                             Height="20"
+                             Foreground="#3498DB"/>
+                <TextBlock Text="{Binding BulkProgressText}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="11"
+                           Foreground="#2C3E50"/>
+            </Grid>
+
+            <!-- Loading Indicator (Dashboard) -->
+            <ProgressBar Grid.Row="3"
+                         IsIndeterminate="True"
+                         Height="3"
+                         Margin="0,0,0,10"
+                         Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"
+                         Foreground="#3498DB"
+                         Background="#ECF0F1"/>
+
+            <!-- Tab Control for Updates, Computers, Reports, and Groups -->
+            <TabControl Grid.Row="4"
+                        Background="White"
+                        BorderBrush="#E0E0E0"
+                        SelectedIndex="{Binding SelectedTabIndex}">
+                <TabControl.Resources>
+                    <Style TargetType="TabItem">
+                        <Setter Property="Padding" Value="15,8"/>
+                        <Setter Property="FontSize" Value="13"/>
+                        <Setter Property="Foreground" Value="#7F8C8D"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Foreground" Value="#2C3E50"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TabControl.Resources>
+
+                <!-- Updates Tab -->
+                <TabItem Header="{x:Static p:Resources.TabUpdates}" AutomationProperties.Name="{x:Static p:Resources.TabUpdates}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <DataGrid Grid.Row="0"
+                                  ItemsSource="{Binding FilteredUpdates}"
+                                  SelectedItem="{Binding SelectedUpdate}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  SelectionMode="Extended"
+                                  GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#E0E0E0"
+                                  Background="White"
+                                  BorderThickness="0"
+                                  RowHeight="32"
+                                  HeadersVisibility="Column"
+                                  AutomationProperties.Name="{x:Static p:Resources.TabUpdates}">
+
+                            <!-- Context Menu -->
+                            <DataGrid.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="{x:Static p:Resources.MenuApprove}"
+                                              Command="{Binding ApproveUpdateCommand}"
+                                              AutomationProperties.Name="{x:Static p:Resources.MenuApprove}"/>
+                                    <MenuItem Header="{x:Static p:Resources.MenuDecline}"
+                                              Command="{Binding DeclineUpdateCommand}"
+                                              AutomationProperties.Name="{x:Static p:Resources.MenuDecline}"/>
+                                    <Separator/>
+                                    <MenuItem Header="{x:Static p:Resources.BtnViewDetails}"
+                                              Command="{Binding ViewUpdateDetailsCommand}"
+                                              AutomationProperties.Name="{x:Static p:Resources.BtnViewDetails}"/>
+                                </ContextMenu>
+                            </DataGrid.ContextMenu>
+
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#F8F9FA"/>
+                                    <Setter Property="Foreground" Value="#2C3E50"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="FontSize" Value="12"/>
+                                    <Setter Property="Padding" Value="10,8"/>
+                                    <Setter Property="BorderBrush" Value="#E0E0E0"/>
+                                    <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+                            <DataGrid.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="Padding" Value="10,6"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="#E3F2FD"/>
+                                            <Setter Property="Foreground" Value="#2C3E50"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.CellStyle>
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#F5F5F5"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColTitle}"
+                                                    Binding="{Binding Title}"
+                                                    Width="*">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                            <Setter Property="ToolTip" Value="{Binding Title}"/>
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColKB}"
+                                                    Binding="{Binding KbArticle}"
+                                                    Width="100">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColClassification}"
+                                                    Binding="{Binding Classification}"
+                                                    Width="140">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColDate}"
+                                                    Binding="{Binding CreationDate, StringFormat=d}"
+                                                    Width="100">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridCheckBoxColumn Header="{x:Static p:Resources.ColApproved}"
+                                                        Binding="{Binding IsApproved, Mode=OneWay}"
+                                                        Width="80">
+                                    <DataGridCheckBoxColumn.ElementStyle>
+                                        <Style TargetType="CheckBox">
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="IsHitTestVisible" Value="False"/>
+                                        </Style>
+                                    </DataGridCheckBoxColumn.ElementStyle>
+                                </DataGridCheckBoxColumn>
+                                <DataGridCheckBoxColumn Header="{x:Static p:Resources.ColDeclined}"
+                                                        Binding="{Binding IsDeclined, Mode=OneWay}"
+                                                        Width="80">
+                                    <DataGridCheckBoxColumn.ElementStyle>
+                                        <Style TargetType="CheckBox">
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="IsHitTestVisible" Value="False"/>
+                                        </Style>
+                                    </DataGridCheckBoxColumn.ElementStyle>
+                                </DataGridCheckBoxColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <!-- Update Details Panel -->
+                        <Border Grid.Row="1"
+                                Background="#F8F9FA"
+                                Padding="15,10"
+                                Margin="0,10,0,0"
+                                Visibility="{Binding SelectedUpdateDetails, Converter={StaticResource BoolToVisibility}}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock FontWeight="SemiBold" Text="{x:Static p:Resources.LblSeverity}"/>
+                                    <TextBlock Text="{Binding SelectedUpdateDetails.Severity}" Margin="0,0,0,10"/>
+                                    <TextBlock FontWeight="SemiBold" Text="{x:Static p:Resources.LblRequiresReboot}"/>
+                                    <TextBlock Text="{Binding SelectedUpdateDetails.RequiresReboot}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock FontWeight="SemiBold" Text="{x:Static p:Resources.LblReleaseDate}"/>
+                                    <TextBlock Text="{Binding SelectedUpdateDetails.ArrivalDate, StringFormat=d}" Margin="0,0,0,10"/>
+                                    <TextBlock FontWeight="SemiBold" Text="{x:Static p:Resources.LblSuperseded}"/>
+                                    <TextBlock Text="{Binding SelectedUpdateDetails.IsSuperseded}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock FontWeight="SemiBold" Text="Description"/>
+                                    <TextBlock Text="{Binding SelectedUpdateDetails.Description}"
+                                               TextWrapping="Wrap"
+                                               MaxHeight="60"
+                                               TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </TabItem>
+
+                <!-- Computers Tab -->
+                <TabItem Header="{x:Static p:Resources.TabComputers}" AutomationProperties.Name="{x:Static p:Resources.TabComputers}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Load Computers Button -->
+                        <Button Grid.Row="0"
+                                Content="{x:Static p:Resources.BtnRefresh}"
+                                Command="{Binding LoadComputerStatusesCommand}"
+                                HorizontalAlignment="Left"
+                                Margin="10,10,10,10"
+                                Background="#3498DB"
+                                Style="{StaticResource ActionButtonStyle}"
+                                AutomationProperties.Name="{x:Static p:Resources.BtnRefresh}"/>
+
+                        <!-- Computers DataGrid -->
+                        <DataGrid Grid.Row="1"
+                                  ItemsSource="{Binding FilteredComputerStatuses}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  SelectionMode="Single"
+                                  GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#E0E0E0"
+                                  Background="White"
+                                  BorderThickness="0"
+                                  RowHeight="32"
+                                  HeadersVisibility="Column"
+                                  AutomationProperties.Name="{x:Static p:Resources.TabComputers}">
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#F8F9FA"/>
+                                    <Setter Property="Foreground" Value="#2C3E50"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="FontSize" Value="12"/>
+                                    <Setter Property="Padding" Value="10,8"/>
+                                    <Setter Property="BorderBrush" Value="#E0E0E0"/>
+                                    <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+                            <DataGrid.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="Padding" Value="10,6"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="#E3F2FD"/>
+                                            <Setter Property="Foreground" Value="#2C3E50"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.CellStyle>
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#F5F5F5"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColComputerName}"
+                                                    Binding="{Binding Name}"
+                                                    Width="*">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                            <Setter Property="ToolTip" Value="{Binding Name}"/>
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColIpAddress}"
+                                                    Binding="{Binding IpAddress}"
+                                                    Width="120">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColGroup}"
+                                                    Binding="{Binding GroupName}"
+                                                    Width="140">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColInstalled}"
+                                                    Binding="{Binding InstalledCount}"
+                                                    Width="80">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            <Setter Property="Foreground" Value="#27AE60"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColNeeded}"
+                                                    Binding="{Binding NeededCount}"
+                                                    Width="80">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            <Setter Property="Foreground" Value="#F39C12"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColFailed}"
+                                                    Binding="{Binding FailedCount}"
+                                                    Width="80">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            <Setter Property="Foreground" Value="#E74C3C"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColLastReport}"
+                                                    Binding="{Binding LastReportedTime, StringFormat=g}"
+                                                    Width="140">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+
+                <!-- Reports Tab -->
+                <TabItem Header="{x:Static p:Resources.TabReports}" AutomationProperties.Name="{x:Static p:Resources.TabReports}">
+                    <Grid Margin="15">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Report Actions -->
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
+                            <Button Content="{x:Static p:Resources.BtnGenerateReport}"
+                                    Command="{Binding GenerateComplianceReportCommand}"
+                                    Background="#3498DB"
+                                    Style="{StaticResource ActionButtonStyle}"
+                                    Margin="0,0,10,0"
+                                    AutomationProperties.Name="{x:Static p:Resources.BtnGenerateReport}"/>
+                            <Button Content="{x:Static p:Resources.BtnExport}"
+                                    Command="{Binding ExportComplianceReportCommand}"
+                                    Background="#9B59B6"
+                                    Style="{StaticResource ActionButtonStyle}"
+                                    AutomationProperties.Name="{x:Static p:Resources.BtnExport}"/>
+                        </StackPanel>
+
+                        <!-- Compliance Summary -->
+                        <Border Grid.Row="1" Background="White" CornerRadius="4" Padding="15" Margin="0,0,0,15"
+                                Visibility="{Binding ComplianceReport, Converter={StaticResource BoolToVisibility}}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                                    <TextBlock Text="{x:Static p:Resources.ReportCompliance}"
+                                               FontSize="12"
+                                               Foreground="#7F8C8D"
+                                               HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ComplianceReport.CompliancePercent, StringFormat={}{0:F1}%}"
+                                               FontSize="28"
+                                               FontWeight="Bold"
+                                               Foreground="#27AE60"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                                    <TextBlock Text="{x:Static p:Resources.ColTotal}"
+                                               FontSize="12"
+                                               Foreground="#7F8C8D"
+                                               HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ComplianceReport.TotalComputers}"
+                                               FontSize="28"
+                                               FontWeight="Bold"
+                                               Foreground="#2C3E50"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                                    <TextBlock Text="{x:Static p:Resources.StatusCompliant}"
+                                               FontSize="12"
+                                               Foreground="#7F8C8D"
+                                               HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ComplianceReport.CompliantComputers}"
+                                               FontSize="28"
+                                               FontWeight="Bold"
+                                               Foreground="#27AE60"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="3" HorizontalAlignment="Center">
+                                    <TextBlock Text="{x:Static p:Resources.StatusNonCompliant}"
+                                               FontSize="12"
+                                               Foreground="#7F8C8D"
+                                               HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ComplianceReport.NonCompliantComputers}"
+                                               FontSize="28"
+                                               FontWeight="Bold"
+                                               Foreground="#E74C3C"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Stale Computers Grid -->
+                        <GroupBox Grid.Row="2" Header="{x:Static p:Resources.ReportStaleComputers}" Padding="10">
+                            <DataGrid ItemsSource="{Binding StaleComputers}"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      GridLinesVisibility="Horizontal"
+                                      HorizontalGridLinesBrush="#E0E0E0"
+                                      Background="White"
+                                      BorderThickness="0"
+                                      RowHeight="28"
+                                      AutomationProperties.Name="{x:Static p:Resources.ReportStaleComputers}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="{x:Static p:Resources.ColComputerName}" Binding="{Binding ComputerName}" Width="*"/>
+                                    <DataGridTextColumn Header="{x:Static p:Resources.ColLastReport}" Binding="{Binding LastReportTime, StringFormat=g}" Width="150"/>
+                                    <DataGridTextColumn Header="Days" Binding="{Binding DaysSinceLastReport}" Width="80"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </GroupBox>
+                    </Grid>
+                </TabItem>
+
+                <!-- Groups Tab -->
+                <TabItem Header="{x:Static p:Resources.TabGroups}" AutomationProperties.Name="{x:Static p:Resources.TabGroups}">
+                    <Grid Margin="15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="300"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Groups List -->
+                        <DataGrid Grid.Column="0"
+                                  ItemsSource="{Binding ComputerGroups}"
+                                  SelectedItem="{Binding SelectedGroupForEdit}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  SelectionMode="Single"
+                                  GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#E0E0E0"
+                                  Background="White"
+                                  BorderThickness="0"
+                                  RowHeight="32"
+                                  Margin="0,0,15,0"
+                                  AutomationProperties.Name="{x:Static p:Resources.TabGroups}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{x:Static p:Resources.LblGroupName}" Binding="{Binding Name}" Width="*"/>
+                                <DataGridTextColumn Header="{x:Static p:Resources.LblGroupDescription}" Binding="{Binding Description}" Width="*"/>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColTotal}" Binding="{Binding ComputerCount}" Width="100"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <!-- Group Management Panel -->
+                        <Border Grid.Column="1" Background="White" CornerRadius="4" Padding="15">
+                            <StackPanel>
+                                <TextBlock Text="{x:Static p:Resources.BtnNewGroup}"
+                                           FontWeight="SemiBold"
+                                           FontSize="14"
+                                           Margin="0,0,0,15"/>
+
+                                <TextBlock Text="{x:Static p:Resources.LblGroupName}"
+                                           FontSize="12"
+                                           Margin="0,0,0,5"/>
+                                <TextBox Text="{Binding NewGroupName, UpdateSourceTrigger=PropertyChanged}"
+                                         Padding="8,6"
+                                         Margin="0,0,0,10"
+                                         AutomationProperties.Name="{x:Static p:Resources.LblGroupName}"/>
+
+                                <TextBlock Text="{x:Static p:Resources.LblGroupDescription}"
+                                           FontSize="12"
+                                           Margin="0,0,0,5"/>
+                                <TextBox Text="{Binding NewGroupDescription, UpdateSourceTrigger=PropertyChanged}"
+                                         Padding="8,6"
+                                         Margin="0,0,0,15"
+                                         Height="60"
+                                         TextWrapping="Wrap"
+                                         AcceptsReturn="True"
+                                         AutomationProperties.Name="{x:Static p:Resources.LblGroupDescription}"/>
+
+                                <Button Content="{x:Static p:Resources.BtnNewGroup}"
+                                        Command="{Binding CreateGroupCommand}"
+                                        Background="#27AE60"
+                                        Style="{StaticResource ActionButtonStyle}"
+                                        HorizontalAlignment="Stretch"
+                                        Margin="0,0,0,10"
+                                        AutomationProperties.Name="{x:Static p:Resources.BtnNewGroup}"/>
+
+                                <Button Content="{x:Static p:Resources.BtnDeleteGroup}"
+                                        Command="{Binding DeleteGroupCommand}"
+                                        Background="#E74C3C"
+                                        Style="{StaticResource ActionButtonStyle}"
+                                        HorizontalAlignment="Stretch"
+                                        AutomationProperties.Name="{x:Static p:Resources.BtnDeleteGroup}"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+
+        <!-- ==================== STATUS BAR ==================== -->
+        <Border Grid.Row="1"
+                Background="#ECF0F1"
+                Padding="15,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Status Text -->
+                <TextBlock Grid.Column="0"
+                           Text="{Binding StatusText}"
+                           FontSize="12"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"
+                           VerticalAlignment="Center">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="#7F8C8D"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                                    <Setter Property="Foreground" Value="#27AE60"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                                    <Setter Property="Foreground" Value="#3498DB"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <!-- Health Indicator -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="{x:Static p:Resources.LblHealthStatus}"
+                               FontSize="11"
+                               Foreground="#7F8C8D"
+                               VerticalAlignment="Center"
+                               Margin="0,0,5,0"/>
+                    <Ellipse Width="10" Height="10" VerticalAlignment="Center">
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Setter Property="Fill" Value="#95A5A6"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HealthReport.Status}" Value="Healthy">
+                                        <Setter Property="Fill" Value="#27AE60"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding HealthReport.Status}" Value="Degraded">
+                                        <Setter Property="Fill" Value="#F39C12"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding HealthReport.Status}" Value="Unhealthy">
+                                        <Setter Property="Fill" Value="#E74C3C"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
+                    <Button Content="{x:Static p:Resources.BtnRefresh}"
+                            Command="{Binding CheckHealthCommand}"
+                            Background="Transparent"
+                            Foreground="#7F8C8D"
+                            BorderThickness="0"
+                            Padding="5,2"
+                            FontSize="10"
+                            Cursor="Hand"
+                            Margin="5,0,0,0"
+                            AutomationProperties.Name="{x:Static p:Resources.LblHealthStatus}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

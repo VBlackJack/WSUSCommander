@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppTitle" xml:space="preserve">
+    <value>WSUS Commander</value>
+  </data>
+  <data name="BtnConnect" xml:space="preserve">
+    <value>Connect to Server</value>
+  </data>
+  <data name="StatusReady" xml:space="preserve">
+    <value>Ready.</value>
+  </data>
+  <data name="StatusConnected" xml:space="preserve">
+    <value>Connected successfully to {0}.</value>
+  </data>
+  <data name="StatusError" xml:space="preserve">
+    <value>Connection failed: {0}</value>
+  </data>
+  <data name="LblServerVersion" xml:space="preserve">
+    <value>Server Version:</value>
+  </data>
+  <data name="ColTitle" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="ColKB" xml:space="preserve">
+    <value>KB</value>
+  </data>
+  <data name="ColClassification" xml:space="preserve">
+    <value>Classification</value>
+  </data>
+  <data name="ColDate" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="ColApproved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="BtnRefresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="StatusLoading" xml:space="preserve">
+    <value>Loading updates...</value>
+  </data>
+  <data name="StatusUpdatesLoaded" xml:space="preserve">
+    <value>Loaded {0} updates.</value>
+  </data>
+  <data name="MenuApprove" xml:space="preserve">
+    <value>Approve Update</value>
+  </data>
+  <data name="MenuDecline" xml:space="preserve">
+    <value>Decline Update</value>
+  </data>
+  <data name="StatusApproved" xml:space="preserve">
+    <value>Update approved for {0}.</value>
+  </data>
+  <data name="StatusDeclined" xml:space="preserve">
+    <value>Update declined.</value>
+  </data>
+  <data name="StatusApproving" xml:space="preserve">
+    <value>Approving update...</value>
+  </data>
+  <data name="StatusDeclining" xml:space="preserve">
+    <value>Declining update...</value>
+  </data>
+  <data name="LblComputerGroups" xml:space="preserve">
+    <value>Target Group:</value>
+  </data>
+  <data name="ComboSelectGroup" xml:space="preserve">
+    <value>Select a group...</value>
+  </data>
+  <data name="LblSyncStatus" xml:space="preserve">
+    <value>Sync Status:</value>
+  </data>
+  <data name="LblLastSync" xml:space="preserve">
+    <value>Last Sync:</value>
+  </data>
+  <data name="BtnStartSync" xml:space="preserve">
+    <value>Sync Now</value>
+  </data>
+  <data name="StatusSyncing" xml:space="preserve">
+    <value>Synchronization in progress...</value>
+  </data>
+  <data name="StatusSyncStarted" xml:space="preserve">
+    <value>Synchronization started.</value>
+  </data>
+  <data name="StatusSyncIdle" xml:space="preserve">
+    <value>Idle</value>
+  </data>
+  <data name="TabUpdates" xml:space="preserve">
+    <value>Updates</value>
+  </data>
+  <data name="TabComputers" xml:space="preserve">
+    <value>Computers</value>
+  </data>
+  <data name="ColComputerName" xml:space="preserve">
+    <value>Computer Name</value>
+  </data>
+  <data name="ColIpAddress" xml:space="preserve">
+    <value>IP Address</value>
+  </data>
+  <data name="ColInstalled" xml:space="preserve">
+    <value>Installed</value>
+  </data>
+  <data name="ColNeeded" xml:space="preserve">
+    <value>Needed</value>
+  </data>
+  <data name="ColFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="ColLastReport" xml:space="preserve">
+    <value>Last Report</value>
+  </data>
+  <data name="ColGroup" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="ColTotal" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="BtnAutoRefresh" xml:space="preserve">
+    <value>Auto Refresh</value>
+  </data>
+  <data name="StatusAutoRefreshOn" xml:space="preserve">
+    <value>Auto-refresh enabled ({0}s interval).</value>
+  </data>
+  <data name="StatusAutoRefreshOff" xml:space="preserve">
+    <value>Auto-refresh disabled.</value>
+  </data>
+  <data name="ColDeclined" xml:space="preserve">
+    <value>Declined</value>
+  </data>
+  <data name="StatusLoadingGroups" xml:space="preserve">
+    <value>Loading computer groups...</value>
+  </data>
+  <data name="StatusLoadingComputers" xml:space="preserve">
+    <value>Loading computers...</value>
+  </data>
+  <data name="StatusComputersLoaded" xml:space="preserve">
+    <value>Loaded {0} computers.</value>
+  </data>
+  <data name="ErrorNoGroupSelected" xml:space="preserve">
+    <value>Please select a target group before approving.</value>
+  </data>
+  <data name="ErrorNoUpdateSelected" xml:space="preserve">
+    <value>Please select an update first.</value>
+  </data>
+
+  <!-- Bulk Operations -->
+  <data name="BtnBulkApprove" xml:space="preserve">
+    <value>Approve Selected</value>
+  </data>
+  <data name="BtnBulkDecline" xml:space="preserve">
+    <value>Decline Selected</value>
+  </data>
+  <data name="StatusBulkOperation" xml:space="preserve">
+    <value>Processing {0} of {1}...</value>
+  </data>
+  <data name="StatusBulkComplete" xml:space="preserve">
+    <value>Completed: {0} succeeded, {1} failed.</value>
+  </data>
+  <data name="ConfirmBulkApprove" xml:space="preserve">
+    <value>Approve {0} selected updates for group '{1}'?</value>
+  </data>
+  <data name="ConfirmBulkDecline" xml:space="preserve">
+    <value>Decline {0} selected updates? This action cannot be undone.</value>
+  </data>
+
+  <!-- Export -->
+  <data name="BtnExport" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="ExportFormatCsv" xml:space="preserve">
+    <value>CSV (Comma Separated)</value>
+  </data>
+  <data name="ExportFormatTsv" xml:space="preserve">
+    <value>TSV (Tab Separated)</value>
+  </data>
+  <data name="ExportFormatJson" xml:space="preserve">
+    <value>JSON</value>
+  </data>
+  <data name="StatusExporting" xml:space="preserve">
+    <value>Exporting data...</value>
+  </data>
+  <data name="StatusExportComplete" xml:space="preserve">
+    <value>Export completed: {0}</value>
+  </data>
+
+  <!-- Health Monitoring -->
+  <data name="HealthStatusHealthy" xml:space="preserve">
+    <value>Healthy</value>
+  </data>
+  <data name="HealthStatusDegraded" xml:space="preserve">
+    <value>Degraded</value>
+  </data>
+  <data name="HealthStatusUnhealthy" xml:space="preserve">
+    <value>Unhealthy</value>
+  </data>
+  <data name="LblHealthStatus" xml:space="preserve">
+    <value>System Health:</value>
+  </data>
+  <data name="HealthCheckWsus" xml:space="preserve">
+    <value>WSUS Server</value>
+  </data>
+  <data name="HealthCheckPowerShell" xml:space="preserve">
+    <value>PowerShell</value>
+  </data>
+  <data name="HealthCheckDisk" xml:space="preserve">
+    <value>Disk Space</value>
+  </data>
+  <data name="HealthCheckMemory" xml:space="preserve">
+    <value>Memory</value>
+  </data>
+
+  <!-- Filtering and Search -->
+  <data name="LblSearch" xml:space="preserve">
+    <value>Search:</value>
+  </data>
+  <data name="PlaceholderSearch" xml:space="preserve">
+    <value>Search updates...</value>
+  </data>
+  <data name="LblFilter" xml:space="preserve">
+    <value>Filter:</value>
+  </data>
+  <data name="FilterAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="FilterApproved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="FilterUnapproved" xml:space="preserve">
+    <value>Unapproved</value>
+  </data>
+  <data name="FilterDeclined" xml:space="preserve">
+    <value>Declined</value>
+  </data>
+  <data name="FilterCritical" xml:space="preserve">
+    <value>Critical</value>
+  </data>
+  <data name="FilterSecurity" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="BtnClearFilter" xml:space="preserve">
+    <value>Clear Filters</value>
+  </data>
+  <data name="StatusFiltered" xml:space="preserve">
+    <value>Showing {0} of {1} items.</value>
+  </data>
+
+  <!-- Reports -->
+  <data name="TabReports" xml:space="preserve">
+    <value>Reports</value>
+  </data>
+  <data name="ReportCompliance" xml:space="preserve">
+    <value>Compliance Report</value>
+  </data>
+  <data name="ReportStaleComputers" xml:space="preserve">
+    <value>Stale Computers</value>
+  </data>
+  <data name="ReportCriticalUpdates" xml:space="preserve">
+    <value>Critical Updates</value>
+  </data>
+  <data name="LblComplianceStatus" xml:space="preserve">
+    <value>Compliance Status:</value>
+  </data>
+  <data name="StatusCompliant" xml:space="preserve">
+    <value>Compliant</value>
+  </data>
+  <data name="StatusPartiallyCompliant" xml:space="preserve">
+    <value>Partially Compliant</value>
+  </data>
+  <data name="StatusNonCompliant" xml:space="preserve">
+    <value>Non-Compliant</value>
+  </data>
+  <data name="BtnGenerateReport" xml:space="preserve">
+    <value>Generate Report</value>
+  </data>
+  <data name="StatusGeneratingReport" xml:space="preserve">
+    <value>Generating report...</value>
+  </data>
+  <data name="ReportGenerated" xml:space="preserve">
+    <value>Report generated. Compliance: {0:F1}%</value>
+  </data>
+  <data name="ErrorNoReport" xml:space="preserve">
+    <value>No report available. Generate a report first.</value>
+  </data>
+  <data name="ColDaysSinceReport" xml:space="preserve">
+    <value>Days Since Report</value>
+  </data>
+
+  <!-- Group Management -->
+  <data name="TabGroups" xml:space="preserve">
+    <value>Groups</value>
+  </data>
+  <data name="BtnNewGroup" xml:space="preserve">
+    <value>New Group</value>
+  </data>
+  <data name="BtnEditGroup" xml:space="preserve">
+    <value>Edit Group</value>
+  </data>
+  <data name="BtnDeleteGroup" xml:space="preserve">
+    <value>Delete Group</value>
+  </data>
+  <data name="LblGroupName" xml:space="preserve">
+    <value>Group Name:</value>
+  </data>
+  <data name="LblGroupDescription" xml:space="preserve">
+    <value>Description:</value>
+  </data>
+  <data name="LblParentGroup" xml:space="preserve">
+    <value>Parent Group:</value>
+  </data>
+  <data name="ConfirmDeleteGroup" xml:space="preserve">
+    <value>Delete group '{0}'? This action cannot be undone.</value>
+  </data>
+  <data name="StatusGroupCreated" xml:space="preserve">
+    <value>Group '{0}' created successfully.</value>
+  </data>
+  <data name="StatusGroupDeleted" xml:space="preserve">
+    <value>Group '{0}' deleted successfully.</value>
+  </data>
+  <data name="ErrorCannotDeleteSystemGroup" xml:space="preserve">
+    <value>Cannot delete system group '{0}'.</value>
+  </data>
+  <data name="ErrorGroupHasComputers" xml:space="preserve">
+    <value>Cannot delete group with computers. Move computers first.</value>
+  </data>
+
+  <!-- Dialogs -->
+  <data name="DialogConfirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="DialogWarning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="DialogError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="DialogInfo" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="BtnYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="BtnNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="BtnOk" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="BtnCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ConfirmApproveUpdate" xml:space="preserve">
+    <value>Approve update '{0}' for group '{1}'?</value>
+  </data>
+  <data name="ConfirmDeclineUpdate" xml:space="preserve">
+    <value>Decline update '{0}'? This cannot be undone.</value>
+  </data>
+  <data name="ConfirmStartSync" xml:space="preserve">
+    <value>Start WSUS synchronization? This may take several minutes.</value>
+  </data>
+
+  <!-- Validation Errors -->
+  <data name="ValidationRequired" xml:space="preserve">
+    <value>This field is required.</value>
+  </data>
+  <data name="ValidationInvalidFormat" xml:space="preserve">
+    <value>Invalid format.</value>
+  </data>
+  <data name="ValidationInvalidHostname" xml:space="preserve">
+    <value>Invalid hostname format.</value>
+  </data>
+  <data name="ValidationInvalidPort" xml:space="preserve">
+    <value>Port must be between 1 and 65535.</value>
+  </data>
+  <data name="ValidationMaxLength" xml:space="preserve">
+    <value>Maximum length is {0} characters.</value>
+  </data>
+
+  <!-- Authentication/Authorization -->
+  <data name="ErrorUnauthorized" xml:space="preserve">
+    <value>You are not authorized to perform this action.</value>
+  </data>
+  <data name="ErrorNotAuthenticated" xml:space="preserve">
+    <value>Authentication required.</value>
+  </data>
+  <data name="RoleViewer" xml:space="preserve">
+    <value>Viewer</value>
+  </data>
+  <data name="RoleOperator" xml:space="preserve">
+    <value>Operator</value>
+  </data>
+  <data name="RoleAdministrator" xml:space="preserve">
+    <value>Administrator</value>
+  </data>
+  <data name="LblCurrentUser" xml:space="preserve">
+    <value>User:</value>
+  </data>
+  <data name="LblCurrentRole" xml:space="preserve">
+    <value>Role:</value>
+  </data>
+
+  <!-- Accessibility -->
+  <data name="AccessibilityHighContrast" xml:space="preserve">
+    <value>High Contrast</value>
+  </data>
+  <data name="AccessibilityNormalContrast" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="AccessibilityReduceMotion" xml:space="preserve">
+    <value>Reduce Motion</value>
+  </data>
+  <data name="AccessibilityFontScale" xml:space="preserve">
+    <value>Font Scale</value>
+  </data>
+
+  <!-- Update Details -->
+  <data name="BtnViewDetails" xml:space="preserve">
+    <value>View Details</value>
+  </data>
+  <data name="LblUpdateId" xml:space="preserve">
+    <value>Update ID:</value>
+  </data>
+  <data name="LblSeverity" xml:space="preserve">
+    <value>Severity:</value>
+  </data>
+  <data name="LblReleaseDate" xml:space="preserve">
+    <value>Release Date:</value>
+  </data>
+  <data name="LblFileSize" xml:space="preserve">
+    <value>File Size:</value>
+  </data>
+  <data name="LblProducts" xml:space="preserve">
+    <value>Products:</value>
+  </data>
+  <data name="LblCveIds" xml:space="preserve">
+    <value>CVE IDs:</value>
+  </data>
+  <data name="LblSupersedes" xml:space="preserve">
+    <value>Supersedes:</value>
+  </data>
+  <data name="LblSuperseded" xml:space="preserve">
+    <value>Superseded</value>
+  </data>
+  <data name="LblSupersededBy" xml:space="preserve">
+    <value>Superseded By:</value>
+  </data>
+  <data name="LblRequiresReboot" xml:space="preserve">
+    <value>Requires Reboot:</value>
+  </data>
+
+  <!-- Error Messages -->
+  <data name="ErrorConnectionFailed" xml:space="preserve">
+    <value>Failed to connect to WSUS server.</value>
+  </data>
+  <data name="ErrorTimeout" xml:space="preserve">
+    <value>Operation timed out.</value>
+  </data>
+  <data name="ErrorScriptFailed" xml:space="preserve">
+    <value>Script execution failed.</value>
+  </data>
+  <data name="ErrorRetryLimitExceeded" xml:space="preserve">
+    <value>Maximum retry attempts exceeded.</value>
+  </data>
+  <data name="ErrorCircuitBreakerOpen" xml:space="preserve">
+    <value>Service temporarily unavailable. Please try again later.</value>
+  </data>
+</root>
