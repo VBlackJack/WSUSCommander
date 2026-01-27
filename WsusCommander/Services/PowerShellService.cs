@@ -47,6 +47,7 @@ public sealed class PowerShellService : IPowerShellService
     /// <inheritdoc/>
     public async Task<PSDataCollection<PSObject>> ExecuteScriptAsync(string scriptName, Dictionary<string, object>? parameters = null)
     {
+        ValidateScriptName(scriptName);
         var scriptPath = Path.Combine(_scriptsPath, scriptName);
         await _loggingService.LogDebugAsync($"[PS] Executing script: {scriptPath}");
 
@@ -73,17 +74,19 @@ public sealed class PowerShellService : IPowerShellService
 
         // Build the PowerShell command with parameters
         var psCommand = new StringBuilder();
-        psCommand.Append($"& '{scriptPath}'");
+        psCommand.Append($"& '{EscapePowerShellString(scriptPath)}'");
 
         if (parameters != null)
         {
             foreach (var param in parameters)
             {
+                ValidateParameterName(param.Key);
                 var value = param.Value switch
                 {
                     bool b => b ? "$true" : "$false",
-                    string s => $"'{s}'",
-                    _ => param.Value.ToString()
+                    string s => $"'{EscapePowerShellString(s)}'",
+                    null => "$null",
+                    _ => param.Value.ToString() ?? string.Empty
                 };
                 psCommand.Append($" -{param.Key} {value}");
             }
@@ -214,5 +217,51 @@ public sealed class PowerShellService : IPowerShellService
         }
 
         return psObj;
+    }
+
+    private static void ValidateScriptName(string scriptName)
+    {
+        if (string.IsNullOrWhiteSpace(scriptName))
+        {
+            throw new ArgumentException(Properties.Resources.ErrorScriptNameRequired, nameof(scriptName));
+        }
+
+        if (!string.Equals(scriptName, Path.GetFileName(scriptName), StringComparison.Ordinal))
+        {
+            throw new ArgumentException(Properties.Resources.ErrorScriptNameNoPath, nameof(scriptName));
+        }
+
+        if (!scriptName.EndsWith(".ps1", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(Properties.Resources.ErrorScriptNameNotPs1, nameof(scriptName));
+        }
+    }
+
+    private static void ValidateParameterName(string parameterName)
+    {
+        if (string.IsNullOrWhiteSpace(parameterName))
+        {
+            throw new ArgumentException(Properties.Resources.ErrorPowerShellParameterNameRequired, nameof(parameterName));
+        }
+
+        for (var i = 0; i < parameterName.Length; i++)
+        {
+            var ch = parameterName[i];
+            var isValid = i == 0
+                ? char.IsLetter(ch)
+                : char.IsLetterOrDigit(ch) || ch == '_';
+
+            if (!isValid)
+            {
+                throw new ArgumentException(
+                    string.Format(Properties.Resources.ErrorInvalidPowerShellParameterName, parameterName),
+                    nameof(parameterName));
+            }
+        }
+    }
+
+    private static string EscapePowerShellString(string value)
+    {
+        return value.Replace("'", "''", StringComparison.Ordinal);
     }
 }
