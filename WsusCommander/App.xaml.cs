@@ -17,6 +17,7 @@
 using System.Windows;
 using WsusCommander.Services;
 using WsusCommander.ViewModels;
+using Res = WsusCommander.Properties.Resources;
 
 namespace WsusCommander;
 
@@ -163,10 +164,10 @@ public partial class App : Application
         }
 
         var result = await dialogService.ShowConfirmationAsync(
-            Properties.Resources.DialogAuthSetupTitle,
-            Properties.Resources.DialogAuthSetupMessage,
-            Properties.Resources.BtnOk,
-            Properties.Resources.BtnLater);
+            Res.DialogAuthSetupTitle,
+            Res.DialogAuthSetupMessage,
+            Res.BtnOk,
+            Res.BtnLater);
 
         preferencesService.Preferences.HasConfiguredAuthentication = true;
         await preferencesService.SaveAsync();
@@ -174,8 +175,8 @@ public partial class App : Application
         if (result == DialogResult.Confirmed)
         {
             await dialogService.ShowInfoAsync(
-                Properties.Resources.DialogAuthSetupTitle,
-                Properties.Resources.DialogAuthSetupFollowup);
+                Res.DialogAuthSetupTitle,
+                Res.DialogAuthSetupFollowup);
         }
     }
 }

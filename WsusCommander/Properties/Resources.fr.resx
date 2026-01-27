@@ -302,9 +302,6 @@
   <data name="ExportHeaderGroupId" xml:space="preserve">
     <value>Identifiant groupe</value>
   </data>
-  <data name="ExportHeaderGroupName" xml:space="preserve">
-    <value>Nom du groupe</value>
-  </data>
   <data name="ExportHeaderGroupDescription" xml:space="preserve">
     <value>Description</value>
   </data>

@@ -28,7 +28,7 @@ public sealed class NavigationService : INavigationService
     /// <inheritdoc/>
     public void NavigateToComputerUpdates(ComputerStatus computer, IReadOnlyList<ComputerUpdateStatus> updates)
     {
-        var dialog = new ComputerUpdatesWindow(computer, updates)
+        var dialog = new ComputerUpdatesWindow(computer, updates.ToList())
         {
             Owner = Application.Current?.MainWindow
         };
