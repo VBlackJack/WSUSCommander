@@ -16,7 +16,7 @@
 
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
+using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using WsusCommander.Models;
@@ -55,6 +55,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private readonly IThemeService _themeService;
     private readonly IClipboardService _clipboardService;
     private readonly INavigationService _navigationService;
+    private readonly SynchronizationContext _uiContext;
 
     #endregion
 
@@ -408,6 +409,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _themeService = themeService;
         _clipboardService = clipboardService;
         _navigationService = navigationService;
+        _uiContext = SynchronizationContext.Current ?? new SynchronizationContext();
 
         // Configure timer
         _timerService.Interval = _configService.AppSettings.AutoRefreshInterval * 1000;
@@ -658,26 +660,17 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     private void OnHealthStatusChanged(object? sender, HealthReport report)
     {
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            HealthReport = report;
-        });
+        _uiContext.Post(_ => HealthReport = report, null);
     }
 
     private async void OnToastRequested(object? sender, Models.ToastNotification notification)
     {
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            ToastNotifications.Add(notification);
-        });
+        _uiContext.Post(_ => ToastNotifications.Add(notification), null);
 
         // Auto-dismiss after duration
         await Task.Delay(notification.Duration);
 
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            ToastNotifications.Remove(notification);
-        });
+        _uiContext.Post(_ => ToastNotifications.Remove(notification), null);
     }
 
     /// <summary>
@@ -689,10 +682,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         if (notification is null)
             return;
 
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            ToastNotifications.Remove(notification);
-        });
+        _uiContext.Post(_ => ToastNotifications.Remove(notification), null);
     }
 
     #endregion
