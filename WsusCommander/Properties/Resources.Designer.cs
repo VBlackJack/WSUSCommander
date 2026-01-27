@@ -116,6 +116,16 @@ public static class Resources
     public static string ErrorNoReport => ResourceManager.GetString("ErrorNoReport", resourceCulture) ?? string.Empty;
     public static string ErrorNotAuthenticated => ResourceManager.GetString("ErrorNotAuthenticated", resourceCulture) ?? string.Empty;
     public static string ErrorNoUpdateSelected => ResourceManager.GetString("ErrorNoUpdateSelected", resourceCulture) ?? string.Empty;
+
+    public static string ErrorScriptNameRequired => ResourceManager.GetString("ErrorScriptNameRequired", resourceCulture) ?? string.Empty;
+
+    public static string ErrorScriptNameNoPath => ResourceManager.GetString("ErrorScriptNameNoPath", resourceCulture) ?? string.Empty;
+
+    public static string ErrorScriptNameNotPs1 => ResourceManager.GetString("ErrorScriptNameNotPs1", resourceCulture) ?? string.Empty;
+
+    public static string ErrorInvalidPowerShellParameterName => ResourceManager.GetString("ErrorInvalidPowerShellParameterName", resourceCulture) ?? string.Empty;
+
+    public static string ErrorPowerShellParameterNameRequired => ResourceManager.GetString("ErrorPowerShellParameterNameRequired", resourceCulture) ?? string.Empty;
     public static string ErrorRetryLimitExceeded => ResourceManager.GetString("ErrorRetryLimitExceeded", resourceCulture) ?? string.Empty;
     public static string ErrorScriptFailed => ResourceManager.GetString("ErrorScriptFailed", resourceCulture) ?? string.Empty;
     public static string ErrorTimeout => ResourceManager.GetString("ErrorTimeout", resourceCulture) ?? string.Empty;

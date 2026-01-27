@@ -199,6 +199,21 @@
   <data name="ErrorNoUpdateSelected" xml:space="preserve">
     <value>Please select an update first.</value>
   </data>
+  <data name="ErrorScriptNameRequired" xml:space="preserve">
+    <value>Script name is required.</value>
+  </data>
+  <data name="ErrorScriptNameNoPath" xml:space="preserve">
+    <value>Script name must not include path segments.</value>
+  </data>
+  <data name="ErrorScriptNameNotPs1" xml:space="preserve">
+    <value>Script name must reference a .ps1 file.</value>
+  </data>
+  <data name="ErrorInvalidPowerShellParameterName" xml:space="preserve">
+    <value>Invalid PowerShell parameter name: {0}</value>
+  </data>
+  <data name="ErrorPowerShellParameterNameRequired" xml:space="preserve">
+    <value>Parameter name is required.</value>
+  </data>
 
   <!-- Bulk Operations -->
   <data name="BtnBulkApprove" xml:space="preserve">

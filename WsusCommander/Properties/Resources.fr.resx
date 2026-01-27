@@ -194,7 +194,22 @@
     <value>Veuillez sélectionner un groupe cible avant d'approuver.</value>
   </data>
   <data name="ErrorNoUpdateSelected" xml:space="preserve">
-    <value>Veuillez d'abord sélectionner une mise à jour.</value>
+    <value>Veuillez d’abord sélectionner une mise à jour.</value>
+  </data>
+  <data name="ErrorScriptNameRequired" xml:space="preserve">
+    <value>Le nom du script est requis.</value>
+  </data>
+  <data name="ErrorScriptNameNoPath" xml:space="preserve">
+    <value>Le nom du script ne doit pas contenir de segments de chemin.</value>
+  </data>
+  <data name="ErrorScriptNameNotPs1" xml:space="preserve">
+    <value>Le nom du script doit référencer un fichier .ps1.</value>
+  </data>
+  <data name="ErrorInvalidPowerShellParameterName" xml:space="preserve">
+    <value>Nom de paramètre PowerShell invalide : {0}</value>
+  </data>
+  <data name="ErrorPowerShellParameterNameRequired" xml:space="preserve">
+    <value>Le nom du paramètre est requis.</value>
   </data>
 
   <!-- Operations en masse -->
