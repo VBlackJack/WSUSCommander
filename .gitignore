@@ -61,3 +61,17 @@ Desktop.ini
 *.log
 appsettings.Development.json
 appsettings.Local.json
+
+# Publish output
+publish/
+publish-portable/
+
+# Claude Code
+.claude/
+
+# BMAD
+_bmad/
+_bmad-output/
+
+# Windows artifacts
+nul
