@@ -171,6 +171,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private string _selectedApprovalFilter = "All";
 
     [ObservableProperty]
+    private string _selectedSupersededFilter = Resources.FilterSupersededAll;
+
+    [ObservableProperty]
     private ObservableCollection<string> _classifications = [];
 
     [ObservableProperty]
@@ -229,6 +232,63 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     [ObservableProperty]
     private DashboardStats? _dashboardStats;
+
+    [ObservableProperty]
+    private string _dashboardLastSyncDisplay = Resources.DashboardLastSyncNever;
+
+    [ObservableProperty]
+    private string _dashboardSyncAgeDisplay = Resources.DashboardSyncAgeUnknown;
+
+    [ObservableProperty]
+    private bool _dashboardSyncStale;
+
+    [ObservableProperty]
+    private string _dashboardHealthStatusDisplay = Resources.DashboardHealthUnknown;
+
+    [ObservableProperty]
+    private string _dashboardAutoRefreshDisplay = string.Empty;
+
+    [ObservableProperty]
+    private string _dashboardUserRoleDisplay = string.Empty;
+
+    [ObservableProperty]
+    private string _dashboardAuthStatusDisplay = string.Empty;
+
+    [ObservableProperty]
+    private string _dashboardApprovalConfirmationDisplay = string.Empty;
+
+    [ObservableProperty]
+    private string _dashboardDeclineConfirmationDisplay = string.Empty;
+
+    [ObservableProperty]
+    private string _dashboardSyncConfirmationDisplay = string.Empty;
+
+    [ObservableProperty]
+    private string _dashboardAuditStatusDisplay = string.Empty;
+
+    [ObservableProperty]
+    private string _dashboardSslStatusDisplay = string.Empty;
+
+    [ObservableProperty]
+    private string _dashboardCertificateValidationDisplay = string.Empty;
+
+    [ObservableProperty]
+    private bool _hasDashboardActions;
+
+    [ObservableProperty]
+    private bool _hasCriticalAction;
+
+    [ObservableProperty]
+    private bool _hasSecurityAction;
+
+    [ObservableProperty]
+    private bool _hasSupersededAction;
+
+    [ObservableProperty]
+    private bool _hasSyncAction;
+
+    [ObservableProperty]
+    private bool _hasComplianceAction;
 
     [ObservableProperty]
     private ObservableCollection<ActivityLogEntry> _activityLog = [];
@@ -355,6 +415,13 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
         // Initialize filter options
         ApprovalFilters = ["All", "Approved", "Unapproved", "Declined"];
+        SupersededFilters =
+        [
+            Resources.FilterSupersededAll,
+            Resources.FilterSupersededOnly,
+            Resources.FilterHideSuperseded
+        ];
+        _selectedSupersededFilter = Resources.FilterSupersededAll;
 
         // Apply configured default page size
         _pageSize = _configService.Config.UI.DefaultPageSize;
@@ -364,6 +431,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _inputServerName = _configService.WsusConnection.ServerName;
         _inputServerPort = _configService.WsusConnection.Port.ToString();
         _inputUseSsl = _configService.WsusConnection.UseSsl;
+
+        UpdateSecuritySummary();
+        UpdateAutoRefreshSummary();
+        UpdateUserSummary();
     }
 
     #endregion
@@ -399,6 +470,11 @@ public partial class MainViewModel : ObservableObject, IDisposable
     /// Gets the approval filter options.
     /// </summary>
     public List<string> ApprovalFilters { get; }
+
+    /// <summary>
+    /// Gets the superseded filter options.
+    /// </summary>
+    public List<string> SupersededFilters { get; }
 
     /// <summary>
     /// Gets whether the current user can approve updates.
@@ -1531,6 +1607,137 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     #endregion
 
+    #region Dashboard Insights
+
+    private const double ComplianceWarningThreshold = 90.0;
+    private static readonly TimeSpan SyncStaleThreshold = TimeSpan.FromHours(24);
+
+    private void UpdateDashboardInsights(DashboardStats? stats)
+    {
+        UpdateSyncInsights(stats);
+        UpdateHealthSummary();
+        UpdateAutoRefreshSummary();
+        UpdateSecuritySummary();
+        UpdateUserSummary();
+        UpdateActionFlags(stats);
+    }
+
+    private void UpdateSyncInsights(DashboardStats? stats)
+    {
+        if (stats?.LastSyncTime is DateTime lastSync)
+        {
+            DashboardLastSyncDisplay = lastSync.ToString("g");
+            var age = DateTime.Now - lastSync;
+            DashboardSyncAgeDisplay = FormatDuration(age);
+            DashboardSyncStale = age > SyncStaleThreshold;
+        }
+        else
+        {
+            DashboardLastSyncDisplay = Resources.DashboardLastSyncNever;
+            DashboardSyncAgeDisplay = Resources.DashboardSyncAgeUnknown;
+            DashboardSyncStale = true;
+        }
+    }
+
+    private void UpdateActionFlags(DashboardStats? stats)
+    {
+        if (stats == null)
+        {
+            HasCriticalAction = false;
+            HasSecurityAction = false;
+            HasSupersededAction = false;
+            HasComplianceAction = false;
+            HasSyncAction = false;
+            HasDashboardActions = false;
+            return;
+        }
+
+        HasCriticalAction = stats?.CriticalPending > 0;
+        HasSecurityAction = stats?.SecurityPending > 0;
+        HasSupersededAction = stats?.SupersededUpdates > 0;
+        HasComplianceAction = stats.CompliancePercent < ComplianceWarningThreshold;
+        HasSyncAction = DashboardSyncStale;
+
+        HasDashboardActions = HasCriticalAction
+            || HasSecurityAction
+            || HasSupersededAction
+            || HasComplianceAction
+            || HasSyncAction;
+    }
+
+    private void UpdateHealthSummary()
+    {
+        DashboardHealthStatusDisplay = HealthReport?.Status switch
+        {
+            HealthStatus.Healthy => Resources.HealthStatusHealthy,
+            HealthStatus.Degraded => Resources.HealthStatusDegraded,
+            HealthStatus.Unhealthy => Resources.HealthStatusUnhealthy,
+            _ => Resources.DashboardHealthUnknown
+        };
+    }
+
+    private void UpdateAutoRefreshSummary()
+    {
+        if (IsAutoRefreshEnabled)
+        {
+            var minutes = Math.Max(1, (int)Math.Round(AutoRefreshIntervalSeconds / 60.0));
+            DashboardAutoRefreshDisplay = string.Format(Resources.DashboardAutoRefreshEnabled, minutes);
+            return;
+        }
+
+        DashboardAutoRefreshDisplay = Resources.DashboardAutoRefreshDisabled;
+    }
+
+    private void UpdateUserSummary()
+    {
+        if (CurrentUser == null)
+        {
+            DashboardUserRoleDisplay = Resources.DashboardUserUnknown;
+            return;
+        }
+
+        var displayName = string.IsNullOrWhiteSpace(CurrentUser.DisplayName)
+            ? CurrentUser.AccountName
+            : CurrentUser.DisplayName;
+        DashboardUserRoleDisplay = $"{displayName} ({CurrentUser.Role})";
+    }
+
+    private void UpdateSecuritySummary()
+    {
+        var security = _configService.Config.Security;
+        DashboardAuthStatusDisplay = FormatEnabled(security.RequireAuthentication);
+        DashboardApprovalConfirmationDisplay = FormatEnabled(security.RequireApprovalConfirmation);
+        DashboardDeclineConfirmationDisplay = FormatEnabled(security.RequireDeclineConfirmation);
+        DashboardSyncConfirmationDisplay = FormatEnabled(security.RequireSyncConfirmation);
+        DashboardAuditStatusDisplay = FormatEnabled(security.AuditAllOperations);
+
+        var connection = _configService.WsusConnection;
+        DashboardSslStatusDisplay = FormatEnabled(connection.UseSsl);
+        DashboardCertificateValidationDisplay = FormatEnabled(connection.ValidateCertificate);
+    }
+
+    private static string FormatEnabled(bool enabled)
+    {
+        return enabled ? Resources.StatusEnabled : Resources.StatusDisabled;
+    }
+
+    private static string FormatDuration(TimeSpan span)
+    {
+        if (span.TotalDays >= 1)
+        {
+            return $"{(int)span.TotalDays}d {span.Hours}h";
+        }
+
+        if (span.TotalHours >= 1)
+        {
+            return $"{(int)span.TotalHours}h {span.Minutes}m";
+        }
+
+        return $"{Math.Max(0, span.Minutes)}m";
+    }
+
+    #endregion
+
     #region Filter Commands
 
     /// <summary>
@@ -1551,6 +1758,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         SearchText = string.Empty;
         SelectedClassification = string.Empty;
         SelectedApprovalFilter = "All";
+        SelectedSupersededFilter = Resources.FilterSupersededAll;
         ApplyFilters();
     }
 
@@ -1571,6 +1779,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
         };
 
         criteria.IsDeclined = SelectedApprovalFilter == "Declined" ? true : null;
+        criteria.IsSuperseded = SelectedSupersededFilter == Resources.FilterSupersededOnly ? true : null;
+        criteria.HideSuperseded = SelectedSupersededFilter == Resources.FilterHideSuperseded;
 
         var filtered = _filterService.FilterUpdates(Updates, criteria).ToList();
 
@@ -1615,6 +1825,31 @@ public partial class MainViewModel : ObservableObject, IDisposable
         ApplyFilters();
     }
 
+    partial void OnSelectedSupersededFilterChanged(string value)
+    {
+        ApplyFilters();
+    }
+
+    partial void OnDashboardStatsChanged(DashboardStats? value)
+    {
+        UpdateDashboardInsights(value);
+    }
+
+    partial void OnHealthReportChanged(HealthReport? value)
+    {
+        UpdateHealthSummary();
+    }
+
+    partial void OnCurrentUserChanged(UserIdentity? value)
+    {
+        UpdateUserSummary();
+    }
+
+    partial void OnIsAutoRefreshEnabledChanged(bool value)
+    {
+        UpdateAutoRefreshSummary();
+    }
+
     partial void OnSelectedFilterPresetChanged(FilterPreset? value)
     {
         if (value != null)
@@ -1650,6 +1885,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         SearchText = preset.SearchText;
         SelectedClassification = preset.Classification;
         SelectedApprovalFilter = preset.ApprovalFilter;
+        SelectedSupersededFilter = Resources.FilterSupersededAll;
         // ApplyFilters() is called automatically by the property changed handlers
     }
 
@@ -2440,6 +2676,40 @@ public partial class MainViewModel : ObservableObject, IDisposable
             StatusText = string.Format(Resources.StatusError, ex.Message);
             await _loggingService.LogErrorAsync("Failed to load dashboard statistics", ex);
         }
+    }
+
+    [RelayCommand]
+    private void ReviewCriticalUpdates()
+    {
+        NavigateToUpdatesWithFilters("Critical Updates", "Unapproved", Resources.FilterSupersededAll);
+    }
+
+    [RelayCommand]
+    private void ReviewSecurityUpdates()
+    {
+        NavigateToUpdatesWithFilters("Security Updates", "Unapproved", Resources.FilterSupersededAll);
+    }
+
+    [RelayCommand]
+    private void ReviewSupersededUpdates()
+    {
+        NavigateToUpdatesWithFilters(string.Empty, "All", Resources.FilterSupersededOnly);
+    }
+
+    [RelayCommand]
+    private void OpenComplianceReports()
+    {
+        SelectedTabIndex = 3;
+    }
+
+    private void NavigateToUpdatesWithFilters(string classification, string approvalFilter, string supersededFilter)
+    {
+        SelectedTabIndex = 1;
+        SearchText = string.Empty;
+        SelectedClassification = classification;
+        SelectedApprovalFilter = approvalFilter;
+        SelectedSupersededFilter = supersededFilter;
+        CurrentPage = 1;
     }
 
     #endregion

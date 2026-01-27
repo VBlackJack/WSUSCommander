@@ -127,6 +127,9 @@ public static class Resources
     public static string FilterApproved => ResourceManager.GetString("FilterApproved", resourceCulture) ?? string.Empty;
     public static string FilterCritical => ResourceManager.GetString("FilterCritical", resourceCulture) ?? string.Empty;
     public static string FilterDeclined => ResourceManager.GetString("FilterDeclined", resourceCulture) ?? string.Empty;
+    public static string FilterSupersededAll => ResourceManager.GetString("FilterSupersededAll", resourceCulture) ?? string.Empty;
+    public static string FilterSupersededOnly => ResourceManager.GetString("FilterSupersededOnly", resourceCulture) ?? string.Empty;
+    public static string FilterHideSuperseded => ResourceManager.GetString("FilterHideSuperseded", resourceCulture) ?? string.Empty;
     public static string FilterSecurity => ResourceManager.GetString("FilterSecurity", resourceCulture) ?? string.Empty;
     public static string FilterUnapproved => ResourceManager.GetString("FilterUnapproved", resourceCulture) ?? string.Empty;
     public static string HealthCheckDisk => ResourceManager.GetString("HealthCheckDisk", resourceCulture) ?? string.Empty;
@@ -143,6 +146,7 @@ public static class Resources
     public static string LblCveIds => ResourceManager.GetString("LblCveIds", resourceCulture) ?? string.Empty;
     public static string LblFileSize => ResourceManager.GetString("LblFileSize", resourceCulture) ?? string.Empty;
     public static string LblFilter => ResourceManager.GetString("LblFilter", resourceCulture) ?? string.Empty;
+    public static string LblSupersededFilter => ResourceManager.GetString("LblSupersededFilter", resourceCulture) ?? string.Empty;
     public static string LblGroupDescription => ResourceManager.GetString("LblGroupDescription", resourceCulture) ?? string.Empty;
     public static string LblGroupName => ResourceManager.GetString("LblGroupName", resourceCulture) ?? string.Empty;
     public static string LblHealthStatus => ResourceManager.GetString("LblHealthStatus", resourceCulture) ?? string.Empty;
@@ -276,6 +280,33 @@ public static class Resources
     public static string DashboardQuickActions => ResourceManager.GetString("DashboardQuickActions", resourceCulture) ?? string.Empty;
     public static string DashboardActionRequired => ResourceManager.GetString("DashboardActionRequired", resourceCulture) ?? string.Empty;
     public static string DashboardNoActionRequired => ResourceManager.GetString("DashboardNoActionRequired", resourceCulture) ?? string.Empty;
+    public static string DashboardOperationalInsights => ResourceManager.GetString("DashboardOperationalInsights", resourceCulture) ?? string.Empty;
+    public static string DashboardSecurityAccess => ResourceManager.GetString("DashboardSecurityAccess", resourceCulture) ?? string.Empty;
+    public static string DashboardSyncAge => ResourceManager.GetString("DashboardSyncAge", resourceCulture) ?? string.Empty;
+    public static string DashboardHealth => ResourceManager.GetString("DashboardHealth", resourceCulture) ?? string.Empty;
+    public static string DashboardAutoRefresh => ResourceManager.GetString("DashboardAutoRefresh", resourceCulture) ?? string.Empty;
+    public static string DashboardUserRole => ResourceManager.GetString("DashboardUserRole", resourceCulture) ?? string.Empty;
+    public static string DashboardAuthenticationRequired => ResourceManager.GetString("DashboardAuthenticationRequired", resourceCulture) ?? string.Empty;
+    public static string DashboardApprovalConfirmation => ResourceManager.GetString("DashboardApprovalConfirmation", resourceCulture) ?? string.Empty;
+    public static string DashboardDeclineConfirmation => ResourceManager.GetString("DashboardDeclineConfirmation", resourceCulture) ?? string.Empty;
+    public static string DashboardSyncConfirmation => ResourceManager.GetString("DashboardSyncConfirmation", resourceCulture) ?? string.Empty;
+    public static string DashboardAuditLogging => ResourceManager.GetString("DashboardAuditLogging", resourceCulture) ?? string.Empty;
+    public static string DashboardSslStatus => ResourceManager.GetString("DashboardSslStatus", resourceCulture) ?? string.Empty;
+    public static string DashboardCertificateValidation => ResourceManager.GetString("DashboardCertificateValidation", resourceCulture) ?? string.Empty;
+    public static string DashboardLastSyncNever => ResourceManager.GetString("DashboardLastSyncNever", resourceCulture) ?? string.Empty;
+    public static string DashboardSyncAgeUnknown => ResourceManager.GetString("DashboardSyncAgeUnknown", resourceCulture) ?? string.Empty;
+    public static string DashboardAutoRefreshEnabled => ResourceManager.GetString("DashboardAutoRefreshEnabled", resourceCulture) ?? string.Empty;
+    public static string DashboardAutoRefreshDisabled => ResourceManager.GetString("DashboardAutoRefreshDisabled", resourceCulture) ?? string.Empty;
+    public static string DashboardPendingLabel => ResourceManager.GetString("DashboardPendingLabel", resourceCulture) ?? string.Empty;
+    public static string DashboardReadyLabel => ResourceManager.GetString("DashboardReadyLabel", resourceCulture) ?? string.Empty;
+    public static string DashboardHealthUnknown => ResourceManager.GetString("DashboardHealthUnknown", resourceCulture) ?? string.Empty;
+    public static string DashboardUserUnknown => ResourceManager.GetString("DashboardUserUnknown", resourceCulture) ?? string.Empty;
+    public static string DashboardActionReviewUpdates => ResourceManager.GetString("DashboardActionReviewUpdates", resourceCulture) ?? string.Empty;
+    public static string DashboardActionReviewSuperseded => ResourceManager.GetString("DashboardActionReviewSuperseded", resourceCulture) ?? string.Empty;
+    public static string DashboardActionStartSync => ResourceManager.GetString("DashboardActionStartSync", resourceCulture) ?? string.Empty;
+    public static string DashboardActionOpenReports => ResourceManager.GetString("DashboardActionOpenReports", resourceCulture) ?? string.Empty;
+    public static string StatusEnabled => ResourceManager.GetString("StatusEnabled", resourceCulture) ?? string.Empty;
+    public static string StatusDisabled => ResourceManager.GetString("StatusDisabled", resourceCulture) ?? string.Empty;
 
     // Filter Presets
     public static string PresetAllUpdates => ResourceManager.GetString("PresetAllUpdates", resourceCulture) ?? string.Empty;

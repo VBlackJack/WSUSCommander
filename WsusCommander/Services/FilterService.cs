@@ -58,6 +58,12 @@ public sealed class FilterService : IFilterService
             query = query.Where(u => u.IsDeclined == criteria.IsDeclined.Value);
         }
 
+        // Superseded status
+        if (criteria.IsSuperseded.HasValue)
+        {
+            query = query.Where(u => u.IsSuperseded == criteria.IsSuperseded.Value);
+        }
+
         // Date range
         if (criteria.CreatedAfter.HasValue)
         {

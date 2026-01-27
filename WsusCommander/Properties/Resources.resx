@@ -722,6 +722,99 @@
   <data name="DashboardNoActionRequired" xml:space="preserve">
     <value>No immediate action required</value>
   </data>
+  <data name="DashboardOperationalInsights" xml:space="preserve">
+    <value>Operational Insights</value>
+  </data>
+  <data name="DashboardSecurityAccess" xml:space="preserve">
+    <value>Security &amp; Access</value>
+  </data>
+  <data name="DashboardSyncAge" xml:space="preserve">
+    <value>Sync Age</value>
+  </data>
+  <data name="DashboardHealth" xml:space="preserve">
+    <value>Health</value>
+  </data>
+  <data name="DashboardAutoRefresh" xml:space="preserve">
+    <value>Auto-Refresh</value>
+  </data>
+  <data name="DashboardUserRole" xml:space="preserve">
+    <value>Current User</value>
+  </data>
+  <data name="DashboardAuthenticationRequired" xml:space="preserve">
+    <value>Authentication Required</value>
+  </data>
+  <data name="DashboardApprovalConfirmation" xml:space="preserve">
+    <value>Approval Confirmation</value>
+  </data>
+  <data name="DashboardDeclineConfirmation" xml:space="preserve">
+    <value>Decline Confirmation</value>
+  </data>
+  <data name="DashboardSyncConfirmation" xml:space="preserve">
+    <value>Sync Confirmation</value>
+  </data>
+  <data name="DashboardAuditLogging" xml:space="preserve">
+    <value>Audit Logging</value>
+  </data>
+  <data name="DashboardSslStatus" xml:space="preserve">
+    <value>SSL</value>
+  </data>
+  <data name="DashboardCertificateValidation" xml:space="preserve">
+    <value>Certificate Validation</value>
+  </data>
+  <data name="DashboardLastSyncNever" xml:space="preserve">
+    <value>Never</value>
+  </data>
+  <data name="DashboardSyncAgeUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="DashboardAutoRefreshEnabled" xml:space="preserve">
+    <value>Enabled (every {0} min)</value>
+  </data>
+  <data name="DashboardAutoRefreshDisabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="DashboardPendingLabel" xml:space="preserve">
+    <value>pending</value>
+  </data>
+  <data name="DashboardReadyLabel" xml:space="preserve">
+    <value>ready</value>
+  </data>
+  <data name="DashboardHealthUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="DashboardUserUnknown" xml:space="preserve">
+    <value>Not signed in</value>
+  </data>
+  <data name="DashboardActionReviewUpdates" xml:space="preserve">
+    <value>Review Updates</value>
+  </data>
+  <data name="DashboardActionReviewSuperseded" xml:space="preserve">
+    <value>Review Superseded</value>
+  </data>
+  <data name="DashboardActionStartSync" xml:space="preserve">
+    <value>Start Sync</value>
+  </data>
+  <data name="DashboardActionOpenReports" xml:space="preserve">
+    <value>Open Reports</value>
+  </data>
+  <data name="StatusEnabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="StatusDisabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="LblSupersededFilter" xml:space="preserve">
+    <value>Superseded:</value>
+  </data>
+  <data name="FilterSupersededAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="FilterSupersededOnly" xml:space="preserve">
+    <value>Superseded Only</value>
+  </data>
+  <data name="FilterHideSuperseded" xml:space="preserve">
+    <value>Hide Superseded</value>
+  </data>
 
   <!-- Filter Presets -->
   <data name="PresetAllUpdates" xml:space="preserve">
