@@ -24,17 +24,25 @@ namespace WsusCommander.Tests.Services;
 public class AuthorizationServiceTests
 {
     private readonly Mock<IAuthenticationService> _authMock;
+    private readonly Mock<IConfigurationService> _configMock;
     private readonly Mock<ILoggingService> _loggingMock;
 
     public AuthorizationServiceTests()
     {
         _authMock = new Mock<IAuthenticationService>();
+        _configMock = new Mock<IConfigurationService>();
         _loggingMock = new Mock<ILoggingService>();
+
+        // Default: authentication is required
+        _configMock.Setup(c => c.Config).Returns(new AppConfig
+        {
+            Security = new SecurityConfig { RequireAuthentication = true }
+        });
     }
 
     private AuthorizationService CreateService()
     {
-        return new AuthorizationService(_authMock.Object, _loggingMock.Object);
+        return new AuthorizationService(_authMock.Object, _configMock.Object, _loggingMock.Object);
     }
 
     #region Administrator Role Tests

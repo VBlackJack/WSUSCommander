@@ -1,24 +1,31 @@
 param(
+    [Parameter(Mandatory=$true)]
     [string]$ServerName,
+
+    [Parameter(Mandatory=$true)]
     [int]$Port,
-    [bool]$UseSsl
+
+    [Parameter(Mandatory=$false)]
+    [bool]$UseSsl = $false
 )
 
-# Defensive coding: Check if module exists
-if (-not (Get-Module -ListAvailable -Name UpdateServices)) {
-    Write-Error "WSUS Module (UpdateServices) is not installed on this machine." -ErrorAction Stop
-}
+$ErrorActionPreference = 'Stop'
 
-# Attempt connection (This returns a IUpdateServer object)
 try {
+    # Load the WSUS assembly
+    [reflection.assembly]::LoadWithPartialName("Microsoft.UpdateServices.Administration") | Out-Null
+
+    # Attempt connection
     $wsus = [Microsoft.UpdateServices.Administration.AdminProxy]::GetUpdateServer($ServerName, $UseSsl, $Port)
-    # Return a simplified object for C#
-    return [PSCustomObject]@{
+
+    # Return a simplified object for JSON serialization
+    [PSCustomObject]@{
         Name = $wsus.Name
         IsConnected = $true
         Version = $wsus.Version.ToString()
     }
 }
 catch {
-    throw $_
+    Write-Error $_.Exception.Message
+    exit 1
 }

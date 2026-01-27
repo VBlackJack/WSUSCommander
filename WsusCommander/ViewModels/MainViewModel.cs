@@ -44,11 +44,14 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private readonly IExportService _exportService;
     private readonly IPreferencesService _preferencesService;
     private readonly IFilterService _filterService;
+    private readonly IFilterPresetsService _filterPresetsService;
+    private readonly IApprovalRulesService _approvalRulesService;
     private readonly IHealthService _healthService;
     private readonly IAccessibilityService _accessibilityService;
     private readonly IBulkOperationService _bulkOperationService;
     private readonly IGroupService _groupService;
     private readonly IReportService _reportService;
+    private readonly IThemeService _themeService;
 
     #endregion
 
@@ -60,12 +63,44 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private string _statusText = Resources.StatusReady;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(RefreshUpdatesCommand))]
+    [NotifyCanExecuteChangedFor(nameof(GenerateComplianceReportCommand))]
+    [NotifyCanExecuteChangedFor(nameof(LoadComputerStatusesCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExportUpdatesCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExportComputersCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ApproveUpdateCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DeclineUpdateCommand))]
+    [NotifyCanExecuteChangedFor(nameof(BulkApproveCommand))]
+    [NotifyCanExecuteChangedFor(nameof(BulkDeclineCommand))]
+    [NotifyCanExecuteChangedFor(nameof(StartSyncCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CreateGroupCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DeleteGroupCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DeclineAllSupersededCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ApproveAllCriticalCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ApproveAllSecurityCommand))]
     private bool _isConnected;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ConnectWsusCommand))]
     private bool _isConnecting;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(RefreshUpdatesCommand))]
+    [NotifyCanExecuteChangedFor(nameof(GenerateComplianceReportCommand))]
+    [NotifyCanExecuteChangedFor(nameof(LoadComputerStatusesCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExportUpdatesCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExportComputersCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ApproveUpdateCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DeclineUpdateCommand))]
+    [NotifyCanExecuteChangedFor(nameof(BulkApproveCommand))]
+    [NotifyCanExecuteChangedFor(nameof(BulkDeclineCommand))]
+    [NotifyCanExecuteChangedFor(nameof(StartSyncCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ConnectWsusCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CreateGroupCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DeleteGroupCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DeclineAllSupersededCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ApproveAllCriticalCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ApproveAllSecurityCommand))]
     private bool _isLoading;
 
     [ObservableProperty]
@@ -87,6 +122,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private ObservableCollection<ComputerGroup> _computerGroups = [];
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ApproveAllCriticalCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ApproveAllSecurityCommand))]
     private ComputerGroup? _selectedComputerGroup;
 
     [ObservableProperty]
@@ -97,6 +134,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     [ObservableProperty]
     private ObservableCollection<ComputerStatus> _filteredComputerStatuses = [];
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ViewComputerUpdatesCommand))]
+    private ComputerStatus? _selectedComputer;
 
     [ObservableProperty]
     private bool _isAutoRefreshEnabled;
@@ -132,7 +173,46 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private ObservableCollection<string> _classifications = [];
 
     [ObservableProperty]
+    private ObservableCollection<FilterPreset> _filterPresets = [];
+
+    [ObservableProperty]
+    private FilterPreset? _selectedFilterPreset;
+
+    [ObservableProperty]
     private int _selectedTabIndex;
+
+    // Pagination
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PreviousPageCommand))]
+    [NotifyCanExecuteChangedFor(nameof(NextPageCommand))]
+    [NotifyCanExecuteChangedFor(nameof(FirstPageCommand))]
+    [NotifyCanExecuteChangedFor(nameof(LastPageCommand))]
+    private int _currentPage = 1;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PreviousPageCommand))]
+    [NotifyCanExecuteChangedFor(nameof(NextPageCommand))]
+    [NotifyCanExecuteChangedFor(nameof(FirstPageCommand))]
+    [NotifyCanExecuteChangedFor(nameof(LastPageCommand))]
+    private int _totalPages = 1;
+
+    [ObservableProperty]
+    private int _pageSize = 50;
+
+    [ObservableProperty]
+    private int _totalFilteredCount;
+
+    /// <summary>
+    /// Gets the available page sizes.
+    /// </summary>
+    public ObservableCollection<int> PageSizes { get; } = [25, 50, 100, 200];
+
+    /// <summary>
+    /// Gets the pagination info text.
+    /// </summary>
+    public string PaginationInfo => TotalFilteredCount > 0
+        ? string.Format(Resources.StatusPagination, CurrentPage, TotalPages, TotalFilteredCount)
+        : string.Empty;
 
     [ObservableProperty]
     private HealthReport? _healthReport;
@@ -147,6 +227,18 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private CriticalUpdatesSummary? _criticalUpdatesSummary;
 
     [ObservableProperty]
+    private DashboardStats? _dashboardStats;
+
+    [ObservableProperty]
+    private ObservableCollection<ActivityLogEntry> _activityLog = [];
+
+    [ObservableProperty]
+    private ObservableCollection<ApprovalRule> _approvalRules = [];
+
+    [ObservableProperty]
+    private ApprovalRule? _selectedRule;
+
+    [ObservableProperty]
     private UpdateDetails? _selectedUpdateDetails;
 
     [ObservableProperty]
@@ -159,7 +251,22 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private string _bulkProgressText = string.Empty;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(RefreshUpdatesCommand))]
+    [NotifyCanExecuteChangedFor(nameof(GenerateComplianceReportCommand))]
+    [NotifyCanExecuteChangedFor(nameof(LoadComputerStatusesCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ApproveUpdateCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DeclineUpdateCommand))]
+    [NotifyCanExecuteChangedFor(nameof(BulkApproveCommand))]
+    [NotifyCanExecuteChangedFor(nameof(BulkDeclineCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DeclineAllSupersededCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ApproveAllCriticalCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ApproveAllSecurityCommand))]
     private bool _isBulkOperationRunning;
+
+    /// <summary>
+    /// Gets the collection of active toast notifications.
+    /// </summary>
+    public ObservableCollection<Models.ToastNotification> ToastNotifications { get; } = [];
 
     // Group management
     [ObservableProperty]
@@ -170,6 +277,16 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     [ObservableProperty]
     private ComputerGroup? _selectedGroupForEdit;
+
+    // Connection settings (editable)
+    [ObservableProperty]
+    private string _inputServerName = string.Empty;
+
+    [ObservableProperty]
+    private string _inputServerPort = string.Empty;
+
+    [ObservableProperty]
+    private bool _inputUseSsl;
 
     #endregion
 
@@ -192,11 +309,14 @@ public partial class MainViewModel : ObservableObject, IDisposable
         IExportService exportService,
         IPreferencesService preferencesService,
         IFilterService filterService,
+        IFilterPresetsService filterPresetsService,
+        IApprovalRulesService approvalRulesService,
         IHealthService healthService,
         IAccessibilityService accessibilityService,
         IBulkOperationService bulkOperationService,
         IGroupService groupService,
-        IReportService reportService)
+        IReportService reportService,
+        IThemeService themeService)
     {
         _configService = configService;
         _psService = psService;
@@ -211,11 +331,14 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _exportService = exportService;
         _preferencesService = preferencesService;
         _filterService = filterService;
+        _filterPresetsService = filterPresetsService;
+        _approvalRulesService = approvalRulesService;
         _healthService = healthService;
         _accessibilityService = accessibilityService;
         _bulkOperationService = bulkOperationService;
         _groupService = groupService;
         _reportService = reportService;
+        _themeService = themeService;
 
         // Configure timer
         _timerService.Interval = _configService.AppSettings.AutoRefreshInterval * 1000;
@@ -224,8 +347,16 @@ public partial class MainViewModel : ObservableObject, IDisposable
         // Subscribe to health changes
         _healthService.HealthStatusChanged += OnHealthStatusChanged;
 
+        // Subscribe to toast notifications
+        _dialogService.ToastRequested += OnToastRequested;
+
         // Initialize filter options
         ApprovalFilters = ["All", "Approved", "Unapproved", "Declined"];
+
+        // Initialize connection settings from config
+        _inputServerName = _configService.WsusConnection.ServerName;
+        _inputServerPort = _configService.WsusConnection.Port.ToString();
+        _inputUseSsl = _configService.WsusConnection.UseSsl;
     }
 
     #endregion
@@ -287,6 +418,63 @@ public partial class MainViewModel : ObservableObject, IDisposable
     /// </summary>
     public bool CanUserExport => _authzService.IsAuthorized(WsusOperation.ExportData);
 
+    /// <summary>
+    /// Gets the current application theme.
+    /// </summary>
+    public AppTheme CurrentTheme => _themeService.CurrentTheme;
+
+    /// <summary>
+    /// Gets the current theme display name.
+    /// </summary>
+    public string CurrentThemeDisplayName => CurrentTheme switch
+    {
+        AppTheme.Dark => Resources.ThemeDark,
+        AppTheme.System => Resources.ThemeSystem,
+        _ => Resources.ThemeLight
+    };
+
+    /// <summary>
+    /// Gets whether dark theme is currently active.
+    /// </summary>
+    public bool IsDarkTheme => CurrentTheme == AppTheme.Dark ||
+        (CurrentTheme == AppTheme.System && _themeService.GetSystemTheme() == AppTheme.Dark);
+
+    #endregion
+
+    #region Theme Commands
+
+    /// <summary>
+    /// Command to toggle between light and dark theme.
+    /// </summary>
+    [RelayCommand]
+    private void ToggleTheme()
+    {
+        var newTheme = CurrentTheme == AppTheme.Dark ? AppTheme.Light : AppTheme.Dark;
+        _themeService.SetTheme(newTheme);
+        OnPropertyChanged(nameof(CurrentTheme));
+        OnPropertyChanged(nameof(CurrentThemeDisplayName));
+        OnPropertyChanged(nameof(IsDarkTheme));
+    }
+
+    /// <summary>
+    /// Command to set a specific theme.
+    /// </summary>
+    [RelayCommand]
+    private void SetTheme(string themeName)
+    {
+        var theme = themeName?.ToLowerInvariant() switch
+        {
+            "dark" => AppTheme.Dark,
+            "system" => AppTheme.System,
+            _ => AppTheme.Light
+        };
+
+        _themeService.SetTheme(theme);
+        OnPropertyChanged(nameof(CurrentTheme));
+        OnPropertyChanged(nameof(CurrentThemeDisplayName));
+        OnPropertyChanged(nameof(IsDarkTheme));
+    }
+
     #endregion
 
     #region Initialization
@@ -301,6 +489,12 @@ public partial class MainViewModel : ObservableObject, IDisposable
             // Load preferences
             await _preferencesService.LoadAsync();
             ApplyPreferences();
+
+            // Load filter presets
+            await LoadFilterPresetsAsync();
+
+            // Load approval rules
+            await LoadApprovalRulesAsync();
 
             // Authenticate user
             if (_configService.Config.Security.RequireAuthentication)
@@ -374,6 +568,37 @@ public partial class MainViewModel : ObservableObject, IDisposable
         });
     }
 
+    private async void OnToastRequested(object? sender, Models.ToastNotification notification)
+    {
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            ToastNotifications.Add(notification);
+        });
+
+        // Auto-dismiss after duration
+        await Task.Delay(notification.Duration);
+
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            ToastNotifications.Remove(notification);
+        });
+    }
+
+    /// <summary>
+    /// Command to manually dismiss a toast notification.
+    /// </summary>
+    [RelayCommand]
+    private void DismissToast(Models.ToastNotification? notification)
+    {
+        if (notification is null)
+            return;
+
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            ToastNotifications.Remove(notification);
+        });
+    }
+
     #endregion
 
     #region Connect Command
@@ -384,18 +609,32 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [RelayCommand(CanExecute = nameof(CanConnect))]
     private async Task ConnectWsusAsync()
     {
+        // Validate input
+        var serverNameError = _validationService.ValidateServerName(InputServerName);
+        if (serverNameError is not null)
+        {
+            await _dialogService.ShowErrorAsync(Resources.DialogError, Resources.ValidationInvalidHostname, serverNameError.Message);
+            return;
+        }
+
+        if (!int.TryParse(InputServerPort, out var port) || port < 1 || port > 65535)
+        {
+            await _dialogService.ShowErrorAsync(Resources.DialogError, Resources.ValidationInvalidPort, string.Empty);
+            return;
+        }
+
         IsConnecting = true;
         StatusText = Resources.StatusReady;
 
         try
         {
-            await _loggingService.LogInfoAsync($"Connecting to WSUS server: {_configService.WsusConnection.ServerName}");
+            await _loggingService.LogInfoAsync($"Connecting to WSUS server: {InputServerName}:{port}");
 
             var parameters = new Dictionary<string, object>
             {
-                { "ServerName", _configService.WsusConnection.ServerName },
-                { "Port", _configService.WsusConnection.Port },
-                { "UseSsl", _configService.WsusConnection.UseSsl }
+                { "ServerName", InputServerName },
+                { "Port", port },
+                { "UseSsl", InputUseSsl }
             };
 
             // Use retry service for connection
@@ -406,8 +645,13 @@ public partial class MainViewModel : ObservableObject, IDisposable
             if (results.Count > 0)
             {
                 var wsusInfo = results[0];
-                var serverName = wsusInfo.Properties["Name"]?.Value?.ToString() ?? _configService.WsusConnection.ServerName;
+                var serverName = wsusInfo.Properties["Name"]?.Value?.ToString() ?? InputServerName;
                 ServerVersion = wsusInfo.Properties["Version"]?.Value?.ToString() ?? string.Empty;
+
+                // Update the configuration with the actual connection values
+                _configService.WsusConnection.ServerName = InputServerName;
+                _configService.WsusConnection.Port = port;
+                _configService.WsusConnection.UseSsl = InputUseSsl;
 
                 IsConnected = true;
                 StatusText = string.Format(Resources.StatusConnected, serverName);
@@ -423,7 +667,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
             IsConnected = false;
             StatusText = string.Format(Resources.StatusError, ex.Message);
             await _loggingService.LogErrorAsync("Failed to connect to WSUS server", ex);
-            await _dialogService.ShowErrorAsync(Resources.DialogError, Resources.ErrorConnectionFailed, ex.Message);
+            var details = $"{ex.Message}\n\nLog file: {_loggingService.CurrentLogFilePath}";
+            await _dialogService.ShowErrorAsync(Resources.DialogError, Resources.ErrorConnectionFailed, details);
         }
         finally
         {
@@ -431,7 +676,52 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private bool CanConnect() => !IsConnecting && !IsLoading && IsAuthenticated;
+    private bool CanConnect() => !IsConnecting && !IsLoading && IsAuthenticated && !string.IsNullOrWhiteSpace(InputServerName);
+
+    /// <summary>
+    /// Command to disconnect from the WSUS server.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanDisconnect))]
+    private async Task DisconnectAsync()
+    {
+        if (!IsConnected) return;
+
+        var result = await _dialogService.ShowConfirmationAsync(
+            Resources.DialogConfirm,
+            Resources.ConfirmDisconnect);
+
+        if (result != DialogResult.Confirmed)
+        {
+            return;
+        }
+
+        await _loggingService.LogInfoAsync("Disconnecting from WSUS server");
+
+        // Stop auto-refresh timer
+        if (IsAutoRefreshEnabled)
+        {
+            IsAutoRefreshEnabled = false;
+        }
+
+        // Clear all data
+        Updates.Clear();
+        FilteredUpdates.Clear();
+        ComputerStatuses.Clear();
+        ComputerGroups.Clear();
+        DashboardStats = null;
+        HealthReport = null;
+        ActivityLog.Clear();
+
+        IsConnected = false;
+        ServerVersion = string.Empty;
+        StatusText = Resources.StatusDisconnected;
+
+        _cacheService.Clear();
+
+        await _loggingService.LogInfoAsync("Disconnected from WSUS server");
+    }
+
+    private bool CanDisconnect() => IsConnected && !IsLoading && !IsSyncing && !IsBulkOperationRunning;
 
     #endregion
 
@@ -461,6 +751,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
         await LoadComputerGroupsAsync();
         await LoadSyncStatusAsync();
         await LoadUpdatesAsync();
+        await LoadComputerStatusesAsync();
+        await LoadDashboardAsync();
         ApplyFilters();
     }
 
@@ -777,6 +1069,245 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     #endregion
 
+    #region One-Click Action Commands
+
+    /// <summary>
+    /// Command to decline all superseded updates.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanOneClickAction))]
+    private async Task DeclineAllSupersededAsync()
+    {
+        if (!_authzService.IsAuthorized(WsusOperation.DeclineUpdate))
+        {
+            await _dialogService.ShowErrorAsync(Resources.DialogError, Resources.ErrorUnauthorized);
+            return;
+        }
+
+        IsBulkOperationRunning = true;
+        StatusText = Resources.StatusDecliningSuperseded;
+
+        try
+        {
+            // First, get the count
+            var countParams = new Dictionary<string, object>
+            {
+                { "ServerName", _configService.WsusConnection.ServerName },
+                { "Port", _configService.WsusConnection.Port },
+                { "UseSsl", _configService.WsusConnection.UseSsl },
+                { "CountOnly", true }
+            };
+
+            var countResult = await _psService.ExecuteScriptAsync("Decline-SupersededUpdates.ps1", countParams);
+            var count = 0;
+
+            if (countResult.Count > 0)
+            {
+                count = ParseInt(countResult[0].Properties["Count"]?.Value);
+            }
+
+            if (count == 0)
+            {
+                StatusText = Resources.ErrorNoSupersededUpdates;
+                _dialogService.ShowToast(Resources.ErrorNoSupersededUpdates);
+                return;
+            }
+
+            // Confirm with user
+            var confirmed = await _dialogService.ShowConfirmationAsync(
+                Resources.DialogConfirm,
+                string.Format(Resources.ConfirmDeclineSuperseded, count));
+
+            if (confirmed != DialogResult.Confirmed)
+            {
+                StatusText = Resources.StatusReady;
+                return;
+            }
+
+            // Execute the decline
+            var parameters = new Dictionary<string, object>
+            {
+                { "ServerName", _configService.WsusConnection.ServerName },
+                { "Port", _configService.WsusConnection.Port },
+                { "UseSsl", _configService.WsusConnection.UseSsl }
+            };
+
+            var results = await _psService.ExecuteScriptAsync("Decline-SupersededUpdates.ps1", parameters);
+
+            if (results.Count > 0)
+            {
+                var successCount = ParseInt(results[0].Properties["SuccessCount"]?.Value);
+                var failedCount = ParseInt(results[0].Properties["FailedCount"]?.Value);
+
+                StatusText = string.Format(Resources.StatusDeclinedSuperseded, successCount, failedCount);
+                await _loggingService.LogInfoAsync($"Declined {successCount} superseded updates, {failedCount} failed");
+                _dialogService.ShowSuccessToast(string.Format(Resources.StatusDeclinedSuperseded, successCount, failedCount));
+
+                // Refresh updates
+                _cacheService.Remove("updates");
+                await LoadUpdatesAsync();
+                ApplyFilters();
+            }
+        }
+        catch (Exception ex)
+        {
+            StatusText = string.Format(Resources.StatusError, ex.Message);
+            await _loggingService.LogErrorAsync("Failed to decline superseded updates", ex);
+            await _dialogService.ShowErrorAsync(Resources.DialogError, ex.Message);
+        }
+        finally
+        {
+            IsBulkOperationRunning = false;
+        }
+    }
+
+    /// <summary>
+    /// Command to approve all unapproved critical updates.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanOneClickApprove))]
+    private async Task ApproveAllCriticalAsync()
+    {
+        await ApproveUpdatesByClassificationAsync("Critical");
+    }
+
+    /// <summary>
+    /// Command to approve all unapproved security updates.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanOneClickApprove))]
+    private async Task ApproveAllSecurityAsync()
+    {
+        await ApproveUpdatesByClassificationAsync("Security");
+    }
+
+    /// <summary>
+    /// Approves all unapproved updates of the specified classification.
+    /// </summary>
+    private async Task ApproveUpdatesByClassificationAsync(string classification)
+    {
+        if (!_authzService.IsAuthorized(WsusOperation.ApproveUpdate))
+        {
+            await _dialogService.ShowErrorAsync(Resources.DialogError, Resources.ErrorUnauthorized);
+            return;
+        }
+
+        if (SelectedComputerGroup is null)
+        {
+            StatusText = Resources.ErrorNoGroupSelected;
+            return;
+        }
+
+        IsBulkOperationRunning = true;
+        StatusText = classification == "Critical" ? Resources.StatusApprovingCritical : Resources.StatusApprovingSecurity;
+
+        try
+        {
+            // First, get the unapproved updates
+            var getParams = new Dictionary<string, object>
+            {
+                { "ServerName", _configService.WsusConnection.ServerName },
+                { "Port", _configService.WsusConnection.Port },
+                { "UseSsl", _configService.WsusConnection.UseSsl },
+                { "Classification", classification },
+                { "CountOnly", true }
+            };
+
+            var countResult = await _psService.ExecuteScriptAsync("Get-UnapprovedUpdates.ps1", getParams);
+            var count = 0;
+
+            if (countResult.Count > 0)
+            {
+                count = ParseInt(countResult[0].Properties["Count"]?.Value);
+            }
+
+            if (count == 0)
+            {
+                var errorMsg = classification == "Critical" ? Resources.ErrorNoCriticalUpdates : Resources.ErrorNoSecurityUpdates;
+                StatusText = errorMsg;
+                _dialogService.ShowWarningToast(errorMsg);
+                return;
+            }
+
+            // Confirm with user
+            var confirmMsg = classification == "Critical"
+                ? string.Format(Resources.ConfirmApproveCritical, count, SelectedComputerGroup.Name)
+                : string.Format(Resources.ConfirmApproveSecurity, count, SelectedComputerGroup.Name);
+
+            var confirmed = await _dialogService.ShowConfirmationAsync(Resources.DialogConfirm, confirmMsg);
+
+            if (confirmed != DialogResult.Confirmed)
+            {
+                StatusText = Resources.StatusReady;
+                return;
+            }
+
+            // Get the actual update IDs
+            getParams["CountOnly"] = false;
+            var updatesResult = await _psService.ExecuteScriptAsync("Get-UnapprovedUpdates.ps1", getParams);
+
+            var updateIds = new List<string>();
+            foreach (var psObject in updatesResult)
+            {
+                var id = psObject.Properties["Id"]?.Value?.ToString();
+                if (!string.IsNullOrEmpty(id))
+                {
+                    updateIds.Add(id);
+                }
+            }
+
+            if (updateIds.Count == 0)
+            {
+                var errorMsg = classification == "Critical" ? Resources.ErrorNoCriticalUpdates : Resources.ErrorNoSecurityUpdates;
+                StatusText = errorMsg;
+                return;
+            }
+
+            // Approve the updates
+            var approveParams = new Dictionary<string, object>
+            {
+                { "ServerName", _configService.WsusConnection.ServerName },
+                { "Port", _configService.WsusConnection.Port },
+                { "UseSsl", _configService.WsusConnection.UseSsl },
+                { "UpdateIds", updateIds.ToArray() },
+                { "GroupId", SelectedComputerGroup.Id.ToString() }
+            };
+
+            var results = await _psService.ExecuteScriptAsync("Approve-Updates.ps1", approveParams);
+
+            if (results.Count > 0)
+            {
+                var successCount = ParseInt(results[0].Properties["SuccessCount"]?.Value);
+                var failedCount = ParseInt(results[0].Properties["FailedCount"]?.Value);
+
+                var statusMsg = classification == "Critical"
+                    ? string.Format(Resources.StatusApprovedCritical, successCount, failedCount)
+                    : string.Format(Resources.StatusApprovedSecurity, successCount, failedCount);
+
+                StatusText = statusMsg;
+                await _loggingService.LogInfoAsync($"Approved {successCount} {classification.ToLower()} updates for {SelectedComputerGroup.Name}, {failedCount} failed");
+                _dialogService.ShowSuccessToast(statusMsg);
+
+                // Refresh updates
+                _cacheService.Remove("updates");
+                await LoadUpdatesAsync();
+                ApplyFilters();
+            }
+        }
+        catch (Exception ex)
+        {
+            StatusText = string.Format(Resources.StatusError, ex.Message);
+            await _loggingService.LogErrorAsync($"Failed to approve {classification.ToLower()} updates", ex);
+            await _dialogService.ShowErrorAsync(Resources.DialogError, ex.Message);
+        }
+        finally
+        {
+            IsBulkOperationRunning = false;
+        }
+    }
+
+    private bool CanOneClickAction() => IsConnected && !IsLoading && !IsBulkOperationRunning;
+    private bool CanOneClickApprove() => IsConnected && !IsLoading && !IsBulkOperationRunning && SelectedComputerGroup is not null;
+
+    #endregion
+
     #region Sync Command
 
     /// <summary>
@@ -829,7 +1360,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 {
                     StatusText = Resources.StatusSyncStarted;
                     await _loggingService.LogInfoAsync("Synchronization started successfully");
-                    _dialogService.ShowToast(Resources.StatusSyncStarted);
+                    _dialogService.ShowSuccessToast(Resources.StatusSyncStarted);
                 }
                 else
                 {
@@ -1027,8 +1558,28 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
         criteria.IsDeclined = SelectedApprovalFilter == "Declined" ? true : null;
 
-        var filtered = _filterService.FilterUpdates(Updates, criteria);
-        FilteredUpdates = new ObservableCollection<WsusUpdate>(filtered);
+        var filtered = _filterService.FilterUpdates(Updates, criteria).ToList();
+
+        // Update total count and pages
+        TotalFilteredCount = filtered.Count;
+        TotalPages = Math.Max(1, (int)Math.Ceiling((double)TotalFilteredCount / PageSize));
+
+        // Ensure current page is valid (use backing field to avoid re-triggering ApplyFilters)
+#pragma warning disable MVVMTK0034
+        if (CurrentPage > TotalPages)
+        {
+            _currentPage = TotalPages;
+            OnPropertyChanged(nameof(CurrentPage));
+        }
+#pragma warning restore MVVMTK0034
+
+        // Apply pagination
+        var paginatedUpdates = filtered
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
+
+        FilteredUpdates = new ObservableCollection<WsusUpdate>(paginatedUpdates);
 
         // Update classifications list
         var distinctClassifications = _filterService.GetDistinctClassifications(Updates).ToList();
@@ -1048,6 +1599,181 @@ public partial class MainViewModel : ObservableObject, IDisposable
     partial void OnSelectedApprovalFilterChanged(string value)
     {
         ApplyFilters();
+    }
+
+    partial void OnSelectedFilterPresetChanged(FilterPreset? value)
+    {
+        if (value != null)
+        {
+            ApplyFilterPreset(value);
+        }
+    }
+
+    partial void OnCurrentPageChanged(int value)
+    {
+        ApplyFilters();
+        OnPropertyChanged(nameof(PaginationInfo));
+    }
+
+    partial void OnTotalPagesChanged(int value)
+    {
+        OnPropertyChanged(nameof(PaginationInfo));
+    }
+
+    partial void OnTotalFilteredCountChanged(int value)
+    {
+        OnPropertyChanged(nameof(PaginationInfo));
+    }
+
+    partial void OnPageSizeChanged(int value)
+    {
+        CurrentPage = 1;
+        ApplyFilters();
+    }
+
+    private void ApplyFilterPreset(FilterPreset preset)
+    {
+        SearchText = preset.SearchText;
+        SelectedClassification = preset.Classification;
+        SelectedApprovalFilter = preset.ApprovalFilter;
+        // ApplyFilters() is called automatically by the property changed handlers
+    }
+
+    #endregion
+
+    #region Pagination Commands
+
+    /// <summary>
+    /// Command to go to the first page.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanGoToPreviousPage))]
+    private void FirstPage()
+    {
+        CurrentPage = 1;
+    }
+
+    /// <summary>
+    /// Command to go to the previous page.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanGoToPreviousPage))]
+    private void PreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+    /// <summary>
+    /// Command to go to the next page.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanGoToNextPage))]
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+    /// <summary>
+    /// Command to go to the last page.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanGoToNextPage))]
+    private void LastPage()
+    {
+        CurrentPage = TotalPages;
+    }
+
+    private bool CanGoToPreviousPage() => CurrentPage > 1;
+    private bool CanGoToNextPage() => CurrentPage < TotalPages;
+
+    /// <summary>
+    /// Loads filter presets.
+    /// </summary>
+    private async Task LoadFilterPresetsAsync()
+    {
+        try
+        {
+            await _filterPresetsService.LoadAsync();
+            var presets = _filterPresetsService.GetPresets();
+            FilterPresets = new ObservableCollection<FilterPreset>(presets);
+            await _loggingService.LogDebugAsync($"Loaded {FilterPresets.Count} filter presets");
+        }
+        catch (Exception ex)
+        {
+            await _loggingService.LogWarningAsync($"Failed to load filter presets: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Command to save the current filter as a preset.
+    /// </summary>
+    [RelayCommand]
+    private async Task SaveFilterPresetAsync()
+    {
+        var presetName = await _dialogService.ShowInputDialogAsync(
+            Resources.DialogSavePreset,
+            Resources.LblPresetName);
+
+        if (string.IsNullOrWhiteSpace(presetName))
+        {
+            return;
+        }
+
+        var preset = new FilterPreset
+        {
+            Name = presetName.Trim(),
+            SearchText = SearchText,
+            Classification = SelectedClassification,
+            ApprovalFilter = SelectedApprovalFilter,
+            IsBuiltIn = false
+        };
+
+        try
+        {
+            await _filterPresetsService.SavePresetAsync(preset);
+            FilterPresets = new ObservableCollection<FilterPreset>(_filterPresetsService.GetPresets());
+            StatusText = Resources.StatusPresetSaved;
+            _dialogService.ShowToast(Resources.StatusPresetSaved);
+        }
+        catch (Exception ex)
+        {
+            await _loggingService.LogErrorAsync("Failed to save filter preset", ex);
+            await _dialogService.ShowErrorAsync(Resources.DialogError, ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Command to delete the selected filter preset.
+    /// </summary>
+    [RelayCommand]
+    private async Task DeleteFilterPresetAsync()
+    {
+        if (SelectedFilterPreset == null)
+        {
+            return;
+        }
+
+        if (SelectedFilterPreset.IsBuiltIn)
+        {
+            await _dialogService.ShowErrorAsync(Resources.DialogError, Resources.ErrorCannotDeleteBuiltIn);
+            return;
+        }
+
+        try
+        {
+            await _filterPresetsService.DeletePresetAsync(SelectedFilterPreset.Id);
+            FilterPresets = new ObservableCollection<FilterPreset>(_filterPresetsService.GetPresets());
+            SelectedFilterPreset = null;
+            StatusText = Resources.StatusPresetDeleted;
+            _dialogService.ShowToast(Resources.StatusPresetDeleted);
+        }
+        catch (Exception ex)
+        {
+            await _loggingService.LogErrorAsync("Failed to delete filter preset", ex);
+            await _dialogService.ShowErrorAsync(Resources.DialogError, ex.Message);
+        }
     }
 
     #endregion
@@ -1117,6 +1843,86 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
+    /// <summary>
+    /// Gets whether a computer is selected.
+    /// </summary>
+    private bool CanViewComputerUpdates() => SelectedComputer is not null && IsConnected;
+
+    /// <summary>
+    /// Command to view updates for the selected computer.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanViewComputerUpdates))]
+    private async Task ViewComputerUpdatesAsync()
+    {
+        if (SelectedComputer is null)
+        {
+            return;
+        }
+
+        await _loggingService.LogInfoAsync($"Viewing updates for computer: {SelectedComputer.Name}");
+        StatusText = Resources.StatusLoading;
+        IsLoading = true;
+
+        try
+        {
+            var parameters = new Dictionary<string, object>
+            {
+                ["ServerName"] = _configService.WsusConnection.ServerName,
+                ["Port"] = _configService.WsusConnection.Port,
+                ["UseSsl"] = _configService.WsusConnection.UseSsl,
+                ["ComputerId"] = SelectedComputer.ComputerId,
+                ["StatusFilter"] = "Needed"
+            };
+
+            var result = await _psService.ExecuteScriptAsync("Get-ComputerUpdates.ps1", parameters);
+
+            var updates = new List<ComputerUpdateStatus>();
+            foreach (var item in result)
+            {
+                updates.Add(new ComputerUpdateStatus
+                {
+                    UpdateId = ParseGuid(item.Properties["UpdateId"]?.Value),
+                    Title = item.Properties["Title"]?.Value?.ToString() ?? string.Empty,
+                    KbArticle = item.Properties["KbArticle"]?.Value?.ToString() ?? string.Empty,
+                    Classification = item.Properties["Classification"]?.Value?.ToString() ?? string.Empty,
+                    InstallationStateDisplay = item.Properties["InstallationState"]?.Value?.ToString() ?? string.Empty,
+                    ApprovalStatusDisplay = item.Properties["ApprovalStatus"]?.Value?.ToString() ?? string.Empty,
+                    IsSuperseded = ParseBool(item.Properties["IsSuperseded"]?.Value),
+                    SupersededBy = item.Properties["SupersededBy"]?.Value?.ToString() ?? string.Empty,
+                    Severity = item.Properties["Severity"]?.Value?.ToString() ?? string.Empty
+                });
+            }
+
+            await _loggingService.LogInfoAsync($"Loaded {updates.Count} updates for {SelectedComputer.Name}");
+            StatusText = string.Format(Resources.StatusUpdatesLoaded, updates.Count);
+
+            // Open the dialog with the updates
+            await ShowComputerUpdatesDialogAsync(SelectedComputer, updates);
+        }
+        catch (Exception ex)
+        {
+            StatusText = string.Format(Resources.StatusError, ex.Message);
+            await _loggingService.LogErrorAsync($"Failed to load updates for computer {SelectedComputer.Name}", ex);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    /// <summary>
+    /// Shows the computer updates dialog.
+    /// </summary>
+    private Task ShowComputerUpdatesDialogAsync(ComputerStatus computer, List<ComputerUpdateStatus> updates)
+    {
+        var dialog = new Views.ComputerUpdatesWindow(computer, updates)
+        {
+            Owner = Application.Current.MainWindow
+        };
+        dialog.ShowDialog();
+        return Task.CompletedTask;
+    }
+
     #endregion
 
     #region Reports Commands
@@ -1127,8 +1933,11 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [RelayCommand(CanExecute = nameof(CanRefresh))]
     private async Task GenerateComplianceReportAsync()
     {
+        await _loggingService.LogInfoAsync("GenerateComplianceReportAsync called");
+
         if (!_authzService.IsAuthorized(WsusOperation.ViewReports))
         {
+            await _loggingService.LogWarningAsync("User not authorized for ViewReports");
             await _dialogService.ShowErrorAsync(Resources.DialogError, Resources.ErrorUnauthorized);
             return;
         }
@@ -1143,12 +1952,22 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 GroupId = SelectedComputerGroup?.Id
             };
 
-            ComplianceReport = await _reportService.GenerateComplianceReportAsync(options);
-            StaleComputers = new ObservableCollection<StaleComputerInfo>(ComplianceReport.StaleComputers);
-            CriticalUpdatesSummary = ComplianceReport.CriticalUpdates;
+            var report = await _reportService.GenerateComplianceReportAsync(options);
+            await _loggingService.LogDebugAsync($"Report received: TotalComputers={report.TotalComputers}, Compliant={report.CompliantComputers}, Percent={report.CompliancePercent}");
 
-            StatusText = string.Format(Resources.ReportGenerated, ComplianceReport.CompliancePercent);
-            await _loggingService.LogInfoAsync($"Compliance report generated: {ComplianceReport.CompliancePercent:F1}%");
+            // Fetch stale computers separately
+            var staleComputersList = await _reportService.GetStaleComputersAsync(options.StaleDays);
+            report.StaleComputers = staleComputersList.ToList();
+            await _loggingService.LogDebugAsync($"Stale computers loaded: {staleComputersList.Count}");
+
+            ComplianceReport = report;
+            await _loggingService.LogDebugAsync($"ComplianceReport property set, IsNull={ComplianceReport is null}");
+
+            StaleComputers = new ObservableCollection<StaleComputerInfo>(report.StaleComputers);
+            CriticalUpdatesSummary = report.CriticalUpdates;
+
+            StatusText = string.Format(Resources.ReportGenerated, report.CompliancePercent);
+            await _loggingService.LogInfoAsync($"Compliance report generated: {report.CompliancePercent:F1}%");
         }
         catch (Exception ex)
         {
@@ -1355,6 +2174,54 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
+    /// <summary>
+    /// Command to copy KB article number to clipboard.
+    /// </summary>
+    [RelayCommand]
+    private void CopyKbArticle()
+    {
+        if (SelectedUpdate is null || string.IsNullOrEmpty(SelectedUpdate.KbArticle))
+        {
+            return;
+        }
+
+        try
+        {
+            System.Windows.Clipboard.SetText(SelectedUpdate.KbArticle);
+            _dialogService.ShowSuccessToast(string.Format(Resources.StatusCopied, SelectedUpdate.KbArticle));
+        }
+        catch (Exception ex)
+        {
+            _loggingService.LogErrorAsync("Failed to copy to clipboard", ex).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>
+    /// Command to search KB article online.
+    /// </summary>
+    [RelayCommand]
+    private void SearchKbOnline()
+    {
+        if (SelectedUpdate is null || string.IsNullOrEmpty(SelectedUpdate.KbArticle))
+        {
+            return;
+        }
+
+        try
+        {
+            var searchUrl = $"https://support.microsoft.com/search/results?query={SelectedUpdate.KbArticle}";
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = searchUrl,
+                UseShellExecute = true
+            });
+        }
+        catch (Exception ex)
+        {
+            _loggingService.LogErrorAsync("Failed to open browser", ex).ConfigureAwait(false);
+        }
+    }
+
     #endregion
 
     #region Health Command
@@ -1373,6 +2240,191 @@ public partial class MainViewModel : ObservableObject, IDisposable
         catch (Exception ex)
         {
             await _loggingService.LogErrorAsync("Health check failed", ex);
+        }
+    }
+
+    #endregion
+
+    #region Approval Rules Commands
+
+    /// <summary>
+    /// Loads approval rules.
+    /// </summary>
+    private async Task LoadApprovalRulesAsync()
+    {
+        try
+        {
+            await _approvalRulesService.LoadAsync();
+            var rules = _approvalRulesService.GetRules();
+            ApprovalRules = new ObservableCollection<ApprovalRule>(rules);
+            await _loggingService.LogDebugAsync($"Loaded {ApprovalRules.Count} approval rules");
+        }
+        catch (Exception ex)
+        {
+            await _loggingService.LogWarningAsync($"Failed to load approval rules: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Command to delete the selected rule.
+    /// </summary>
+    [RelayCommand]
+    private async Task DeleteRuleAsync()
+    {
+        if (SelectedRule == null)
+        {
+            return;
+        }
+
+        var confirmed = await _dialogService.ShowConfirmationAsync(
+            Resources.DialogConfirm,
+            string.Format(Resources.ConfirmDeleteRule, SelectedRule.Name));
+
+        if (confirmed != DialogResult.Confirmed)
+        {
+            return;
+        }
+
+        try
+        {
+            await _approvalRulesService.DeleteRuleAsync(SelectedRule.Id);
+            ApprovalRules = new ObservableCollection<ApprovalRule>(_approvalRulesService.GetRules());
+            SelectedRule = null;
+            StatusText = Resources.StatusRuleDeleted;
+            _dialogService.ShowToast(Resources.StatusRuleDeleted);
+        }
+        catch (Exception ex)
+        {
+            await _loggingService.LogErrorAsync("Failed to delete approval rule", ex);
+            await _dialogService.ShowErrorAsync(Resources.DialogError, ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Command to toggle a rule's enabled state.
+    /// </summary>
+    [RelayCommand]
+    private async Task ToggleRuleEnabledAsync(ApprovalRule rule)
+    {
+        if (rule == null)
+        {
+            return;
+        }
+
+        rule.IsEnabled = !rule.IsEnabled;
+
+        try
+        {
+            await _approvalRulesService.SaveRuleAsync(rule);
+            ApprovalRules = new ObservableCollection<ApprovalRule>(_approvalRulesService.GetRules());
+        }
+        catch (Exception ex)
+        {
+            await _loggingService.LogErrorAsync("Failed to toggle rule state", ex);
+        }
+    }
+
+    #endregion
+
+    #region Activity Monitor Command
+
+    /// <summary>
+    /// Command to load the activity log.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanRefresh))]
+    private async Task LoadActivityLogAsync()
+    {
+        StatusText = Resources.StatusLoadingActivity;
+
+        try
+        {
+            await _loggingService.LogInfoAsync("Loading activity log");
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "ServerName", _configService.WsusConnection.ServerName },
+                { "Port", _configService.WsusConnection.Port },
+                { "UseSsl", _configService.WsusConnection.UseSsl },
+                { "MaxEntries", 100 }
+            };
+
+            var results = await _psService.ExecuteScriptAsync("Get-ActivityLog.ps1", parameters);
+
+            var activities = new List<ActivityLogEntry>();
+            foreach (var psObject in results)
+            {
+                activities.Add(new ActivityLogEntry
+                {
+                    Timestamp = ParseDateTime(psObject.Properties["Timestamp"]?.Value),
+                    ActivityType = psObject.Properties["ActivityType"]?.Value?.ToString() ?? string.Empty,
+                    Description = psObject.Properties["Description"]?.Value?.ToString() ?? string.Empty,
+                    User = psObject.Properties["User"]?.Value?.ToString() ?? string.Empty,
+                    Target = psObject.Properties["Target"]?.Value?.ToString() ?? string.Empty,
+                    Status = psObject.Properties["Status"]?.Value?.ToString() ?? string.Empty
+                });
+            }
+
+            ActivityLog = new ObservableCollection<ActivityLogEntry>(activities);
+            await _loggingService.LogInfoAsync($"Loaded {ActivityLog.Count} activity log entries");
+            StatusText = string.Format(Resources.StatusActivityLoaded, ActivityLog.Count);
+        }
+        catch (Exception ex)
+        {
+            StatusText = string.Format(Resources.StatusError, ex.Message);
+            await _loggingService.LogErrorAsync("Failed to load activity log", ex);
+        }
+    }
+
+    #endregion
+
+    #region Dashboard Command
+
+    /// <summary>
+    /// Command to load dashboard statistics.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanRefresh))]
+    private async Task LoadDashboardAsync()
+    {
+        StatusText = Resources.StatusLoading;
+
+        try
+        {
+            await _loggingService.LogInfoAsync("Loading dashboard statistics");
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "ServerName", _configService.WsusConnection.ServerName },
+                { "Port", _configService.WsusConnection.Port },
+                { "UseSsl", _configService.WsusConnection.UseSsl }
+            };
+
+            var results = await _psService.ExecuteScriptAsync("Get-DashboardStats.ps1", parameters);
+
+            if (results.Count > 0)
+            {
+                var psObject = results[0];
+                DashboardStats = new DashboardStats
+                {
+                    TotalUpdates = ParseInt(psObject.Properties["TotalUpdates"]?.Value),
+                    UnapprovedUpdates = ParseInt(psObject.Properties["UnapprovedUpdates"]?.Value),
+                    SupersededUpdates = ParseInt(psObject.Properties["SupersededUpdates"]?.Value),
+                    CriticalPending = ParseInt(psObject.Properties["CriticalPending"]?.Value),
+                    SecurityPending = ParseInt(psObject.Properties["SecurityPending"]?.Value),
+                    TotalComputers = ParseInt(psObject.Properties["TotalComputers"]?.Value),
+                    ComputersNeedingUpdates = ParseInt(psObject.Properties["ComputersNeedingUpdates"]?.Value),
+                    ComputersUpToDate = ParseInt(psObject.Properties["ComputersUpToDate"]?.Value),
+                    CompliancePercent = ParseDouble(psObject.Properties["CompliancePercent"]?.Value),
+                    LastSyncTime = ParseNullableDateTime(psObject.Properties["LastSyncTime"]?.Value)
+                };
+
+                await _loggingService.LogInfoAsync($"Dashboard loaded: {DashboardStats.TotalUpdates} updates, {DashboardStats.TotalComputers} computers");
+                StatusText = Resources.StatusReady;
+            }
+        }
+        catch (Exception ex)
+        {
+            StatusText = string.Format(Resources.StatusError, ex.Message);
+            await _loggingService.LogErrorAsync("Failed to load dashboard statistics", ex);
         }
     }
 
@@ -1592,7 +2644,21 @@ public partial class MainViewModel : ObservableObject, IDisposable
         if (value is DateTime dateTime)
             return dateTime;
 
-        if (DateTime.TryParse(value.ToString(), out var parsedDateTime))
+        var str = value.ToString();
+        if (string.IsNullOrEmpty(str))
+            return DateTime.MinValue;
+
+        // Handle Microsoft JSON date format: /Date(milliseconds)/
+        if (str.StartsWith("/Date(") && str.EndsWith(")/"))
+        {
+            var ticksStr = str[6..^2]; // Remove "/Date(" and ")/"
+            if (long.TryParse(ticksStr, out var milliseconds))
+            {
+                return DateTimeOffset.FromUnixTimeMilliseconds(milliseconds).LocalDateTime;
+            }
+        }
+
+        if (DateTime.TryParse(str, out var parsedDateTime))
             return parsedDateTime;
 
         return DateTime.MinValue;
@@ -1606,7 +2672,21 @@ public partial class MainViewModel : ObservableObject, IDisposable
         if (value is DateTime dateTime)
             return dateTime;
 
-        if (DateTime.TryParse(value.ToString(), out var parsedDateTime))
+        var str = value.ToString();
+        if (string.IsNullOrEmpty(str))
+            return null;
+
+        // Handle Microsoft JSON date format: /Date(milliseconds)/
+        if (str.StartsWith("/Date(") && str.EndsWith(")/"))
+        {
+            var ticksStr = str[6..^2]; // Remove "/Date(" and ")/"
+            if (long.TryParse(ticksStr, out var milliseconds))
+            {
+                return DateTimeOffset.FromUnixTimeMilliseconds(milliseconds).LocalDateTime;
+            }
+        }
+
+        if (DateTime.TryParse(str, out var parsedDateTime))
             return parsedDateTime;
 
         return null;
@@ -1634,10 +2714,34 @@ public partial class MainViewModel : ObservableObject, IDisposable
         if (value is int intValue)
             return intValue;
 
+        // Handle long values from JSON parsing
+        if (value is long longValue)
+            return (int)longValue;
+
         if (int.TryParse(value.ToString(), out var parsedInt))
             return parsedInt;
 
         return 0;
+    }
+
+    private static double ParseDouble(object? value)
+    {
+        if (value is null)
+            return 0.0;
+
+        if (value is double doubleValue)
+            return doubleValue;
+
+        if (value is float floatValue)
+            return floatValue;
+
+        if (value is decimal decimalValue)
+            return (double)decimalValue;
+
+        if (double.TryParse(value.ToString(), out var parsedDouble))
+            return parsedDouble;
+
+        return 0.0;
     }
 
     #endregion
@@ -1657,6 +2761,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
         _timerService.Tick -= OnTimerTick;
         _healthService.HealthStatusChanged -= OnHealthStatusChanged;
+        _dialogService.ToastRequested -= OnToastRequested;
 
         if (_timerService is IDisposable disposableTimer)
         {

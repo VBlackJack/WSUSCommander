@@ -505,4 +505,137 @@
   <data name="ErrorCircuitBreakerOpen" xml:space="preserve">
     <value>Service temporairement indisponible. Reessayez plus tard.</value>
   </data>
+
+  <!-- Parametres de connexion -->
+  <data name="LblServerName" xml:space="preserve">
+    <value>Serveur :</value>
+  </data>
+  <data name="LblServerPort" xml:space="preserve">
+    <value>Port :</value>
+  </data>
+  <data name="LblUseSsl" xml:space="preserve">
+    <value>Utiliser SSL</value>
+  </data>
+  <data name="PlaceholderServerName" xml:space="preserve">
+    <value>serveur-wsus ou adresse IP</value>
+  </data>
+  <data name="TooltipRefresh" xml:space="preserve">
+    <value>Actualiser les donnees (F5)</value>
+  </data>
+  <data name="TooltipStartSync" xml:space="preserve">
+    <value>Demarrer la synchronisation WSUS (Ctrl+S)</value>
+  </data>
+  <data name="TooltipExport" xml:space="preserve">
+    <value>Exporter les donnees (Ctrl+E)</value>
+  </data>
+  <data name="TooltipDisconnect" xml:space="preserve">
+    <value>Se deconnecter du serveur (Echap)</value>
+  </data>
+  <data name="TooltipApprove" xml:space="preserve">
+    <value>Approuver la mise a jour selectionnee (Ctrl+A)</value>
+  </data>
+  <data name="TooltipDecline" xml:space="preserve">
+    <value>Refuser la mise a jour selectionnee (Ctrl+D)</value>
+  </data>
+  <data name="TooltipSearch" xml:space="preserve">
+    <value>Rechercher des mises a jour par titre ou numero KB</value>
+  </data>
+  <data name="StatusBarHealthHealthy" xml:space="preserve">
+    <value>Sain</value>
+  </data>
+  <data name="StatusBarHealthWarning" xml:space="preserve">
+    <value>Avertissement</value>
+  </data>
+  <data name="StatusBarHealthCritical" xml:space="preserve">
+    <value>Critique</value>
+  </data>
+  <data name="ConfirmDisconnect" xml:space="preserve">
+    <value>Se deconnecter du serveur WSUS ?</value>
+  </data>
+  <data name="StatusDisconnected" xml:space="preserve">
+    <value>Deconnecte du serveur.</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Clair</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Sombre</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Systeme</value>
+  </data>
+  <data name="TooltipTheme" xml:space="preserve">
+    <value>Changer le theme (Clair/Sombre)</value>
+  </data>
+  <data name="ConfirmDeclineSupersededCount" xml:space="preserve">
+    <value>Refuser {0} mises a jour remplacees ? Cette action est irreversible.</value>
+  </data>
+  <data name="ConfirmApproveCount" xml:space="preserve">
+    <value>Approuver {0} mises a jour {1} pour le groupe '{2}' ?</value>
+  </data>
+  <data name="StatusCountingUpdates" xml:space="preserve">
+    <value>Comptage des mises a jour...</value>
+  </data>
+  <data name="ProgressApprovingCount" xml:space="preserve">
+    <value>Approbation : {0} sur {1} mises a jour</value>
+  </data>
+  <data name="ProgressDecliningCount" xml:space="preserve">
+    <value>Refus : {0} sur {1} mises a jour</value>
+  </data>
+  <data name="MenuCopyKB" xml:space="preserve">
+    <value>Copier l'article KB</value>
+  </data>
+  <data name="MenuSearchKB" xml:space="preserve">
+    <value>Rechercher KB en ligne</value>
+  </data>
+  <data name="ToastApproveSuccess" xml:space="preserve">
+    <value>{0} mises a jour approuvees avec succes</value>
+  </data>
+  <data name="ToastDeclineSuccess" xml:space="preserve">
+    <value>{0} mises a jour refusees avec succes</value>
+  </data>
+  <data name="ToastSyncComplete" xml:space="preserve">
+    <value>Synchronisation WSUS terminee</value>
+  </data>
+
+  <!-- Accessibility Labels -->
+  <data name="GridUpdates" xml:space="preserve">
+    <value>Liste des mises a jour</value>
+  </data>
+  <data name="GridComputers" xml:space="preserve">
+    <value>Liste des ordinateurs</value>
+  </data>
+  <data name="GridActivityLog" xml:space="preserve">
+    <value>Journal d'activite</value>
+  </data>
+  <data name="GridApprovalRules" xml:space="preserve">
+    <value>Liste des regles d'approbation</value>
+  </data>
+  <data name="HealthStatusUnknown" xml:space="preserve">
+    <value>Inconnu</value>
+  </data>
+  <data name="TooltipHealthIndicator" xml:space="preserve">
+    <value>Etat de sante du serveur WSUS - cliquez Actualiser pour mettre a jour</value>
+  </data>
+  <data name="StatusCopied" xml:space="preserve">
+    <value>{0} copie dans le presse-papiers</value>
+  </data>
+  <data name="TooltipRefreshShortcut" xml:space="preserve">
+    <value>Actualiser les mises a jour (F5 ou Ctrl+R)</value>
+  </data>
+  <data name="TooltipSyncShortcut" xml:space="preserve">
+    <value>Demarrer la synchronisation (Ctrl+S)</value>
+  </data>
+  <data name="TooltipApproveShortcut" xml:space="preserve">
+    <value>Approuver les mises a jour selectionnees (Ctrl+A)</value>
+  </data>
+  <data name="TooltipDeclineShortcut" xml:space="preserve">
+    <value>Refuser les mises a jour selectionnees (Ctrl+D)</value>
+  </data>
+  <data name="TooltipExportShortcut" xml:space="preserve">
+    <value>Exporter les donnees (Ctrl+E)</value>
+  </data>
+  <data name="BtnDismiss" xml:space="preserve">
+    <value>Fermer</value>
+  </data>
 </root>

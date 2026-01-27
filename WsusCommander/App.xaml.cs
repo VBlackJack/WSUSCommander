@@ -29,6 +29,11 @@ public partial class App : Application
     private readonly List<IDisposable> _disposables = [];
 
     /// <summary>
+    /// Gets the preferences service for window state persistence.
+    /// </summary>
+    public IPreferencesService? PreferencesService { get; private set; }
+
+    /// <summary>
     /// Called when the application starts. Sets up dependency injection manually.
     /// </summary>
     /// <param name="e">Startup event arguments.</param>
@@ -39,13 +44,13 @@ public partial class App : Application
         // Composition Root - Manual DI
         // Core Services
         IConfigurationService configService = new ConfigurationService();
-        IPowerShellService psService = new PowerShellService();
         ILoggingService loggingService = new LoggingService(configService);
+        IPowerShellService psService = new PowerShellService(loggingService);
         ITimerService timerService = new TimerService();
 
         // Security Services
         IAuthenticationService authService = new AuthenticationService(configService, loggingService);
-        IAuthorizationService authzService = new AuthorizationService(authService, loggingService);
+        IAuthorizationService authzService = new AuthorizationService(authService, configService, loggingService);
 
         // Infrastructure Services
         IValidationService validationService = new ValidationService();
@@ -56,24 +61,31 @@ public partial class App : Application
         // Data Services
         IExportService exportService = new ExportService(loggingService);
         IPreferencesService preferencesService = new PreferencesService(configService, loggingService);
+        PreferencesService = preferencesService;
         IFilterService filterService = new FilterService();
+        IFilterPresetsService filterPresetsService = new FilterPresetsService(configService, loggingService);
+        IApprovalRulesService approvalRulesService = new ApprovalRulesService(configService, loggingService);
 
         // Monitoring Services
         IHealthService healthService = new HealthService(configService, psService, loggingService);
         IAccessibilityService accessibilityService = new AccessibilityService(loggingService);
+        IThemeService themeService = new ThemeService(loggingService);
 
         // Business Services
         IBulkOperationService bulkOperationService = new BulkOperationService(
-            psService, loggingService);
+            psService, loggingService, configService);
         IGroupService groupService = new GroupService(
-            psService, loggingService, cacheService, validationService);
+            psService, loggingService, cacheService, validationService, configService);
         IReportService reportService = new ReportService(
-            psService, loggingService, cacheService);
+            psService, loggingService, cacheService, configService);
 
         // Track disposables
         _disposables.Add((IDisposable)timerService);
         _disposables.Add((IDisposable)cacheService);
         _disposables.Add((IDisposable)healthService);
+
+        // Initialize theme from configuration
+        themeService.Initialize(configService.Config.UI.Theme);
 
         // Create ViewModel with all services
         _mainViewModel = new MainViewModel(
@@ -90,11 +102,14 @@ public partial class App : Application
             exportService,
             preferencesService,
             filterService,
+            filterPresetsService,
+            approvalRulesService,
             healthService,
             accessibilityService,
             bulkOperationService,
             groupService,
-            reportService);
+            reportService,
+            themeService);
 
         // Initialize ViewModel (authentication, preferences, health check)
         await _mainViewModel.InitializeAsync();

@@ -221,16 +221,17 @@ public sealed class HealthService : IHealthService, IDisposable
 
         try
         {
-            // Simple PowerShell test
+            // Simple PowerShell test using health check script
             var result = await _powerShellService.ExecuteScriptAsync(
-                "$PSVersionTable.PSVersion.ToString()",
+                "Get-PowerShellVersion.ps1",
                 new Dictionary<string, object>());
 
             sw.Stop();
 
             if (result != null && result.Count > 0)
             {
-                var version = result.FirstOrDefault()?.ToString() ?? "Unknown";
+                var psObj = result.FirstOrDefault();
+                var version = psObj?.Properties["Version"]?.Value?.ToString() ?? "Unknown";
                 return new HealthCheckResult
                 {
                     Name = "PowerShell",

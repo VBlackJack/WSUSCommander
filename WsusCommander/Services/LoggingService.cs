@@ -39,12 +39,27 @@ public sealed class LoggingService : ILoggingService, IDisposable
     /// <param name="configService">The configuration service to get log path settings.</param>
     public LoggingService(IConfigurationService configService)
     {
-        _logPath = configService.AppSettings.LogPath;
+        // Use app directory for easier debugging, fallback to configured path
+        var appDir = AppDomain.CurrentDomain.BaseDirectory;
+        var appLogPath = Path.Combine(appDir, "logs");
+        _logPath = Directory.Exists(Path.GetDirectoryName(configService.AppSettings.LogPath))
+            ? configService.AppSettings.LogPath
+            : appLogPath;
         _logFileName = $"wsuscommander_{DateTime.Now:yyyyMMdd}.log";
 
         EnsureLogDirectoryExists();
         _writeTask = ProcessLogQueueAsync(_cts.Token);
+
+        // Log startup info
+        LogAsync("INFO", $"=== WSUS Commander Started ===");
+        LogAsync("INFO", $"Log file: {Path.Combine(_logPath, _logFileName)}");
+        LogAsync("INFO", $"App directory: {appDir}");
     }
+
+    /// <summary>
+    /// Gets the current log file path.
+    /// </summary>
+    public string CurrentLogFilePath => Path.Combine(_logPath, _logFileName);
 
     /// <inheritdoc/>
     public Task LogInfoAsync(string message)

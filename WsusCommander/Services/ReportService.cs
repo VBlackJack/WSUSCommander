@@ -30,6 +30,7 @@ public sealed class ReportService : IReportService
     private readonly IPowerShellService _powerShellService;
     private readonly ILoggingService _loggingService;
     private readonly ICacheService _cacheService;
+    private readonly IConfigurationService _configService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ReportService"/> class.
@@ -37,11 +38,13 @@ public sealed class ReportService : IReportService
     public ReportService(
         IPowerShellService powerShellService,
         ILoggingService loggingService,
-        ICacheService cacheService)
+        ICacheService cacheService,
+        IConfigurationService configService)
     {
         _powerShellService = powerShellService;
         _loggingService = loggingService;
         _cacheService = cacheService;
+        _configService = configService;
     }
 
     /// <inheritdoc/>
@@ -54,6 +57,9 @@ public sealed class ReportService : IReportService
 
         var parameters = new Dictionary<string, object>
         {
+            ["ServerName"] = _configService.WsusConnection.ServerName,
+            ["Port"] = _configService.WsusConnection.Port,
+            ["UseSsl"] = _configService.WsusConnection.UseSsl,
             ["StaleDays"] = options.StaleDays,
             ["IncludeSuperseded"] = options.IncludeSuperseded,
             ["IncludeDeclined"] = options.IncludeDeclined
@@ -88,7 +94,13 @@ public sealed class ReportService : IReportService
 
                 var result = await _powerShellService.ExecuteScriptAsync(
                     "Get-StaleComputers.ps1",
-                    new Dictionary<string, object> { ["StaleDays"] = staleDays });
+                    new Dictionary<string, object>
+                    {
+                        ["ServerName"] = _configService.WsusConnection.ServerName,
+                        ["Port"] = _configService.WsusConnection.Port,
+                        ["UseSsl"] = _configService.WsusConnection.UseSsl,
+                        ["StaleDays"] = staleDays
+                    });
 
                 return ParseStaleComputers(result);
             },
@@ -107,7 +119,12 @@ public sealed class ReportService : IReportService
 
                 var result = await _powerShellService.ExecuteScriptAsync(
                     "Get-CriticalUpdates.ps1",
-                    new Dictionary<string, object>());
+                    new Dictionary<string, object>
+                    {
+                        ["ServerName"] = _configService.WsusConnection.ServerName,
+                        ["Port"] = _configService.WsusConnection.Port,
+                        ["UseSsl"] = _configService.WsusConnection.UseSsl
+                    });
 
                 return ParseCriticalUpdatesSummary(result);
             },

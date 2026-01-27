@@ -28,6 +28,7 @@ public sealed class GroupService : IGroupService
     private readonly ILoggingService _loggingService;
     private readonly ICacheService _cacheService;
     private readonly IValidationService _validationService;
+    private readonly IConfigurationService _configService;
 
     private static readonly string[] SystemGroupNames = ["All Computers", "Unassigned Computers"];
 
@@ -38,12 +39,24 @@ public sealed class GroupService : IGroupService
         IPowerShellService powerShellService,
         ILoggingService loggingService,
         ICacheService cacheService,
-        IValidationService validationService)
+        IValidationService validationService,
+        IConfigurationService configService)
     {
         _powerShellService = powerShellService;
         _loggingService = loggingService;
         _cacheService = cacheService;
         _validationService = validationService;
+        _configService = configService;
+    }
+
+    private Dictionary<string, object> GetConnectionParameters()
+    {
+        return new Dictionary<string, object>
+        {
+            ["ServerName"] = _configService.WsusConnection.ServerName,
+            ["Port"] = _configService.WsusConnection.Port,
+            ["UseSsl"] = _configService.WsusConnection.UseSsl
+        };
     }
 
     /// <inheritdoc/>
@@ -59,7 +72,7 @@ public sealed class GroupService : IGroupService
             {
                 var result = await _powerShellService.ExecuteScriptAsync(
                     "Get-ComputerGroups.ps1",
-                    new Dictionary<string, object>());
+                    GetConnectionParameters());
 
                 var groups = ParseGroups(result);
 
@@ -80,9 +93,12 @@ public sealed class GroupService : IGroupService
     {
         try
         {
+            var parameters = GetConnectionParameters();
+            parameters["GroupId"] = groupId.ToString();
+
             var result = await _powerShellService.ExecuteScriptAsync(
                 "Get-ComputerGroup.ps1",
-                new Dictionary<string, object> { ["GroupId"] = groupId.ToString() });
+                parameters);
 
             var groups = ParseGroups(result);
             return groups.FirstOrDefault();
@@ -107,10 +123,8 @@ public sealed class GroupService : IGroupService
 
         await _loggingService.LogInfoAsync($"Creating computer group: {sanitizedName}");
 
-        var parameters = new Dictionary<string, object>
-        {
-            ["GroupName"] = sanitizedName
-        };
+        var parameters = GetConnectionParameters();
+        parameters["GroupName"] = sanitizedName;
 
         if (!string.IsNullOrWhiteSpace(options.Description))
         {
@@ -149,10 +163,8 @@ public sealed class GroupService : IGroupService
     {
         await _loggingService.LogInfoAsync($"Updating computer group: {groupId}");
 
-        var parameters = new Dictionary<string, object>
-        {
-            ["GroupId"] = groupId.ToString()
-        };
+        var parameters = GetConnectionParameters();
+        parameters["GroupId"] = groupId.ToString();
 
         if (!string.IsNullOrWhiteSpace(options.Name))
         {
@@ -190,9 +202,12 @@ public sealed class GroupService : IGroupService
     {
         await _loggingService.LogInfoAsync($"Deleting computer group: {groupId}");
 
+        var parameters = GetConnectionParameters();
+        parameters["GroupId"] = groupId.ToString();
+
         await _powerShellService.ExecuteScriptAsync(
             "Remove-ComputerGroup.ps1",
-            new Dictionary<string, object> { ["GroupId"] = groupId.ToString() });
+            parameters);
 
         _cacheService.Remove("groups_true");
         _cacheService.Remove("groups_false");
@@ -207,9 +222,12 @@ public sealed class GroupService : IGroupService
     {
         try
         {
+            var parameters = GetConnectionParameters();
+            parameters["GroupId"] = groupId.ToString();
+
             var result = await _powerShellService.ExecuteScriptAsync(
                 "Get-ComputerStatus.ps1",
-                new Dictionary<string, object> { ["GroupId"] = groupId.ToString() });
+                parameters);
 
             return ParseComputers(result);
         }
@@ -227,9 +245,12 @@ public sealed class GroupService : IGroupService
     {
         try
         {
+            var parameters = GetConnectionParameters();
+            parameters["ParentGroupId"] = parentGroupId.ToString();
+
             var result = await _powerShellService.ExecuteScriptAsync(
                 "Get-ChildGroups.ps1",
-                new Dictionary<string, object> { ["ParentGroupId"] = parentGroupId.ToString() });
+                parameters);
 
             return ParseGroups(result);
         }

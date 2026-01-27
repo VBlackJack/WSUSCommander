@@ -1,46 +1,18 @@
 # Copyright 2025 Julien Bombled
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-<#
-.SYNOPSIS
-    Generates a compliance report from WSUS.
-
-.PARAMETER GroupId
-    Optional group ID to filter by.
-
-.PARAMETER StaleDays
-    Days threshold for stale computers.
-
-.PARAMETER IncludeSuperseded
-    Whether to include superseded updates.
-
-.PARAMETER IncludeDeclined
-    Whether to include declined updates.
-
-.PARAMETER WsusServer
-    The WSUS server name.
-
-.PARAMETER WsusPort
-    The WSUS server port.
-
-.PARAMETER UseSsl
-    Whether to use SSL connection.
-#>
+# Licensed under the Apache License, Version 2.0
 
 param(
+    [Parameter(Mandatory = $true)]
+    [string]$ServerName,
+
+    [Parameter(Mandatory = $true)]
+    [int]$Port,
+
+    [Parameter(Mandatory = $true)]
+    [bool]$UseSsl,
+
     [Parameter(Mandatory = $false)]
-    [string]$GroupId,
+    [string]$GroupId = "",
 
     [Parameter(Mandatory = $false)]
     [int]$StaleDays = 30,
@@ -49,37 +21,29 @@ param(
     [bool]$IncludeSuperseded = $false,
 
     [Parameter(Mandatory = $false)]
-    [bool]$IncludeDeclined = $false,
-
-    [Parameter(Mandatory = $false)]
-    [string]$WsusServer = "localhost",
-
-    [Parameter(Mandatory = $false)]
-    [int]$WsusPort = 8530,
-
-    [Parameter(Mandatory = $false)]
-    [bool]$UseSsl = $false
+    [bool]$IncludeDeclined = $false
 )
 
 try {
-    # Import WSUS module
+    # Defensive coding: Check if module exists
     if (-not (Get-Module -ListAvailable -Name UpdateServices)) {
-        throw "WSUS PowerShell module (UpdateServices) is not installed."
+        Write-Error "WSUS Module (UpdateServices) is not installed on this machine." -ErrorAction Stop
     }
 
-    Import-Module UpdateServices -ErrorAction Stop
+    # Load the WSUS assembly
+    [reflection.assembly]::LoadWithPartialName("Microsoft.UpdateServices.Administration") | Out-Null
 
     # Connect to WSUS server
-    $wsus = Get-WsusServer -Name $WsusServer -PortNumber $WsusPort -UseSsl:$UseSsl
+    $wsus = [Microsoft.UpdateServices.Administration.AdminProxy]::GetUpdateServer($ServerName, $UseSsl, $Port)
 
     if (-not $wsus) {
-        throw "Failed to connect to WSUS server: $WsusServer"
+        Write-Error "Failed to connect to WSUS server: $ServerName" -ErrorAction Stop
     }
 
     # Get target group
     $targetGroup = $null
-    if ($GroupId) {
-        $groupGuid = [Guid]::Parse($GroupId)
+    if ($GroupId -and $GroupId -ne "") {
+        $groupGuid = [Guid]$GroupId
         $targetGroup = $wsus.GetComputerTargetGroup($groupGuid)
     }
 
@@ -94,6 +58,9 @@ try {
     # Get computers
     $allComputers = $wsus.GetComputerTargets()
     $totalComputers = $allComputers.Count
+
+    # Create update scope for later
+    $updateScope = New-Object Microsoft.UpdateServices.Administration.UpdateScope
 
     # Calculate compliance per group
     $groupCompliance = @()
@@ -119,7 +86,7 @@ try {
         $groupCompliant = 0
 
         foreach ($computer in $groupComputers) {
-            $status = $computer.GetUpdateInstallationSummary()
+            $status = $computer.GetUpdateInstallationSummary($updateScope)
             $needed = $status.NotInstalledCount + $status.DownloadedCount
             $failed = $status.FailedCount
 
@@ -133,12 +100,12 @@ try {
 
         $compliancePercent = if ($groupTotal -gt 0) { ($groupCompliant / $groupTotal) * 100 } else { 0 }
 
-        $groupCompliance += @{
-            GroupId = $group.Id.ToString()
-            GroupName = $group.Name
-            TotalComputers = $groupTotal
+        $groupCompliance += [PSCustomObject]@{
+            GroupId            = $group.Id.ToString()
+            GroupName          = $group.Name
+            TotalComputers     = $groupTotal
             CompliantComputers = $groupCompliant
-            CompliancePercent = [math]::Round($compliancePercent, 1)
+            CompliancePercent  = [math]::Round($compliancePercent, 1)
             TotalNeededUpdates = $groupNeeded
             TotalFailedUpdates = $groupFailed
         }
@@ -149,7 +116,7 @@ try {
 
     # Calculate overall compliance
     foreach ($computer in $allComputers) {
-        $status = $computer.GetUpdateInstallationSummary()
+        $status = $computer.GetUpdateInstallationSummary($updateScope)
         $needed = $status.NotInstalledCount + $status.DownloadedCount
         $failed = $status.FailedCount
 
@@ -161,23 +128,22 @@ try {
     $overallCompliancePercent = if ($totalComputers -gt 0) { ($compliantComputers / $totalComputers) * 100 } else { 0 }
 
     # Get approved updates count
-    $updateScope = New-Object Microsoft.UpdateServices.Administration.UpdateScope
-    $updateScope.ApprovedStates = [Microsoft.UpdateServices.Administration.ApprovedStates]::LatestRevisionApproved
-    $approvedUpdates = $wsus.GetUpdates($updateScope)
+    $approvedScope = New-Object Microsoft.UpdateServices.Administration.UpdateScope
+    $approvedScope.ApprovedStates = [Microsoft.UpdateServices.Administration.ApprovedStates]::LatestRevisionApproved
+    $approvedUpdates = $wsus.GetUpdates($approvedScope)
 
-    @{
-        TotalComputers = $totalComputers
-        CompliantComputers = $compliantComputers
+    return [PSCustomObject]@{
+        TotalComputers       = $totalComputers
+        CompliantComputers   = $compliantComputers
         NonCompliantComputers = $totalComputers - $compliantComputers
         TotalApprovedUpdates = $approvedUpdates.Count
-        CompliancePercent = [math]::Round($overallCompliancePercent, 1)
-        GroupCompliance = $groupCompliance
-        TotalNeededUpdates = $totalNeeded
-        TotalFailedUpdates = $totalFailed
+        CompliancePercent    = [math]::Round($overallCompliancePercent, 1)
+        GroupCompliance      = $groupCompliance
+        TotalNeededUpdates   = $totalNeeded
+        TotalFailedUpdates   = $totalFailed
     }
 }
 catch {
-    @{
-        Error = $_.Exception.Message
-    }
+    Write-Error "Failed to generate compliance report: $_" -ErrorAction Stop
+    throw $_
 }

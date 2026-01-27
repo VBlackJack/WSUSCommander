@@ -25,6 +25,7 @@ public sealed class BulkOperationService : IBulkOperationService
 {
     private readonly IPowerShellService _powerShellService;
     private readonly ILoggingService _loggingService;
+    private readonly IConfigurationService _configService;
     private readonly int _maxParallelOperations;
 
     /// <summary>
@@ -33,11 +34,23 @@ public sealed class BulkOperationService : IBulkOperationService
     public BulkOperationService(
         IPowerShellService powerShellService,
         ILoggingService loggingService,
+        IConfigurationService configService,
         int maxParallelOperations = 5)
     {
         _powerShellService = powerShellService;
         _loggingService = loggingService;
+        _configService = configService;
         _maxParallelOperations = maxParallelOperations;
+    }
+
+    private Dictionary<string, object> GetConnectionParameters()
+    {
+        return new Dictionary<string, object>
+        {
+            ["ServerName"] = _configService.WsusConnection.ServerName,
+            ["Port"] = _configService.WsusConnection.Port,
+            ["UseSsl"] = _configService.WsusConnection.UseSsl
+        };
     }
 
     /// <inheritdoc/>
@@ -54,13 +67,13 @@ public sealed class BulkOperationService : IBulkOperationService
             ids,
             async (id, ct) =>
             {
+                var parameters = GetConnectionParameters();
+                parameters["UpdateId"] = id.ToString();
+                parameters["GroupId"] = targetGroupId.ToString();
+
                 await _powerShellService.ExecuteScriptAsync(
                     "Approve-WsusUpdate.ps1",
-                    new Dictionary<string, object>
-                    {
-                        ["UpdateId"] = id.ToString(),
-                        ["GroupId"] = targetGroupId.ToString()
-                    });
+                    parameters);
             },
             id => id.ToString(),
             progress,
@@ -80,12 +93,12 @@ public sealed class BulkOperationService : IBulkOperationService
             ids,
             async (id, ct) =>
             {
+                var parameters = GetConnectionParameters();
+                parameters["UpdateId"] = id.ToString();
+
                 await _powerShellService.ExecuteScriptAsync(
                     "Decline-WsusUpdate.ps1",
-                    new Dictionary<string, object>
-                    {
-                        ["UpdateId"] = id.ToString()
-                    });
+                    parameters);
             },
             id => id.ToString(),
             progress,
@@ -106,13 +119,13 @@ public sealed class BulkOperationService : IBulkOperationService
             ids,
             async (id, ct) =>
             {
+                var parameters = GetConnectionParameters();
+                parameters["UpdateId"] = id.ToString();
+                parameters["GroupId"] = targetGroupId.ToString();
+
                 await _powerShellService.ExecuteScriptAsync(
                     "Unapprove-WsusUpdate.ps1",
-                    new Dictionary<string, object>
-                    {
-                        ["UpdateId"] = id.ToString(),
-                        ["GroupId"] = targetGroupId.ToString()
-                    });
+                    parameters);
             },
             id => id.ToString(),
             progress,
@@ -133,13 +146,13 @@ public sealed class BulkOperationService : IBulkOperationService
             ids,
             async (id, ct) =>
             {
+                var parameters = GetConnectionParameters();
+                parameters["ComputerId"] = id;
+                parameters["TargetGroupId"] = targetGroupId.ToString();
+
                 await _powerShellService.ExecuteScriptAsync(
                     "Move-ComputerToGroup.ps1",
-                    new Dictionary<string, object>
-                    {
-                        ["ComputerId"] = id,
-                        ["TargetGroupId"] = targetGroupId.ToString()
-                    });
+                    parameters);
             },
             id => id,
             progress,
@@ -160,13 +173,13 @@ public sealed class BulkOperationService : IBulkOperationService
             ids,
             async (id, ct) =>
             {
+                var parameters = GetConnectionParameters();
+                parameters["ComputerId"] = id;
+                parameters["GroupId"] = groupId.ToString();
+
                 await _powerShellService.ExecuteScriptAsync(
                     "Remove-ComputerFromGroup.ps1",
-                    new Dictionary<string, object>
-                    {
-                        ["ComputerId"] = id,
-                        ["GroupId"] = groupId.ToString()
-                    });
+                    parameters);
             },
             id => id,
             progress,

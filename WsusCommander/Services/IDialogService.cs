@@ -81,6 +81,32 @@ public interface IDialogService
     void ShowToast(string message, int duration = 3000);
 
     /// <summary>
+    /// Shows a success toast notification.
+    /// </summary>
+    /// <param name="message">Notification message.</param>
+    /// <param name="duration">Duration in milliseconds.</param>
+    void ShowSuccessToast(string message, int duration = 3000);
+
+    /// <summary>
+    /// Shows a warning toast notification.
+    /// </summary>
+    /// <param name="message">Notification message.</param>
+    /// <param name="duration">Duration in milliseconds.</param>
+    void ShowWarningToast(string message, int duration = 3000);
+
+    /// <summary>
+    /// Shows an error toast notification.
+    /// </summary>
+    /// <param name="message">Notification message.</param>
+    /// <param name="duration">Duration in milliseconds.</param>
+    void ShowErrorToast(string message, int duration = 5000);
+
+    /// <summary>
+    /// Event raised when a toast notification should be shown.
+    /// </summary>
+    event EventHandler<Models.ToastNotification>? ToastRequested;
+
+    /// <summary>
     /// Shows a save file dialog.
     /// </summary>
     /// <param name="defaultFileName">Default file name.</param>
@@ -94,4 +120,13 @@ public interface IDialogService
     /// <param name="filter">File filter.</param>
     /// <returns>Selected file path or null if cancelled.</returns>
     Task<string?> ShowOpenFileDialogAsync(string filter);
+
+    /// <summary>
+    /// Shows an input dialog for text entry.
+    /// </summary>
+    /// <param name="title">Dialog title.</param>
+    /// <param name="prompt">Input prompt.</param>
+    /// <param name="defaultValue">Default value.</param>
+    /// <returns>User input or null if cancelled.</returns>
+    Task<string?> ShowInputDialogAsync(string title, string prompt, string defaultValue = "");
 }

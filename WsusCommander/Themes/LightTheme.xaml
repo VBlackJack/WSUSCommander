@@ -1,0 +1,56 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Light Theme Colors -->
+    <Color x:Key="PrimaryColor">#2C3E50</Color>
+    <Color x:Key="SecondaryColor">#34495E</Color>
+    <Color x:Key="AccentColor">#3498DB</Color>
+    <Color x:Key="SuccessColor">#27AE60</Color>
+    <Color x:Key="WarningColor">#F39C12</Color>
+    <Color x:Key="DangerColor">#E74C3C</Color>
+
+    <!-- Background Colors -->
+    <Color x:Key="WindowBackgroundColor">#F5F5F5</Color>
+    <Color x:Key="CardBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="BorderColor">#E0E0E0</Color>
+    <Color x:Key="HoverBackgroundColor">#F8F9FA</Color>
+
+    <!-- Text Colors -->
+    <Color x:Key="PrimaryTextColor">#2C3E50</Color>
+    <Color x:Key="SecondaryTextColor">#7F8C8D</Color>
+    <Color x:Key="MutedTextColor">#95A5A6</Color>
+
+    <!-- Status Bar -->
+    <Color x:Key="StatusBarBackgroundColor">#ECF0F1</Color>
+
+    <!-- DataGrid Colors -->
+    <Color x:Key="DataGridRowBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="DataGridAlternateRowColor">#F8F9FA</Color>
+    <Color x:Key="DataGridSelectedRowColor">#E3F2FD</Color>
+    <Color x:Key="DataGridHeaderBackgroundColor">#FAFAFA</Color>
+
+    <!-- Brushes -->
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}"/>
+    <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource SecondaryColor}"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}"/>
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}"/>
+    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}"/>
+
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="{StaticResource WindowBackgroundColor}"/>
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}"/>
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
+    <SolidColorBrush x:Key="HoverBackgroundBrush" Color="{StaticResource HoverBackgroundColor}"/>
+
+    <SolidColorBrush x:Key="PrimaryTextBrush" Color="{StaticResource PrimaryTextColor}"/>
+    <SolidColorBrush x:Key="SecondaryTextBrush" Color="{StaticResource SecondaryTextColor}"/>
+    <SolidColorBrush x:Key="MutedTextBrush" Color="{StaticResource MutedTextColor}"/>
+
+    <SolidColorBrush x:Key="StatusBarBackgroundBrush" Color="{StaticResource StatusBarBackgroundColor}"/>
+
+    <SolidColorBrush x:Key="DataGridRowBackgroundBrush" Color="{StaticResource DataGridRowBackgroundColor}"/>
+    <SolidColorBrush x:Key="DataGridAlternateRowBrush" Color="{StaticResource DataGridAlternateRowColor}"/>
+    <SolidColorBrush x:Key="DataGridSelectedRowBrush" Color="{StaticResource DataGridSelectedRowColor}"/>
+    <SolidColorBrush x:Key="DataGridHeaderBackgroundBrush" Color="{StaticResource DataGridHeaderBackgroundColor}"/>
+
+</ResourceDictionary>

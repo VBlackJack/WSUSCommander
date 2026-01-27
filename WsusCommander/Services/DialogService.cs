@@ -16,6 +16,8 @@
 
 using System.Windows;
 using Microsoft.Win32;
+using WsusCommander.Models;
+using WsusCommander.Views;
 
 namespace WsusCommander.Services;
 
@@ -91,14 +93,57 @@ public sealed class DialogService : IDialogService
     }
 
     /// <inheritdoc/>
+    public event EventHandler<ToastNotification>? ToastRequested;
+
+    /// <inheritdoc/>
     public void ShowToast(string message, int duration = 3000)
     {
-        // Toast notifications would require custom implementation
-        // For now, we log the message - can be enhanced with custom toast control
+        RaiseToast(new ToastNotification
+        {
+            Message = message,
+            Type = ToastType.Info,
+            Duration = duration
+        });
+    }
+
+    /// <inheritdoc/>
+    public void ShowSuccessToast(string message, int duration = 3000)
+    {
+        RaiseToast(new ToastNotification
+        {
+            Message = message,
+            Type = ToastType.Success,
+            Duration = duration
+        });
+    }
+
+    /// <inheritdoc/>
+    public void ShowWarningToast(string message, int duration = 3000)
+    {
+        RaiseToast(new ToastNotification
+        {
+            Message = message,
+            Type = ToastType.Warning,
+            Duration = duration
+        });
+    }
+
+    /// <inheritdoc/>
+    public void ShowErrorToast(string message, int duration = 5000)
+    {
+        RaiseToast(new ToastNotification
+        {
+            Message = message,
+            Type = ToastType.Error,
+            Duration = duration
+        });
+    }
+
+    private void RaiseToast(ToastNotification notification)
+    {
         Application.Current.Dispatcher.Invoke(() =>
         {
-            // Could implement as a Snackbar-style notification in the UI
-            System.Diagnostics.Debug.WriteLine($"Toast: {message}");
+            ToastRequested?.Invoke(this, notification);
         });
     }
 
@@ -131,6 +176,15 @@ public sealed class DialogService : IDialogService
             };
 
             return dialog.ShowDialog() == true ? dialog.FileName : null;
+        }));
+    }
+
+    /// <inheritdoc/>
+    public Task<string?> ShowInputDialogAsync(string title, string prompt, string defaultValue = "")
+    {
+        return Task.FromResult(Application.Current.Dispatcher.Invoke(() =>
+        {
+            return InputDialog.Show(Application.Current.MainWindow, title, prompt, defaultValue);
         }));
     }
 

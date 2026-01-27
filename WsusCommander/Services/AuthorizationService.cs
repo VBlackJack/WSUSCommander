@@ -24,6 +24,7 @@ namespace WsusCommander.Services;
 public sealed class AuthorizationService : IAuthorizationService
 {
     private readonly IAuthenticationService _authService;
+    private readonly IConfigurationService _configService;
     private readonly ILoggingService _loggingService;
 
     /// <summary>
@@ -45,15 +46,25 @@ public sealed class AuthorizationService : IAuthorizationService
     /// <summary>
     /// Initializes a new instance of the <see cref="AuthorizationService"/> class.
     /// </summary>
-    public AuthorizationService(IAuthenticationService authService, ILoggingService loggingService)
+    public AuthorizationService(
+        IAuthenticationService authService,
+        IConfigurationService configService,
+        ILoggingService loggingService)
     {
         _authService = authService;
+        _configService = configService;
         _loggingService = loggingService;
     }
 
     /// <inheritdoc/>
     public bool IsAuthorized(WsusOperation operation)
     {
+        // When authentication is not required, allow all operations
+        if (!_configService.Config.Security.RequireAuthentication)
+        {
+            return true;
+        }
+
         var user = _authService.CurrentUser;
 
         if (user is null)

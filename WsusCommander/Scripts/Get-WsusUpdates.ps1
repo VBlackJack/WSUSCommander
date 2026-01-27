@@ -21,6 +21,9 @@ try {
         Write-Error "WSUS Module (UpdateServices) is not installed on this machine." -ErrorAction Stop
     }
 
+    # Load the WSUS assembly
+    [reflection.assembly]::LoadWithPartialName("Microsoft.UpdateServices.Administration") | Out-Null
+
     # Connect to WSUS server
     $wsus = [Microsoft.UpdateServices.Administration.AdminProxy]::GetUpdateServer($ServerName, $UseSsl, $Port)
 
@@ -41,8 +44,8 @@ try {
         }
     }
 
-    # Get updates with scope
-    $updates = $wsus.GetUpdates($searchScope) | Select-Object -First 50
+    # Get updates with scope, sorted by creation date (most recent first)
+    $updates = $wsus.GetUpdates($searchScope) | Sort-Object -Property CreationDate -Descending | Select-Object -First 100
 
     # Transform to simplified objects for C#
     $result = @()

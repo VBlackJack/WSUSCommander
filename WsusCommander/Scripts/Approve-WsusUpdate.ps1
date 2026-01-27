@@ -24,6 +24,9 @@ try {
         Write-Error "WSUS Module (UpdateServices) is not installed on this machine." -ErrorAction Stop
     }
 
+    # Load the WSUS assembly
+    [reflection.assembly]::LoadWithPartialName("Microsoft.UpdateServices.Administration") | Out-Null
+
     # Connect to WSUS server
     $wsus = [Microsoft.UpdateServices.Administration.AdminProxy]::GetUpdateServer($ServerName, $UseSsl, $Port)
 

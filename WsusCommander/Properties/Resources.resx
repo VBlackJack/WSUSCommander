@@ -508,6 +508,20 @@
   <data name="ErrorConnectionFailed" xml:space="preserve">
     <value>Failed to connect to WSUS server.</value>
   </data>
+
+  <!-- Connection Settings -->
+  <data name="LblServerName" xml:space="preserve">
+    <value>Server:</value>
+  </data>
+  <data name="LblServerPort" xml:space="preserve">
+    <value>Port:</value>
+  </data>
+  <data name="LblUseSsl" xml:space="preserve">
+    <value>Use SSL</value>
+  </data>
+  <data name="PlaceholderServerName" xml:space="preserve">
+    <value>wsus-server or IP address</value>
+  </data>
   <data name="ErrorTimeout" xml:space="preserve">
     <value>Operation timed out.</value>
   </data>
@@ -519,5 +533,508 @@
   </data>
   <data name="ErrorCircuitBreakerOpen" xml:space="preserve">
     <value>Service temporarily unavailable. Please try again later.</value>
+  </data>
+
+  <!-- Computer Context Menu -->
+  <data name="MenuViewUpdates" xml:space="preserve">
+    <value>View Updates</value>
+  </data>
+  <data name="MenuRefreshStatus" xml:space="preserve">
+    <value>Refresh Status</value>
+  </data>
+  <data name="MenuMoveToGroup" xml:space="preserve">
+    <value>Move to Group</value>
+  </data>
+
+  <!-- Computer Updates Dialog -->
+  <data name="DialogComputerUpdates" xml:space="preserve">
+    <value>Updates for {0}</value>
+  </data>
+  <data name="ColStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ColApprovalStatus" xml:space="preserve">
+    <value>Approval</value>
+  </data>
+  <data name="FilterNeeded" xml:space="preserve">
+    <value>Needed</value>
+  </data>
+  <data name="FilterNotApproved" xml:space="preserve">
+    <value>Not Approved</value>
+  </data>
+  <data name="FilterFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="StatusNotInstalled" xml:space="preserve">
+    <value>Not Installed</value>
+  </data>
+  <data name="StatusDownloaded" xml:space="preserve">
+    <value>Downloaded</value>
+  </data>
+  <data name="StatusInstalled" xml:space="preserve">
+    <value>Installed</value>
+  </data>
+  <data name="StatusFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="StatusPendingReboot" xml:space="preserve">
+    <value>Pending Reboot</value>
+  </data>
+  <data name="StatusNotApplicable" xml:space="preserve">
+    <value>Not Applicable</value>
+  </data>
+  <data name="ApprovalNotApproved" xml:space="preserve">
+    <value>Not Approved</value>
+  </data>
+  <data name="ApprovalApproved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="StatusLoadingUpdates" xml:space="preserve">
+    <value>Loading updates for computer...</value>
+  </data>
+  <data name="StatusUpdatesLoadedForComputer" xml:space="preserve">
+    <value>Loaded {0} updates for {1}.</value>
+  </data>
+  <data name="LblSupersededInfo" xml:space="preserve">
+    <value>Superseded by: {0}</value>
+  </data>
+  <data name="BtnApproveSelected" xml:space="preserve">
+    <value>Approve Selected</value>
+  </data>
+  <data name="BtnDeclineSelected" xml:space="preserve">
+    <value>Decline Selected</value>
+  </data>
+  <data name="BtnClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ConfirmApproveSelectedUpdates" xml:space="preserve">
+    <value>Approve {0} selected updates for group '{1}'?</value>
+  </data>
+  <data name="ConfirmDeclineSelectedUpdates" xml:space="preserve">
+    <value>Decline {0} selected updates? Declined updates will not be offered to any computer.</value>
+  </data>
+  <data name="TipSuperseded" xml:space="preserve">
+    <value>This update has been superseded by a newer update. Consider declining it.</value>
+  </data>
+  <data name="TipNotApproved" xml:space="preserve">
+    <value>This update has not been approved for any group.</value>
+  </data>
+
+  <!-- One-Click Actions -->
+  <data name="BtnDeclineSuperseded" xml:space="preserve">
+    <value>Decline Superseded</value>
+  </data>
+  <data name="BtnApproveCritical" xml:space="preserve">
+    <value>Approve Critical</value>
+  </data>
+  <data name="BtnApproveSecurity" xml:space="preserve">
+    <value>Approve Security</value>
+  </data>
+  <data name="ConfirmDeclineSuperseded" xml:space="preserve">
+    <value>Decline {0} superseded updates? These updates have been replaced by newer versions.</value>
+  </data>
+  <data name="ConfirmApproveCritical" xml:space="preserve">
+    <value>Approve {0} unapproved critical updates for group '{1}'?</value>
+  </data>
+  <data name="ConfirmApproveSecurity" xml:space="preserve">
+    <value>Approve {0} unapproved security updates for group '{1}'?</value>
+  </data>
+  <data name="StatusDecliningSuperseded" xml:space="preserve">
+    <value>Declining superseded updates...</value>
+  </data>
+  <data name="StatusApprovingCritical" xml:space="preserve">
+    <value>Approving critical updates...</value>
+  </data>
+  <data name="StatusApprovingSecurity" xml:space="preserve">
+    <value>Approving security updates...</value>
+  </data>
+  <data name="StatusDeclinedSuperseded" xml:space="preserve">
+    <value>Declined {0} superseded updates. {1} failed.</value>
+  </data>
+  <data name="StatusApprovedCritical" xml:space="preserve">
+    <value>Approved {0} critical updates. {1} failed.</value>
+  </data>
+  <data name="StatusApprovedSecurity" xml:space="preserve">
+    <value>Approved {0} security updates. {1} failed.</value>
+  </data>
+  <data name="ErrorNoSupersededUpdates" xml:space="preserve">
+    <value>No superseded updates to decline.</value>
+  </data>
+  <data name="ErrorNoCriticalUpdates" xml:space="preserve">
+    <value>No unapproved critical updates found.</value>
+  </data>
+  <data name="ErrorNoSecurityUpdates" xml:space="preserve">
+    <value>No unapproved security updates found.</value>
+  </data>
+  <data name="LblQuickActions" xml:space="preserve">
+    <value>Quick Actions:</value>
+  </data>
+
+  <!-- Dashboard -->
+  <data name="TabDashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="DashboardTitle" xml:space="preserve">
+    <value>Server Overview</value>
+  </data>
+  <data name="DashboardTotalUpdates" xml:space="preserve">
+    <value>Total Updates</value>
+  </data>
+  <data name="DashboardUnapproved" xml:space="preserve">
+    <value>Unapproved</value>
+  </data>
+  <data name="DashboardSuperseded" xml:space="preserve">
+    <value>Superseded</value>
+  </data>
+  <data name="DashboardCriticalPending" xml:space="preserve">
+    <value>Critical Pending</value>
+  </data>
+  <data name="DashboardSecurityPending" xml:space="preserve">
+    <value>Security Pending</value>
+  </data>
+  <data name="DashboardTotalComputers" xml:space="preserve">
+    <value>Total Computers</value>
+  </data>
+  <data name="DashboardNeedingUpdates" xml:space="preserve">
+    <value>Needing Updates</value>
+  </data>
+  <data name="DashboardUpToDate" xml:space="preserve">
+    <value>Up to Date</value>
+  </data>
+  <data name="DashboardCompliance" xml:space="preserve">
+    <value>Compliance</value>
+  </data>
+  <data name="DashboardLastSync" xml:space="preserve">
+    <value>Last Sync</value>
+  </data>
+  <data name="DashboardUpdateStats" xml:space="preserve">
+    <value>Update Statistics</value>
+  </data>
+  <data name="DashboardComputerStats" xml:space="preserve">
+    <value>Computer Statistics</value>
+  </data>
+  <data name="DashboardQuickActions" xml:space="preserve">
+    <value>Quick Actions</value>
+  </data>
+  <data name="DashboardActionRequired" xml:space="preserve">
+    <value>Action Required</value>
+  </data>
+  <data name="DashboardNoActionRequired" xml:space="preserve">
+    <value>No immediate action required</value>
+  </data>
+
+  <!-- Filter Presets -->
+  <data name="PresetAllUpdates" xml:space="preserve">
+    <value>All Updates</value>
+  </data>
+  <data name="PresetUnapprovedOnly" xml:space="preserve">
+    <value>Unapproved Only</value>
+  </data>
+  <data name="PresetCriticalUpdates" xml:space="preserve">
+    <value>Critical Updates</value>
+  </data>
+  <data name="PresetSecurityUpdates" xml:space="preserve">
+    <value>Security Updates</value>
+  </data>
+  <data name="PresetDeclinedUpdates" xml:space="preserve">
+    <value>Declined Updates</value>
+  </data>
+  <data name="LblFilterPresets" xml:space="preserve">
+    <value>Presets:</value>
+  </data>
+  <data name="BtnSavePreset" xml:space="preserve">
+    <value>Save Preset</value>
+  </data>
+  <data name="BtnDeletePreset" xml:space="preserve">
+    <value>Delete Preset</value>
+  </data>
+  <data name="DialogSavePreset" xml:space="preserve">
+    <value>Save Filter Preset</value>
+  </data>
+  <data name="LblPresetName" xml:space="preserve">
+    <value>Preset Name:</value>
+  </data>
+  <data name="StatusPresetSaved" xml:space="preserve">
+    <value>Filter preset saved.</value>
+  </data>
+  <data name="StatusPresetDeleted" xml:space="preserve">
+    <value>Filter preset deleted.</value>
+  </data>
+  <data name="ErrorCannotDeleteBuiltIn" xml:space="preserve">
+    <value>Cannot delete built-in presets.</value>
+  </data>
+
+  <!-- Pagination -->
+  <data name="StatusPagination" xml:space="preserve">
+    <value>Page {0} of {1} ({2} items)</value>
+  </data>
+  <data name="LblPageSize" xml:space="preserve">
+    <value>Items per page:</value>
+  </data>
+  <data name="BtnFirstPage" xml:space="preserve">
+    <value>First</value>
+  </data>
+  <data name="BtnPreviousPage" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="BtnNextPage" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="BtnLastPage" xml:space="preserve">
+    <value>Last</value>
+  </data>
+
+  <!-- Activity Monitor -->
+  <data name="TabActivity" xml:space="preserve">
+    <value>Activity</value>
+  </data>
+  <data name="ColTimestamp" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="ColActivityType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ColDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ColUser" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="ColTarget" xml:space="preserve">
+    <value>Target</value>
+  </data>
+  <data name="StatusLoadingActivity" xml:space="preserve">
+    <value>Loading activity log...</value>
+  </data>
+  <data name="StatusActivityLoaded" xml:space="preserve">
+    <value>Loaded {0} activity entries.</value>
+  </data>
+  <data name="ActivityApproval" xml:space="preserve">
+    <value>Approval</value>
+  </data>
+  <data name="ActivityDecline" xml:space="preserve">
+    <value>Decline</value>
+  </data>
+  <data name="ActivitySync" xml:space="preserve">
+    <value>Synchronization</value>
+  </data>
+  <data name="ActivityDownload" xml:space="preserve">
+    <value>Download</value>
+  </data>
+
+  <!-- Charts and Visualizations -->
+  <data name="DashboardUpdateDistribution" xml:space="preserve">
+    <value>Update Distribution</value>
+  </data>
+
+  <!-- Approval Rules -->
+  <data name="TabRules" xml:space="preserve">
+    <value>Rules</value>
+  </data>
+  <data name="BtnNewRule" xml:space="preserve">
+    <value>New Rule</value>
+  </data>
+  <data name="BtnEditRule" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="BtnDeleteRule" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="BtnApplyRules" xml:space="preserve">
+    <value>Apply Rules</value>
+  </data>
+  <data name="ColRuleName" xml:space="preserve">
+    <value>Rule Name</value>
+  </data>
+  <data name="ColCondition" xml:space="preserve">
+    <value>Condition</value>
+  </data>
+  <data name="ColAction" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="ColEnabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="ColPriority" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="DialogNewRule" xml:space="preserve">
+    <value>New Approval Rule</value>
+  </data>
+  <data name="DialogEditRule" xml:space="preserve">
+    <value>Edit Approval Rule</value>
+  </data>
+  <data name="LblRuleName" xml:space="preserve">
+    <value>Rule Name:</value>
+  </data>
+  <data name="LblConditionType" xml:space="preserve">
+    <value>Condition Type:</value>
+  </data>
+  <data name="LblConditionValue" xml:space="preserve">
+    <value>Condition Value:</value>
+  </data>
+  <data name="LblRuleAction" xml:space="preserve">
+    <value>Action:</value>
+  </data>
+  <data name="LblTargetGroup" xml:space="preserve">
+    <value>Target Group:</value>
+  </data>
+  <data name="LblPriority" xml:space="preserve">
+    <value>Priority:</value>
+  </data>
+  <data name="ConditionClassification" xml:space="preserve">
+    <value>Classification</value>
+  </data>
+  <data name="ConditionSuperseded" xml:space="preserve">
+    <value>Is Superseded</value>
+  </data>
+  <data name="ConditionTitleContains" xml:space="preserve">
+    <value>Title Contains</value>
+  </data>
+  <data name="ConditionKbArticle" xml:space="preserve">
+    <value>KB Article</value>
+  </data>
+  <data name="ActionApprove" xml:space="preserve">
+    <value>Approve</value>
+  </data>
+  <data name="ActionDecline" xml:space="preserve">
+    <value>Decline</value>
+  </data>
+  <data name="StatusRuleSaved" xml:space="preserve">
+    <value>Rule saved successfully.</value>
+  </data>
+  <data name="StatusRuleDeleted" xml:space="preserve">
+    <value>Rule deleted.</value>
+  </data>
+  <data name="StatusApplyingRules" xml:space="preserve">
+    <value>Applying rules...</value>
+  </data>
+  <data name="StatusRulesApplied" xml:space="preserve">
+    <value>Rules applied: {0} updates processed.</value>
+  </data>
+  <data name="ConfirmDeleteRule" xml:space="preserve">
+    <value>Delete rule '{0}'?</value>
+  </data>
+  <data name="RulesDescription" xml:space="preserve">
+    <value>Create rules to automatically approve or decline updates based on conditions.</value>
+  </data>
+  <data name="TooltipRefresh" xml:space="preserve">
+    <value>Refresh data (F5)</value>
+  </data>
+  <data name="TooltipStartSync" xml:space="preserve">
+    <value>Start WSUS synchronization (Ctrl+S)</value>
+  </data>
+  <data name="TooltipExport" xml:space="preserve">
+    <value>Export data (Ctrl+E)</value>
+  </data>
+  <data name="TooltipDisconnect" xml:space="preserve">
+    <value>Disconnect from server (Esc)</value>
+  </data>
+  <data name="TooltipApprove" xml:space="preserve">
+    <value>Approve selected update (Ctrl+A)</value>
+  </data>
+  <data name="TooltipDecline" xml:space="preserve">
+    <value>Decline selected update (Ctrl+D)</value>
+  </data>
+  <data name="TooltipSearch" xml:space="preserve">
+    <value>Search updates by title or KB number</value>
+  </data>
+  <data name="StatusBarHealthHealthy" xml:space="preserve">
+    <value>Healthy</value>
+  </data>
+  <data name="StatusBarHealthWarning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="StatusBarHealthCritical" xml:space="preserve">
+    <value>Critical</value>
+  </data>
+  <data name="ConfirmDisconnect" xml:space="preserve">
+    <value>Disconnect from the WSUS server?</value>
+  </data>
+  <data name="StatusDisconnected" xml:space="preserve">
+    <value>Disconnected from server.</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="TooltipTheme" xml:space="preserve">
+    <value>Toggle theme (Light/Dark)</value>
+  </data>
+  <data name="ConfirmDeclineSupersededCount" xml:space="preserve">
+    <value>Decline {0} superseded updates? This action cannot be undone.</value>
+  </data>
+  <data name="ConfirmApproveCount" xml:space="preserve">
+    <value>Approve {0} {1} updates for group '{2}'?</value>
+  </data>
+  <data name="StatusCountingUpdates" xml:space="preserve">
+    <value>Counting updates...</value>
+  </data>
+  <data name="ProgressApprovingCount" xml:space="preserve">
+    <value>Approving: {0} of {1} updates</value>
+  </data>
+  <data name="ProgressDecliningCount" xml:space="preserve">
+    <value>Declining: {0} of {1} updates</value>
+  </data>
+  <data name="MenuCopyKB" xml:space="preserve">
+    <value>Copy KB Article</value>
+  </data>
+  <data name="MenuSearchKB" xml:space="preserve">
+    <value>Search KB Online</value>
+  </data>
+  <data name="ToastApproveSuccess" xml:space="preserve">
+    <value>Successfully approved {0} updates</value>
+  </data>
+  <data name="ToastDeclineSuccess" xml:space="preserve">
+    <value>Successfully declined {0} updates</value>
+  </data>
+  <data name="ToastSyncComplete" xml:space="preserve">
+    <value>WSUS synchronization completed</value>
+  </data>
+
+  <!-- Accessibility Labels -->
+  <data name="GridUpdates" xml:space="preserve">
+    <value>Updates list</value>
+  </data>
+  <data name="GridComputers" xml:space="preserve">
+    <value>Computers list</value>
+  </data>
+  <data name="GridActivityLog" xml:space="preserve">
+    <value>Activity log</value>
+  </data>
+  <data name="GridApprovalRules" xml:space="preserve">
+    <value>Approval rules list</value>
+  </data>
+  <data name="HealthStatusUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="TooltipHealthIndicator" xml:space="preserve">
+    <value>WSUS server health status - click Refresh to update</value>
+  </data>
+  <data name="StatusCopied" xml:space="preserve">
+    <value>Copied {0} to clipboard</value>
+  </data>
+  <data name="TooltipRefreshShortcut" xml:space="preserve">
+    <value>Refresh updates (F5 or Ctrl+R)</value>
+  </data>
+  <data name="TooltipSyncShortcut" xml:space="preserve">
+    <value>Start synchronization (Ctrl+S)</value>
+  </data>
+  <data name="TooltipApproveShortcut" xml:space="preserve">
+    <value>Approve selected updates (Ctrl+A)</value>
+  </data>
+  <data name="TooltipDeclineShortcut" xml:space="preserve">
+    <value>Decline selected updates (Ctrl+D)</value>
+  </data>
+  <data name="TooltipExportShortcut" xml:space="preserve">
+    <value>Export data (Ctrl+E)</value>
+  </data>
+  <data name="BtnDismiss" xml:space="preserve">
+    <value>Dismiss</value>
   </data>
 </root>

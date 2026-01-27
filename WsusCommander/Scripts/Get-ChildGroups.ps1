@@ -1,87 +1,61 @@
 # Copyright 2025 Julien Bombled
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-<#
-.SYNOPSIS
-    Gets child groups of a WSUS computer target group.
-
-.PARAMETER ParentGroupId
-    The GUID of the parent group.
-
-.PARAMETER WsusServer
-    The WSUS server name.
-
-.PARAMETER WsusPort
-    The WSUS server port.
-
-.PARAMETER UseSsl
-    Whether to use SSL connection.
-#>
+# Licensed under the Apache License, Version 2.0
 
 param(
     [Parameter(Mandatory = $true)]
-    [string]$ParentGroupId,
+    [string]$ServerName,
 
-    [Parameter(Mandatory = $false)]
-    [string]$WsusServer = "localhost",
+    [Parameter(Mandatory = $true)]
+    [int]$Port,
 
-    [Parameter(Mandatory = $false)]
-    [int]$WsusPort = 8530,
+    [Parameter(Mandatory = $true)]
+    [bool]$UseSsl,
 
-    [Parameter(Mandatory = $false)]
-    [bool]$UseSsl = $false
+    [Parameter(Mandatory = $true)]
+    [string]$ParentGroupId
 )
 
 try {
-    # Import WSUS module
+    # Defensive coding: Check if module exists
     if (-not (Get-Module -ListAvailable -Name UpdateServices)) {
-        throw "WSUS PowerShell module (UpdateServices) is not installed."
+        Write-Error "WSUS Module (UpdateServices) is not installed on this machine." -ErrorAction Stop
     }
 
-    Import-Module UpdateServices -ErrorAction Stop
+    # Load the WSUS assembly
+    [reflection.assembly]::LoadWithPartialName("Microsoft.UpdateServices.Administration") | Out-Null
 
     # Connect to WSUS server
-    $wsus = Get-WsusServer -Name $WsusServer -PortNumber $WsusPort -UseSsl:$UseSsl
+    $wsus = [Microsoft.UpdateServices.Administration.AdminProxy]::GetUpdateServer($ServerName, $UseSsl, $Port)
 
     if (-not $wsus) {
-        throw "Failed to connect to WSUS server: $WsusServer"
+        Write-Error "Failed to connect to WSUS server: $ServerName" -ErrorAction Stop
     }
 
     # Get the parent group
-    $parentGuid = [Guid]::Parse($ParentGroupId)
+    $parentGuid = [Guid]$ParentGroupId
     $parentGroup = $wsus.GetComputerTargetGroup($parentGuid)
 
     if (-not $parentGroup) {
-        throw "Parent group not found: $ParentGroupId"
+        Write-Error "Parent group not found: $ParentGroupId" -ErrorAction Stop
     }
 
     # Get child groups
     $childGroups = $parentGroup.GetChildTargetGroups()
 
-    $childGroups | ForEach-Object {
-        @{
-            Id = $_.Id.ToString()
-            Name = $_.Name
-            Description = $_.Description
-            ComputerCount = $_.GetComputerTargets().Count
+    $result = @()
+    foreach ($child in $childGroups) {
+        $result += [PSCustomObject]@{
+            Id            = $child.Id.ToString()
+            Name          = $child.Name
+            Description   = $child.Description
+            ComputerCount = $child.GetComputerTargets().Count
             ParentGroupId = $ParentGroupId
         }
     }
+
+    return $result
 }
 catch {
-    @{
-        Error = $_.Exception.Message
-        ParentGroupId = $ParentGroupId
-    }
+    Write-Error "Failed to get child groups: $_" -ErrorAction Stop
+    throw $_
 }

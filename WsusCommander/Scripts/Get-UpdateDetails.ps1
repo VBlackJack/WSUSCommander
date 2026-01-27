@@ -1,69 +1,43 @@
 # Copyright 2025 Julien Bombled
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-<#
-.SYNOPSIS
-    Gets detailed information about a WSUS update.
-
-.PARAMETER UpdateId
-    The GUID of the update.
-
-.PARAMETER WsusServer
-    The WSUS server name.
-
-.PARAMETER WsusPort
-    The WSUS server port.
-
-.PARAMETER UseSsl
-    Whether to use SSL connection.
-#>
+# Licensed under the Apache License, Version 2.0
 
 param(
     [Parameter(Mandatory = $true)]
-    [string]$UpdateId,
+    [string]$ServerName,
 
-    [Parameter(Mandatory = $false)]
-    [string]$WsusServer = "localhost",
+    [Parameter(Mandatory = $true)]
+    [int]$Port,
 
-    [Parameter(Mandatory = $false)]
-    [int]$WsusPort = 8530,
+    [Parameter(Mandatory = $true)]
+    [bool]$UseSsl,
 
-    [Parameter(Mandatory = $false)]
-    [bool]$UseSsl = $false
+    [Parameter(Mandatory = $true)]
+    [string]$UpdateId
 )
 
 try {
-    # Import WSUS module
+    # Defensive coding: Check if module exists
     if (-not (Get-Module -ListAvailable -Name UpdateServices)) {
-        throw "WSUS PowerShell module (UpdateServices) is not installed."
+        Write-Error "WSUS Module (UpdateServices) is not installed on this machine." -ErrorAction Stop
     }
 
-    Import-Module UpdateServices -ErrorAction Stop
+    # Load the WSUS assembly
+    [reflection.assembly]::LoadWithPartialName("Microsoft.UpdateServices.Administration") | Out-Null
 
     # Connect to WSUS server
-    $wsus = Get-WsusServer -Name $WsusServer -PortNumber $WsusPort -UseSsl:$UseSsl
+    $wsus = [Microsoft.UpdateServices.Administration.AdminProxy]::GetUpdateServer($ServerName, $UseSsl, $Port)
 
     if (-not $wsus) {
-        throw "Failed to connect to WSUS server: $WsusServer"
+        Write-Error "Failed to connect to WSUS server: $ServerName" -ErrorAction Stop
     }
 
     # Get the update
-    $updateGuid = [Guid]::Parse($UpdateId)
-    $update = $wsus.GetUpdate([Microsoft.UpdateServices.Administration.UpdateRevisionId]::new($updateGuid, 0))
+    $updateGuid = [Guid]$UpdateId
+    $updateRevisionId = New-Object Microsoft.UpdateServices.Administration.UpdateRevisionId($updateGuid)
+    $update = $wsus.GetUpdate($updateRevisionId)
 
     if (-not $update) {
-        throw "Update not found: $UpdateId"
+        Write-Error "Update not found: $UpdateId" -ErrorAction Stop
     }
 
     # Get approvals
@@ -71,13 +45,13 @@ try {
     $updateApprovals = $update.GetUpdateApprovals()
     foreach ($approval in $updateApprovals) {
         $group = $wsus.GetComputerTargetGroup($approval.ComputerTargetGroupId)
-        $approvals += @{
-            GroupId = $approval.ComputerTargetGroupId.ToString()
-            GroupName = $group.Name
+        $approvals += [PSCustomObject]@{
+            GroupId        = $approval.ComputerTargetGroupId.ToString()
+            GroupName      = $group.Name
             ApprovalAction = $approval.Action.ToString()
-            ApprovalDate = $approval.GoLiveTime
-            ApprovedBy = $approval.AdministratorName
-            Deadline = $approval.Deadline
+            ApprovalDate   = $approval.GoLiveTime
+            ApprovedBy     = $approval.AdministratorName
+            Deadline       = $approval.Deadline
         }
     }
 
@@ -85,24 +59,25 @@ try {
     $files = @()
     foreach ($file in $update.GetInstallableItems()) {
         foreach ($fileUrl in $file.Files) {
-            $files += @{
-                FileName = $fileUrl.Name
-                FileSize = $fileUrl.TotalBytes
-                DownloadUrl = $fileUrl.OriginUri.ToString()
-                Hash = $fileUrl.Hash
+            $files += [PSCustomObject]@{
+                FileName      = $fileUrl.Name
+                FileSize      = $fileUrl.TotalBytes
+                DownloadUrl   = $fileUrl.OriginUri.ToString()
+                Hash          = $fileUrl.Hash
                 HashAlgorithm = $fileUrl.HashAlgorithm
             }
         }
     }
 
     # Get installation statistics
-    $stats = $update.GetSummary()
-    $installStats = @{
-        NeededCount = $stats.NotInstalledCount + $stats.DownloadedCount
-        InstalledCount = $stats.InstalledCount + $stats.InstalledPendingRebootCount
-        FailedCount = $stats.FailedCount
+    $computerScope = New-Object Microsoft.UpdateServices.Administration.ComputerTargetScope
+    $stats = $update.GetSummary($computerScope)
+    $installStats = [PSCustomObject]@{
+        NeededCount        = $stats.NotInstalledCount + $stats.DownloadedCount
+        InstalledCount     = $stats.InstalledCount + $stats.InstalledPendingRebootCount
+        FailedCount        = $stats.FailedCount
         NotApplicableCount = $stats.NotApplicableCount
-        TotalCount = $stats.ComputerTargetCount
+        TotalCount         = $stats.ComputerTargetCount
     }
 
     # Get supersedence information
@@ -157,37 +132,35 @@ try {
     # Calculate total file size
     $totalFileSize = ($files | Measure-Object -Property FileSize -Sum).Sum
 
-    @{
-        Id = $update.Id.UpdateId.ToString()
-        Title = $update.Title
-        KbArticle = $update.KnowledgebaseArticles -join ", "
-        Description = $update.Description
-        Classification = $update.UpdateClassificationTitle
-        Severity = $update.MsrcSeverity
-        CreationDate = $update.CreationDate
-        ArrivalDate = $update.ArrivalDate
-        ReleaseNotesUrl = $update.ReleaseNotes
-        SupportUrl = $update.SupportUrl
-        MoreInfoUrl = $update.AdditionalInformationUrls -join "; "
-        ProductTitles = @($update.ProductTitles)
-        SupersededUpdates = $supersededUpdates
+    return [PSCustomObject]@{
+        Id                 = $update.Id.UpdateId.ToString()
+        Title              = $update.Title
+        KbArticle          = $update.KnowledgebaseArticles -join ", "
+        Description        = $update.Description
+        Classification     = $update.UpdateClassificationTitle
+        Severity           = $update.MsrcSeverity
+        CreationDate       = $update.CreationDate
+        ArrivalDate        = $update.ArrivalDate
+        ReleaseNotesUrl    = $update.ReleaseNotes
+        SupportUrl         = $update.SupportUrl
+        MoreInfoUrl        = $update.AdditionalInformationUrls -join "; "
+        ProductTitles      = @($update.ProductTitles)
+        SupersededUpdates  = $supersededUpdates
         SupersedingUpdates = $supersedingUpdates
-        Prerequisites = $prerequisites
-        Files = $files
-        CveIds = $cveIds
-        Approvals = $approvals
-        InstallationStats = $installStats
-        IsApproved = $update.IsApproved
-        IsDeclined = $update.IsDeclined
-        IsSuperseded = $update.IsSuperseded
-        RequiresReboot = $update.InstallationBehavior.RebootBehavior -ne "NeverReboots"
-        CanUninstall = $update.UninstallationBehavior -ne $null
-        TotalFileSize = $totalFileSize
+        Prerequisites      = $prerequisites
+        Files              = $files
+        CveIds             = $cveIds
+        Approvals          = $approvals
+        InstallationStats  = $installStats
+        IsApproved         = $update.IsApproved
+        IsDeclined         = $update.IsDeclined
+        IsSuperseded       = $update.IsSuperseded
+        RequiresReboot     = $update.InstallationBehavior.RebootBehavior -ne "NeverReboots"
+        CanUninstall       = $update.UninstallationBehavior -ne $null
+        TotalFileSize      = $totalFileSize
     }
 }
 catch {
-    @{
-        Error = $_.Exception.Message
-        UpdateId = $UpdateId
-    }
+    Write-Error "Failed to get update details: $_" -ErrorAction Stop
+    throw $_
 }

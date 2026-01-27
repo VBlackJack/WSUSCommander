@@ -45,4 +45,9 @@ public interface ILoggingService
     /// </summary>
     /// <param name="message">The message to log.</param>
     Task LogDebugAsync(string message);
+
+    /// <summary>
+    /// Gets the current log file path.
+    /// </summary>
+    string CurrentLogFilePath { get; }
 }
