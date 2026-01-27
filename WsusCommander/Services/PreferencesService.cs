@@ -28,6 +28,7 @@ public sealed class PreferencesService : IPreferencesService
     private readonly string _preferencesPath;
     private readonly ILoggingService _loggingService;
     private UserPreferences _preferences = new();
+    private bool _hasSavedPreferences;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PreferencesService"/> class.
@@ -49,6 +50,9 @@ public sealed class PreferencesService : IPreferencesService
     public UserPreferences Preferences => _preferences;
 
     /// <inheritdoc/>
+    public bool HasSavedPreferences => _hasSavedPreferences;
+
+    /// <inheritdoc/>
     public async Task LoadAsync()
     {
         try
@@ -57,6 +61,7 @@ public sealed class PreferencesService : IPreferencesService
             {
                 var content = await File.ReadAllTextAsync(_preferencesPath);
                 _preferences = JsonSerializer.Deserialize<UserPreferences>(content) ?? new UserPreferences();
+                _hasSavedPreferences = true;
                 await _loggingService.LogDebugAsync("User preferences loaded.");
             }
         }
@@ -64,6 +69,7 @@ public sealed class PreferencesService : IPreferencesService
         {
             await _loggingService.LogWarningAsync($"Failed to load preferences: {ex.Message}");
             _preferences = new UserPreferences();
+            _hasSavedPreferences = false;
         }
     }
 
@@ -90,6 +96,7 @@ public sealed class PreferencesService : IPreferencesService
     public void Reset()
     {
         _preferences = new UserPreferences();
+        _hasSavedPreferences = false;
         _loggingService.LogInfoAsync("User preferences reset to defaults.");
     }
 

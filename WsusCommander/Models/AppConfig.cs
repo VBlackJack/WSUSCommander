@@ -74,7 +74,7 @@ public sealed class WsusConnectionConfig
     /// <summary>
     /// Gets or sets a value indicating whether to use SSL for the connection.
     /// </summary>
-    public bool UseSsl { get; set; } = true;
+    public bool UseSsl { get; set; } = false;
 
     /// <summary>
     /// Gets or sets a value indicating whether to validate server certificates.
@@ -129,7 +129,7 @@ public sealed class SecurityConfig
     /// <summary>
     /// Gets or sets a value indicating whether authentication is required.
     /// </summary>
-    public bool RequireAuthentication { get; set; } = true;
+    public bool RequireAuthentication { get; set; } = false;
 
     /// <summary>
     /// Gets or sets the list of AD groups that grant administrator access.
