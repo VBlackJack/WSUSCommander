@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using System.ComponentModel.DataAnnotations;
+
 namespace WsusCommander.Models;
 
 /// <summary>
@@ -24,26 +26,32 @@ public sealed class FilterPreset
     /// <summary>
     /// Gets or sets the unique identifier.
     /// </summary>
+    [Required]
     public Guid Id { get; set; } = Guid.NewGuid();
 
     /// <summary>
     /// Gets or sets the preset name.
     /// </summary>
+    [Required]
+    [StringLength(256, MinimumLength = 1)]
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the search text filter.
     /// </summary>
+    [StringLength(256)]
     public string SearchText { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the classification filter.
     /// </summary>
+    [StringLength(128)]
     public string Classification { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the approval status filter.
     /// </summary>
+    [StringLength(64)]
     public string ApprovalFilter { get; set; } = "All";
 
     /// <summary>
@@ -54,6 +62,7 @@ public sealed class FilterPreset
     /// <summary>
     /// Gets or sets the creation date.
     /// </summary>
+    [Required]
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 }
 
@@ -65,5 +74,6 @@ public sealed class FilterPresetsCollection
     /// <summary>
     /// Gets or sets the list of presets.
     /// </summary>
+    [Required]
     public List<FilterPreset> Presets { get; set; } = [];
 }

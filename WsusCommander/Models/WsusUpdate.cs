@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using System.ComponentModel.DataAnnotations;
+
 namespace WsusCommander.Models;
 
 /// <summary>
@@ -24,21 +26,26 @@ public sealed class WsusUpdate
     /// <summary>
     /// Gets or sets the unique identifier of the update.
     /// </summary>
+    [Required]
     public Guid Id { get; set; }
 
     /// <summary>
     /// Gets or sets the title of the update.
     /// </summary>
+    [Required]
+    [StringLength(512, MinimumLength = 1)]
     public string Title { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the Knowledge Base article reference(s).
     /// </summary>
+    [StringLength(256)]
     public string KbArticle { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the classification of the update (e.g., Critical, Security).
     /// </summary>
+    [StringLength(128)]
     public string Classification { get; set; } = string.Empty;
 
     /// <summary>
@@ -59,6 +66,7 @@ public sealed class WsusUpdate
     /// <summary>
     /// Gets or sets the description of the update.
     /// </summary>
+    [StringLength(2048)]
     public string? Description { get; set; }
 
     /// <summary>

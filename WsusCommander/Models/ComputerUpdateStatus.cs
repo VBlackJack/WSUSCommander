@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using System.ComponentModel.DataAnnotations;
+
 namespace WsusCommander.Models;
 
 /// <summary>
@@ -66,21 +68,26 @@ public sealed class ComputerUpdateStatus
     /// <summary>
     /// Gets or sets the update ID.
     /// </summary>
+    [Required]
     public Guid UpdateId { get; set; }
 
     /// <summary>
     /// Gets or sets the update title.
     /// </summary>
+    [Required]
+    [StringLength(512, MinimumLength = 1)]
     public string Title { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the KB article number.
     /// </summary>
+    [StringLength(256)]
     public string KbArticle { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the update classification (e.g., Security Updates, Critical Updates).
     /// </summary>
+    [StringLength(128)]
     public string Classification { get; set; } = string.Empty;
 
     /// <summary>
@@ -91,6 +98,7 @@ public sealed class ComputerUpdateStatus
     /// <summary>
     /// Gets or sets the installation state as a display string.
     /// </summary>
+    [StringLength(128)]
     public string InstallationStateDisplay { get; set; } = string.Empty;
 
     /// <summary>
@@ -101,6 +109,7 @@ public sealed class ComputerUpdateStatus
     /// <summary>
     /// Gets or sets the approval status as a display string.
     /// </summary>
+    [StringLength(128)]
     public string ApprovalStatusDisplay { get; set; } = string.Empty;
 
     /// <summary>
@@ -111,16 +120,19 @@ public sealed class ComputerUpdateStatus
     /// <summary>
     /// Gets or sets the title of the update that supersedes this one.
     /// </summary>
+    [StringLength(512)]
     public string SupersededBy { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the release date of the update.
     /// </summary>
+    [Required]
     public DateTime ReleaseDate { get; set; }
 
     /// <summary>
     /// Gets or sets the severity level (Critical, Important, Moderate, Low).
     /// </summary>
+    [StringLength(128)]
     public string Severity { get; set; } = string.Empty;
 
     /// <summary>

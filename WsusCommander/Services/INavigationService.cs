@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-using System.Management.Automation;
+using WsusCommander.Models;
 
 namespace WsusCommander.Services;
 
 /// <summary>
-/// Interface for the PowerShell script execution service.
+/// Provides navigation and window management for the application.
 /// </summary>
-public interface IPowerShellService
+public interface INavigationService
 {
     /// <summary>
-    /// Executes a PowerShell script asynchronously.
+    /// Opens the computer updates window for the specified computer.
     /// </summary>
-    /// <param name="scriptName">The name of the script file (relative to Scripts folder).</param>
-    /// <param name="parameters">Optional dictionary of parameters to pass to the script.</param>
-    /// <returns>A collection of PSObject results from the script execution.</returns>
-    Task<PSDataCollection<PSObject>> ExecuteScriptAsync(
-        string scriptName,
-        Dictionary<string, object>? parameters = null,
-        CancellationToken cancellationToken = default);
+    /// <param name="computer">The selected computer.</param>
+    /// <param name="updates">The updates associated with the computer.</param>
+    void NavigateToComputerUpdates(ComputerStatus computer, IReadOnlyList<ComputerUpdateStatus> updates);
 }

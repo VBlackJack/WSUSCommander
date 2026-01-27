@@ -30,22 +30,27 @@ public sealed class PowerShellService : IPowerShellService
 {
     private readonly string _scriptsPath;
     private readonly ILoggingService _loggingService;
+    private readonly IConfigurationService _configurationService;
     private const string PowerShellExe = @"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PowerShellService"/> class.
     /// </summary>
     /// <param name="loggingService">The logging service for detailed diagnostics.</param>
-    public PowerShellService(ILoggingService loggingService)
+    public PowerShellService(ILoggingService loggingService, IConfigurationService configurationService)
     {
         _loggingService = loggingService;
+        _configurationService = configurationService;
         _scriptsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scripts");
         _loggingService.LogDebugAsync($"PowerShellService initialized. Scripts path: {_scriptsPath}");
         _loggingService.LogDebugAsync($"Using Windows PowerShell: {PowerShellExe}");
     }
 
     /// <inheritdoc/>
-    public async Task<PSDataCollection<PSObject>> ExecuteScriptAsync(string scriptName, Dictionary<string, object>? parameters = null)
+    public async Task<PSDataCollection<PSObject>> ExecuteScriptAsync(
+        string scriptName,
+        Dictionary<string, object>? parameters = null,
+        CancellationToken cancellationToken = default)
     {
         ValidateScriptName(scriptName);
         var scriptPath = Path.Combine(_scriptsPath, scriptName);
@@ -93,15 +98,17 @@ public sealed class PowerShellService : IPowerShellService
         }
 
         // Wrap to convert output to JSON for easy parsing
-        var fullCommand = $"{psCommand} | ConvertTo-Json -Compress";
+        var jsonDepth = _configurationService.Config.PowerShell.JsonDepth;
+        var fullCommand = $"{psCommand} | ConvertTo-Json -Depth {jsonDepth} -Compress";
         await _loggingService.LogDebugAsync($"[PS] Command: {fullCommand}");
 
         try
         {
+            var executionPolicy = _configurationService.Config.PowerShell.ExecutionPolicy ?? "RemoteSigned";
             var psi = new ProcessStartInfo
             {
                 FileName = PowerShellExe,
-                Arguments = $"-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command \"{fullCommand}\"",
+                Arguments = $"-NoProfile -NonInteractive -ExecutionPolicy {executionPolicy} -Command \"{fullCommand}\"",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -115,6 +122,24 @@ public sealed class PowerShellService : IPowerShellService
             using var process = new Process { StartInfo = psi };
             var outputBuilder = new StringBuilder();
             var errorBuilder = new StringBuilder();
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            var timeoutSeconds = _configurationService.Config.PowerShell.TimeoutSeconds;
+            linkedCts.CancelAfter(TimeSpan.FromSeconds(timeoutSeconds));
+
+            using var registration = linkedCts.Token.Register(() =>
+            {
+                try
+                {
+                    if (!process.HasExited)
+                    {
+                        process.Kill(entireProcessTree: true);
+                    }
+                }
+                catch
+                {
+                    // Process already exited
+                }
+            });
 
             process.OutputDataReceived += (s, e) =>
             {
@@ -129,7 +154,7 @@ public sealed class PowerShellService : IPowerShellService
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
 
-            await process.WaitForExitAsync();
+            await process.WaitForExitAsync(linkedCts.Token);
 
             var output = outputBuilder.ToString().Trim();
             var errors = errorBuilder.ToString().Trim();
@@ -140,6 +165,13 @@ public sealed class PowerShellService : IPowerShellService
             if (!string.IsNullOrEmpty(errors))
             {
                 await _loggingService.LogWarningAsync($"[PS] Stderr: {errors}");
+            }
+
+            if (linkedCts.IsCancellationRequested)
+            {
+                throw new OperationCanceledException(
+                    $"PowerShell execution timed out after {timeoutSeconds} seconds.",
+                    linkedCts.Token);
             }
 
             if (process.ExitCode != 0)

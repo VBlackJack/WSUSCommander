@@ -18,6 +18,7 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using WsusCommander.Models;
+using WsusCommander.Properties;
 
 namespace WsusCommander.Services;
 
@@ -40,7 +41,8 @@ public sealed class ExportService : IExportService
     public async Task ExportUpdatesAsync(IEnumerable<WsusUpdate> updates, string filePath, ExportFormat format)
     {
         var data = updates.ToList();
-        await _loggingService.LogInfoAsync($"Exporting {data.Count} updates to {filePath}");
+        await _loggingService.LogInfoAsync(
+            string.Format(Resources.LogExportingUpdates, data.Count, filePath));
 
         var content = format switch
         {
@@ -51,14 +53,15 @@ public sealed class ExportService : IExportService
         };
 
         await File.WriteAllTextAsync(filePath, content, Encoding.UTF8);
-        await _loggingService.LogInfoAsync($"Export completed: {filePath}");
+        await _loggingService.LogInfoAsync(string.Format(Resources.LogExportCompleted, filePath));
     }
 
     /// <inheritdoc/>
     public async Task ExportComputersAsync(IEnumerable<ComputerStatus> computers, string filePath, ExportFormat format)
     {
         var data = computers.ToList();
-        await _loggingService.LogInfoAsync($"Exporting {data.Count} computers to {filePath}");
+        await _loggingService.LogInfoAsync(
+            string.Format(Resources.LogExportingComputers, data.Count, filePath));
 
         var content = format switch
         {
@@ -69,14 +72,15 @@ public sealed class ExportService : IExportService
         };
 
         await File.WriteAllTextAsync(filePath, content, Encoding.UTF8);
-        await _loggingService.LogInfoAsync($"Export completed: {filePath}");
+        await _loggingService.LogInfoAsync(string.Format(Resources.LogExportCompleted, filePath));
     }
 
     /// <inheritdoc/>
     public async Task ExportGroupsAsync(IEnumerable<ComputerGroup> groups, string filePath, ExportFormat format)
     {
         var data = groups.ToList();
-        await _loggingService.LogInfoAsync($"Exporting {data.Count} groups to {filePath}");
+        await _loggingService.LogInfoAsync(
+            string.Format(Resources.LogExportingGroups, data.Count, filePath));
 
         var content = format switch
         {
@@ -87,7 +91,7 @@ public sealed class ExportService : IExportService
         };
 
         await File.WriteAllTextAsync(filePath, content, Encoding.UTF8);
-        await _loggingService.LogInfoAsync($"Export completed: {filePath}");
+        await _loggingService.LogInfoAsync(string.Format(Resources.LogExportCompleted, filePath));
     }
 
     /// <inheritdoc/>
@@ -95,10 +99,10 @@ public sealed class ExportService : IExportService
     {
         return format switch
         {
-            ExportFormat.Csv => "CSV files (*.csv)|*.csv",
-            ExportFormat.Tsv => "TSV files (*.tsv)|*.tsv",
-            ExportFormat.Json => "JSON files (*.json)|*.json",
-            _ => "All files (*.*)|*.*"
+            ExportFormat.Csv => Resources.ExportFilterCsv,
+            ExportFormat.Tsv => Resources.ExportFilterTsv,
+            ExportFormat.Json => Resources.ExportFilterJson,
+            _ => Resources.ExportFilterAll
         };
     }
 
@@ -119,7 +123,14 @@ public sealed class ExportService : IExportService
         var sb = new StringBuilder();
 
         // Header
-        sb.AppendLine(string.Join(separator, "Id", "Title", "KB", "Classification", "CreationDate", "IsApproved", "IsDeclined"));
+        sb.AppendLine(string.Join(separator,
+            Resources.ExportHeaderUpdateId,
+            Resources.ExportHeaderUpdateTitle,
+            Resources.ExportHeaderKBArticle,
+            Resources.ExportHeaderClassification,
+            Resources.ExportHeaderCreationDate,
+            Resources.ExportHeaderApprovalStatus,
+            Resources.ExportHeaderDeclineStatus));
 
         // Data
         foreach (var update in updates)
@@ -151,7 +162,15 @@ public sealed class ExportService : IExportService
         var sb = new StringBuilder();
 
         // Header
-        sb.AppendLine(string.Join(separator, "ComputerId", "Name", "IpAddress", "GroupName", "InstalledCount", "NeededCount", "FailedCount", "LastReportedTime"));
+        sb.AppendLine(string.Join(separator,
+            Resources.ExportHeaderComputerId,
+            Resources.ExportHeaderComputerName,
+            Resources.ExportHeaderIpAddress,
+            Resources.ExportHeaderGroupName,
+            Resources.ExportHeaderInstalledCount,
+            Resources.ExportHeaderNeededCount,
+            Resources.ExportHeaderFailedCount,
+            Resources.ExportHeaderLastContact));
 
         // Data
         foreach (var computer in computers)
@@ -184,7 +203,11 @@ public sealed class ExportService : IExportService
         var sb = new StringBuilder();
 
         // Header
-        sb.AppendLine(string.Join(separator, "Id", "Name", "Description", "ComputerCount"));
+        sb.AppendLine(string.Join(separator,
+            Resources.ExportHeaderGroupId,
+            Resources.ExportHeaderGroupName,
+            Resources.ExportHeaderGroupDescription,
+            Resources.ExportHeaderGroupComputerCount));
 
         // Data
         foreach (var group in groups)

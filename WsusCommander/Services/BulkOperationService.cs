@@ -73,7 +73,8 @@ public sealed class BulkOperationService : IBulkOperationService
 
                 await _powerShellService.ExecuteScriptAsync(
                     "Approve-WsusUpdate.ps1",
-                    parameters);
+                    parameters,
+                    ct);
             },
             id => id.ToString(),
             progress,
@@ -98,7 +99,8 @@ public sealed class BulkOperationService : IBulkOperationService
 
                 await _powerShellService.ExecuteScriptAsync(
                     "Decline-WsusUpdate.ps1",
-                    parameters);
+                    parameters,
+                    ct);
             },
             id => id.ToString(),
             progress,
@@ -125,7 +127,8 @@ public sealed class BulkOperationService : IBulkOperationService
 
                 await _powerShellService.ExecuteScriptAsync(
                     "Unapprove-WsusUpdate.ps1",
-                    parameters);
+                    parameters,
+                    ct);
             },
             id => id.ToString(),
             progress,
@@ -152,7 +155,8 @@ public sealed class BulkOperationService : IBulkOperationService
 
                 await _powerShellService.ExecuteScriptAsync(
                     "Move-ComputerToGroup.ps1",
-                    parameters);
+                    parameters,
+                    ct);
             },
             id => id,
             progress,
@@ -179,7 +183,8 @@ public sealed class BulkOperationService : IBulkOperationService
 
                 await _powerShellService.ExecuteScriptAsync(
                     "Remove-ComputerFromGroup.ps1",
-                    parameters);
+                    parameters,
+                    ct);
             },
             id => id,
             progress,

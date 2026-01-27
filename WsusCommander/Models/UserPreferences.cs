@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using System.ComponentModel.DataAnnotations;
+
 namespace WsusCommander.Models;
 
 /// <summary>
@@ -59,21 +61,25 @@ public sealed class UserPreferences
     /// <summary>
     /// Gets or sets the last selected tab index.
     /// </summary>
+    [Range(0, 20)]
     public int LastSelectedTabIndex { get; set; }
 
     /// <summary>
     /// Gets or sets the updates grid column widths.
     /// </summary>
+    [Required]
     public Dictionary<string, double> UpdatesColumnWidths { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the computers grid column widths.
     /// </summary>
+    [Required]
     public Dictionary<string, double> ComputersColumnWidths { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the last export format used.
     /// </summary>
+    [StringLength(32)]
     public string LastExportFormat { get; set; } = "Csv";
 
     /// <summary>
@@ -84,11 +90,18 @@ public sealed class UserPreferences
     /// <summary>
     /// Gets or sets the update filter settings.
     /// </summary>
+    [Required]
     public UpdateFilterPreferences UpdateFilter { get; set; } = new();
+
+    /// <summary>
+    /// Gets or sets a value indicating whether authentication has been configured.
+    /// </summary>
+    public bool HasConfiguredAuthentication { get; set; }
 
     /// <summary>
     /// Gets or sets additional custom preferences.
     /// </summary>
+    [Required]
     public Dictionary<string, object> Custom { get; set; } = [];
 }
 
@@ -100,16 +113,19 @@ public sealed class UpdateFilterPreferences
     /// <summary>
     /// Gets or sets the classification filter.
     /// </summary>
+    [StringLength(128)]
     public string? Classification { get; set; }
 
     /// <summary>
     /// Gets or sets the approval status filter.
     /// </summary>
+    [StringLength(64)]
     public string? ApprovalStatus { get; set; }
 
     /// <summary>
     /// Gets or sets the search text.
     /// </summary>
+    [StringLength(256)]
     public string? SearchText { get; set; }
 
     /// <summary>

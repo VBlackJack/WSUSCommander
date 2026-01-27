@@ -1,8 +1,11 @@
 param(
     [Parameter(Mandatory=$true)]
+    [ValidateNotNullOrEmpty()]
+    [ValidatePattern('^[a-zA-Z0-9\-_.]+$')]
     [string]$ServerName,
 
     [Parameter(Mandatory=$true)]
+    [ValidateRange(1, 65535)]
     [int]$Port,
 
     [Parameter(Mandatory=$false)]
@@ -10,6 +13,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
 
 try {
     # Load the WSUS assembly
@@ -26,6 +30,13 @@ try {
     }
 }
 catch {
-    Write-Error $_.Exception.Message
+    $errorResult = @{
+        Success = $false
+        Error   = @{
+            Message = $_.Exception.Message
+            Type    = $_.Exception.GetType().Name
+        }
+    }
+    Write-Output ($errorResult | ConvertTo-Json -Depth 5 -Compress)
     exit 1
 }

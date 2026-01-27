@@ -51,7 +51,7 @@ public partial class App : Application
         IConfigurationService configService = new ConfigurationService();
         ConfigService = configService;
         ILoggingService loggingService = new LoggingService(configService);
-        IPowerShellService psService = new PowerShellService(loggingService);
+        IPowerShellService psService = new PowerShellService(loggingService, configService);
         ITimerService timerService = new TimerService();
 
         // Security Services
@@ -63,6 +63,8 @@ public partial class App : Application
         IRetryService retryService = new RetryService(configService, loggingService);
         ICacheService cacheService = new CacheService(configService);
         IDialogService dialogService = new DialogService();
+        IClipboardService clipboardService = new ClipboardService();
+        INavigationService navigationService = new NavigationService();
 
         // Data Services
         IExportService exportService = new ExportService(loggingService);
@@ -81,9 +83,11 @@ public partial class App : Application
         IBulkOperationService bulkOperationService = new BulkOperationService(
             psService, loggingService, configService);
         IGroupService groupService = new GroupService(
-            psService, loggingService, cacheService, validationService, configService);
+            psService, loggingService, cacheService, validationService, configService, retryService);
         IReportService reportService = new ReportService(
             psService, loggingService, cacheService, configService);
+
+        await preferencesService.LoadAsync();
 
         // Track disposables
         _disposables.Add((IDisposable)timerService);
@@ -115,7 +119,9 @@ public partial class App : Application
             bulkOperationService,
             groupService,
             reportService,
-            themeService);
+            themeService,
+            clipboardService,
+            navigationService);
 
         // Initialize ViewModel (authentication, preferences, health check)
         await _mainViewModel.InitializeAsync();
@@ -124,6 +130,9 @@ public partial class App : Application
         {
             DataContext = _mainViewModel
         };
+        MainWindow = mainWindow;
+
+        await PromptForAuthenticationSetupAsync(preferencesService, dialogService);
 
         mainWindow.Show();
     }
@@ -142,5 +151,31 @@ public partial class App : Application
         }
 
         base.OnExit(e);
+    }
+
+    private static async Task PromptForAuthenticationSetupAsync(
+        IPreferencesService preferencesService,
+        IDialogService dialogService)
+    {
+        if (preferencesService.Preferences.HasConfiguredAuthentication)
+        {
+            return;
+        }
+
+        var result = await dialogService.ShowConfirmationAsync(
+            Properties.Resources.DialogAuthSetupTitle,
+            Properties.Resources.DialogAuthSetupMessage,
+            Properties.Resources.BtnOk,
+            Properties.Resources.BtnLater);
+
+        preferencesService.Preferences.HasConfiguredAuthentication = true;
+        await preferencesService.SaveAsync();
+
+        if (result == DialogResult.Confirmed)
+        {
+            await dialogService.ShowInfoAsync(
+                Properties.Resources.DialogAuthSetupTitle,
+                Properties.Resources.DialogAuthSetupFollowup);
+        }
     }
 }

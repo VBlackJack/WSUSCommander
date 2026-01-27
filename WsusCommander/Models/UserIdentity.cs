@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using System.ComponentModel.DataAnnotations;
+
 namespace WsusCommander.Models;
 
 /// <summary>
@@ -39,16 +41,20 @@ public sealed class UserIdentity
     /// <summary>
     /// Gets or sets the user's Windows account name (DOMAIN\Username).
     /// </summary>
+    [Required]
+    [StringLength(256, MinimumLength = 1)]
     public string AccountName { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the user's display name.
     /// </summary>
+    [StringLength(256)]
     public string DisplayName { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the user's email address.
     /// </summary>
+    [StringLength(256)]
     public string Email { get; set; } = string.Empty;
 
     /// <summary>
@@ -59,16 +65,19 @@ public sealed class UserIdentity
     /// <summary>
     /// Gets or sets the list of AD groups the user belongs to.
     /// </summary>
+    [Required]
     public List<string> Groups { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the list of WSUS group IDs the user can manage.
     /// </summary>
+    [Required]
     public List<Guid> AllowedWsusGroups { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the authentication timestamp.
     /// </summary>
+    [Required]
     public DateTime AuthenticatedAt { get; set; }
 
     /// <summary>

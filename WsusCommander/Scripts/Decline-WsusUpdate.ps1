@@ -3,17 +3,25 @@
 
 param(
     [Parameter(Mandatory = $true)]
+    [ValidateNotNullOrEmpty()]
+    [ValidatePattern('^[a-zA-Z0-9\-_.]+$')]
     [string]$ServerName,
 
     [Parameter(Mandatory = $true)]
+    [ValidateRange(1, 65535)]
     [int]$Port,
 
     [Parameter(Mandatory = $true)]
     [bool]$UseSsl,
 
     [Parameter(Mandatory = $true)]
+    [ValidateNotNullOrEmpty()]
+    [ValidatePattern('^[0-9a-fA-F-]{36}$')]
     [string]$UpdateId
 )
+
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
 
 try {
     # Defensive coding: Check if module exists
@@ -50,6 +58,13 @@ try {
     }
 }
 catch {
-    Write-Error "Failed to decline update: $_" -ErrorAction Stop
-    throw $_
+    $errorResult = @{
+        Success = $false
+        Error   = @{
+            Message = $_.Exception.Message
+            Type    = $_.Exception.GetType().Name
+        }
+    }
+    Write-Output ($errorResult | ConvertTo-Json -Depth 5 -Compress)
+    exit 1
 }

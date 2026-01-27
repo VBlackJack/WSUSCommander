@@ -3,18 +3,23 @@
 
 param(
     [Parameter(Mandatory = $true)]
+    [ValidateNotNullOrEmpty()]
+    [ValidatePattern('^[a-zA-Z0-9\-_.]+$')]
     [string]$ServerName,
 
     [Parameter(Mandatory = $true)]
+    [ValidateRange(1, 65535)]
     [int]$Port,
 
     [Parameter(Mandatory = $true)]
     [bool]$UseSsl,
 
     [Parameter(Mandatory = $false)]
+    [ValidatePattern('^[0-9a-fA-F-]{36}$')]
     [string]$GroupId = "",
 
     [Parameter(Mandatory = $false)]
+    [ValidateRange(1, 3650)]
     [int]$StaleDays = 30,
 
     [Parameter(Mandatory = $false)]
@@ -23,6 +28,9 @@ param(
     [Parameter(Mandatory = $false)]
     [bool]$IncludeDeclined = $false
 )
+
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
 
 try {
     # Defensive coding: Check if module exists
@@ -144,6 +152,13 @@ try {
     }
 }
 catch {
-    Write-Error "Failed to generate compliance report: $_" -ErrorAction Stop
-    throw $_
+    $errorResult = @{
+        Success = $false
+        Error   = @{
+            Message = $_.Exception.Message
+            Type    = $_.Exception.GetType().Name
+        }
+    }
+    Write-Output ($errorResult | ConvertTo-Json -Depth 5 -Compress)
+    exit 1
 }

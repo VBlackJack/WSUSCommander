@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using System.ComponentModel.DataAnnotations;
+
 namespace WsusCommander.Models;
 
 /// <summary>
@@ -24,46 +26,55 @@ public sealed class DashboardStats
     /// <summary>
     /// Gets or sets the total number of updates (non-declined).
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int TotalUpdates { get; set; }
 
     /// <summary>
     /// Gets or sets the number of unapproved updates.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int UnapprovedUpdates { get; set; }
 
     /// <summary>
     /// Gets or sets the number of superseded updates (not declined).
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int SupersededUpdates { get; set; }
 
     /// <summary>
     /// Gets or sets the number of critical updates pending approval.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int CriticalPending { get; set; }
 
     /// <summary>
     /// Gets or sets the number of security updates pending approval.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int SecurityPending { get; set; }
 
     /// <summary>
     /// Gets or sets the total number of computers.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int TotalComputers { get; set; }
 
     /// <summary>
     /// Gets or sets the number of computers needing updates.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int ComputersNeedingUpdates { get; set; }
 
     /// <summary>
     /// Gets or sets the number of computers up to date.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int ComputersUpToDate { get; set; }
 
     /// <summary>
     /// Gets or sets the compliance percentage.
     /// </summary>
+    [Range(0, 100)]
     public double CompliancePercent { get; set; }
 
     /// <summary>

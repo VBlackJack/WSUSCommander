@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-using System.Management.Automation;
-
 namespace WsusCommander.Services;
 
 /// <summary>
-/// Interface for the PowerShell script execution service.
+/// Event args for logging failures.
 /// </summary>
-public interface IPowerShellService
+public sealed class LoggingFailedEventArgs : EventArgs
 {
     /// <summary>
-    /// Executes a PowerShell script asynchronously.
+    /// Initializes a new instance of the <see cref="LoggingFailedEventArgs"/> class.
     /// </summary>
-    /// <param name="scriptName">The name of the script file (relative to Scripts folder).</param>
-    /// <param name="parameters">Optional dictionary of parameters to pass to the script.</param>
-    /// <returns>A collection of PSObject results from the script execution.</returns>
-    Task<PSDataCollection<PSObject>> ExecuteScriptAsync(
-        string scriptName,
-        Dictionary<string, object>? parameters = null,
-        CancellationToken cancellationToken = default);
+    /// <param name="exception">The exception that caused the failure.</param>
+    public LoggingFailedEventArgs(Exception exception)
+    {
+        Exception = exception;
+    }
+
+    /// <summary>
+    /// Gets the exception that caused the logging failure.
+    /// </summary>
+    public Exception Exception { get; }
 }
