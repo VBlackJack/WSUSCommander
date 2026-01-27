@@ -147,6 +147,18 @@
             <Setter Property="Background" Value="White"/>
         </Style>
 
+        <!-- Status Value Style -->
+        <Style x:Key="StatusValueTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#27AE60"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=Text}"
+                             Value="{x:Static p:Resources.StatusDisabled}">
+                    <Setter Property="Foreground" Value="#E74C3C"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
         <!-- Health Status Colors -->
         <SolidColorBrush x:Key="HealthyBrush" Color="#27AE60"/>
         <SolidColorBrush x:Key="DegradedBrush" Color="#F39C12"/>
@@ -497,7 +509,7 @@
                               Padding="8,6"
                               FontSize="12"
                               Margin="0,0,10,0"
-                              TabIndex="1"
+                              TabIndex="2"
                               AutomationProperties.Name="{x:Static p:Resources.LblFilter}">
                         <ComboBox.Style>
                             <Style TargetType="ComboBox">
@@ -510,6 +522,22 @@
                         </ComboBox.Style>
                     </ComboBox>
 
+                    <!-- Superseded Filter -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,0,10,0">
+                        <TextBlock Text="{x:Static p:Resources.LblSupersededFilter}"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,5,0"
+                                   FontSize="12"
+                                   Foreground="#5D6D7E"/>
+                        <ComboBox ItemsSource="{Binding SupersededFilters}"
+                                  SelectedItem="{Binding SelectedSupersededFilter}"
+                                  MinWidth="150"
+                                  Padding="8,6"
+                                  FontSize="12"
+                                  TabIndex="1"
+                                  AutomationProperties.Name="{x:Static p:Resources.LblSupersededFilter}"/>
+                    </StackPanel>
+
                     <!-- Approval Status Filter -->
                     <ComboBox Grid.Column="4"
                               ItemsSource="{Binding ApprovalFilters}"
@@ -518,7 +546,7 @@
                               Padding="8,6"
                               FontSize="12"
                               Margin="0,0,10,0"
-                              TabIndex="2"
+                              TabIndex="3"
                               AutomationProperties.Name="{x:Static p:Resources.LblFilter}"/>
 
                     <!-- Clear Filter Button -->
@@ -528,7 +556,7 @@
                             Background="#7B8D8E"
                             Style="{StaticResource SmallButtonStyle}"
                             Margin="0,0,10,0"
-                            TabIndex="3"
+                            TabIndex="4"
                             AutomationProperties.Name="{x:Static p:Resources.BtnClearFilter}"/>
 
                     <!-- Bulk Operations Buttons -->
@@ -623,6 +651,8 @@
                     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="15">
                         <Grid>
                             <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
@@ -923,8 +953,248 @@
                                 </GroupBox>
                             </Grid>
 
+                            <!-- Operational and Security Overview -->
+                            <Grid Grid.Row="4" Margin="0,0,0,15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <GroupBox Grid.Column="0" Header="{x:Static p:Resources.DashboardOperationalInsights}" Margin="0,0,10,0">
+                                    <Grid Margin="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static p:Resources.LblServerName}" Foreground="#5D6D7E" Margin="0,0,10,6"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ServerName}" Foreground="#2C3E50"/>
+
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static p:Resources.LblServerVersion}" Foreground="#5D6D7E" Margin="0,0,10,6"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ServerVersion, FallbackValue=-}" Foreground="#2C3E50"/>
+
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static p:Resources.DashboardLastSync}" Foreground="#5D6D7E" Margin="0,0,10,6"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding DashboardLastSyncDisplay}" Foreground="#2C3E50"/>
+
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="{x:Static p:Resources.DashboardSyncAge}" Foreground="#5D6D7E" Margin="0,0,10,6"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding DashboardSyncAgeDisplay}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="#2C3E50"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding DashboardSyncStale}" Value="True">
+                                                            <Setter Property="Foreground" Value="#E74C3C"/>
+                                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="{x:Static p:Resources.DashboardHealth}" Foreground="#5D6D7E" Margin="0,0,10,6"/>
+                                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding DashboardHealthStatusDisplay}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="#7B8D8E"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding HealthReport.Status}" Value="Healthy">
+                                                            <Setter Property="Foreground" Value="#27AE60"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding HealthReport.Status}" Value="Degraded">
+                                                            <Setter Property="Foreground" Value="#F39C12"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding HealthReport.Status}" Value="Unhealthy">
+                                                            <Setter Property="Foreground" Value="#E74C3C"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+
+                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="{x:Static p:Resources.DashboardAutoRefresh}" Foreground="#5D6D7E" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding DashboardAutoRefreshDisplay}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="#2C3E50"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsAutoRefreshEnabled}" Value="False">
+                                                            <Setter Property="Foreground" Value="#E74C3C"/>
+                                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+                                </GroupBox>
+
+                                <GroupBox Grid.Column="1" Header="{x:Static p:Resources.DashboardSecurityAccess}" Margin="10,0,0,0">
+                                    <Grid Margin="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static p:Resources.DashboardUserRole}" Foreground="#5D6D7E" Margin="0,0,10,6"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding DashboardUserRoleDisplay}" Foreground="#2C3E50"/>
+
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static p:Resources.DashboardAuthenticationRequired}" Foreground="#5D6D7E" Margin="0,0,10,6"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding DashboardAuthStatusDisplay}" Style="{StaticResource StatusValueTextStyle}"/>
+
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static p:Resources.DashboardApprovalConfirmation}" Foreground="#5D6D7E" Margin="0,0,10,6"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding DashboardApprovalConfirmationDisplay}" Style="{StaticResource StatusValueTextStyle}"/>
+
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="{x:Static p:Resources.DashboardDeclineConfirmation}" Foreground="#5D6D7E" Margin="0,0,10,6"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding DashboardDeclineConfirmationDisplay}" Style="{StaticResource StatusValueTextStyle}"/>
+
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="{x:Static p:Resources.DashboardSyncConfirmation}" Foreground="#5D6D7E" Margin="0,0,10,6"/>
+                                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding DashboardSyncConfirmationDisplay}" Style="{StaticResource StatusValueTextStyle}"/>
+
+                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="{x:Static p:Resources.DashboardAuditLogging}" Foreground="#5D6D7E" Margin="0,0,10,6"/>
+                                        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding DashboardAuditStatusDisplay}" Style="{StaticResource StatusValueTextStyle}"/>
+
+                                        <TextBlock Grid.Row="6" Grid.Column="0" Text="{x:Static p:Resources.DashboardSslStatus}" Foreground="#5D6D7E" Margin="0,0,10,6"/>
+                                        <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding DashboardSslStatusDisplay}" Style="{StaticResource StatusValueTextStyle}"/>
+
+                                        <TextBlock Grid.Row="7" Grid.Column="0" Text="{x:Static p:Resources.DashboardCertificateValidation}" Foreground="#5D6D7E" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding DashboardCertificateValidationDisplay}" Style="{StaticResource StatusValueTextStyle}"/>
+                                    </Grid>
+                                </GroupBox>
+                            </Grid>
+
+                            <!-- Action Required -->
+                            <GroupBox Grid.Row="5" Header="{x:Static p:Resources.DashboardActionRequired}" Margin="0,0,0,15">
+                                <StackPanel Margin="10">
+                                    <TextBlock Text="{x:Static p:Resources.DashboardNoActionRequired}"
+                                               Foreground="#7B8D8E"
+                                               Visibility="{Binding HasDashboardActions, Converter={StaticResource InverseBoolToVisibility}}"/>
+
+                                    <Border Background="#FFEBEE" CornerRadius="6" Padding="12" Margin="0,0,0,10"
+                                            Visibility="{Binding HasCriticalAction, Converter={StaticResource BoolToVisibility}}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="{x:Static p:Resources.DashboardCriticalPending}" FontWeight="SemiBold" Foreground="#C0392B"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding DashboardStats.CriticalPending, FallbackValue=0}" Foreground="#2C3E50" FontWeight="SemiBold"/>
+                                                    <TextBlock Text="{x:Static p:Resources.DashboardPendingLabel}" Foreground="#7B8D8E" Margin="6,0,0,0"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <Button Grid.Column="1" Content="{x:Static p:Resources.DashboardActionReviewUpdates}"
+                                                    Command="{Binding ReviewCriticalUpdatesCommand}"
+                                                    Background="#C0392B"
+                                                    Style="{StaticResource SmallButtonStyle}"
+                                                    Margin="10,0,0,0"/>
+                                        </Grid>
+                                    </Border>
+
+                                    <Border Background="#F3E5F5" CornerRadius="6" Padding="12" Margin="0,0,0,10"
+                                            Visibility="{Binding HasSecurityAction, Converter={StaticResource BoolToVisibility}}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="{x:Static p:Resources.DashboardSecurityPending}" FontWeight="SemiBold" Foreground="#8E44AD"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding DashboardStats.SecurityPending, FallbackValue=0}" Foreground="#2C3E50" FontWeight="SemiBold"/>
+                                                    <TextBlock Text="{x:Static p:Resources.DashboardPendingLabel}" Foreground="#7B8D8E" Margin="6,0,0,0"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <Button Grid.Column="1" Content="{x:Static p:Resources.DashboardActionReviewUpdates}"
+                                                    Command="{Binding ReviewSecurityUpdatesCommand}"
+                                                    Background="#8E44AD"
+                                                    Style="{StaticResource SmallButtonStyle}"
+                                                    Margin="10,0,0,0"/>
+                                        </Grid>
+                                    </Border>
+
+                                    <Border Background="#FFF3E0" CornerRadius="6" Padding="12" Margin="0,0,0,10"
+                                            Visibility="{Binding HasSupersededAction, Converter={StaticResource BoolToVisibility}}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="{x:Static p:Resources.DashboardSuperseded}" FontWeight="SemiBold" Foreground="#E67E22"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding DashboardStats.SupersededUpdates, FallbackValue=0}" Foreground="#2C3E50" FontWeight="SemiBold"/>
+                                                    <TextBlock Text="{x:Static p:Resources.DashboardReadyLabel}" Foreground="#7B8D8E" Margin="6,0,0,0"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <Button Grid.Column="1" Content="{x:Static p:Resources.DashboardActionReviewSuperseded}"
+                                                    Command="{Binding ReviewSupersededUpdatesCommand}"
+                                                    Background="#E67E22"
+                                                    Style="{StaticResource SmallButtonStyle}"
+                                                    Margin="10,0,0,0"/>
+                                        </Grid>
+                                    </Border>
+
+                                    <Border Background="#E8F4FD" CornerRadius="6" Padding="12" Margin="0,0,0,10"
+                                            Visibility="{Binding HasSyncAction, Converter={StaticResource BoolToVisibility}}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="{x:Static p:Resources.DashboardLastSync}" FontWeight="SemiBold" Foreground="#3498DB"/>
+                                                <TextBlock Text="{Binding DashboardLastSyncDisplay}" Foreground="#7B8D8E"/>
+                                            </StackPanel>
+                                            <Button Grid.Column="1" Content="{x:Static p:Resources.DashboardActionStartSync}"
+                                                    Command="{Binding StartSyncCommand}"
+                                                    Background="#3498DB"
+                                                    Style="{StaticResource SmallButtonStyle}"
+                                                    Margin="10,0,0,0"/>
+                                        </Grid>
+                                    </Border>
+
+                                    <Border Background="#F8F9FA" CornerRadius="6" Padding="12"
+                                            Visibility="{Binding HasComplianceAction, Converter={StaticResource BoolToVisibility}}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="{x:Static p:Resources.DashboardCompliance}" FontWeight="SemiBold" Foreground="#5D6D7E"/>
+                                                <TextBlock Text="{Binding DashboardStats.CompliancePercent, StringFormat={}{0:F1}%}" Foreground="#7B8D8E"/>
+                                            </StackPanel>
+                                            <Button Grid.Column="1" Content="{x:Static p:Resources.DashboardActionOpenReports}"
+                                                    Command="{Binding OpenComplianceReportsCommand}"
+                                                    Background="#7B8D8E"
+                                                    Style="{StaticResource SmallButtonStyle}"
+                                                    Margin="10,0,0,0"/>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </GroupBox>
+
                             <!-- Quick Actions -->
-                            <GroupBox Grid.Row="4" Header="{x:Static p:Resources.DashboardQuickActions}">
+                            <GroupBox Grid.Row="6" Header="{x:Static p:Resources.DashboardQuickActions}">
                                 <StackPanel Margin="10" Orientation="Horizontal">
                                     <Button Content="{x:Static p:Resources.BtnDeclineSuperseded}"
                                             Command="{Binding DeclineAllSupersededCommand}"

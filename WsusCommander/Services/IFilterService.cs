@@ -44,6 +44,11 @@ public sealed class UpdateFilterCriteria
     public bool? IsDeclined { get; set; }
 
     /// <summary>
+    /// Gets or sets whether to show only superseded updates.
+    /// </summary>
+    public bool? IsSuperseded { get; set; }
+
+    /// <summary>
     /// Gets or sets the minimum creation date.
     /// </summary>
     public DateTime? CreatedAfter { get; set; }
