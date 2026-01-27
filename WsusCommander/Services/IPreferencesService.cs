@@ -29,6 +29,11 @@ public interface IPreferencesService
     UserPreferences Preferences { get; }
 
     /// <summary>
+    /// Gets a value indicating whether preferences were loaded from storage.
+    /// </summary>
+    bool HasSavedPreferences { get; }
+
+    /// <summary>
     /// Loads preferences from storage.
     /// </summary>
     Task LoadAsync();

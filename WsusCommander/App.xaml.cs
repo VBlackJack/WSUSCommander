@@ -34,6 +34,11 @@ public partial class App : Application
     public IPreferencesService? PreferencesService { get; private set; }
 
     /// <summary>
+    /// Gets the configuration service for app defaults.
+    /// </summary>
+    public IConfigurationService? ConfigService { get; private set; }
+
+    /// <summary>
     /// Called when the application starts. Sets up dependency injection manually.
     /// </summary>
     /// <param name="e">Startup event arguments.</param>
@@ -44,6 +49,7 @@ public partial class App : Application
         // Composition Root - Manual DI
         // Core Services
         IConfigurationService configService = new ConfigurationService();
+        ConfigService = configService;
         ILoggingService loggingService = new LoggingService(configService);
         IPowerShellService psService = new PowerShellService(loggingService);
         ITimerService timerService = new TimerService();

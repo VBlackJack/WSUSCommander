@@ -15,6 +15,7 @@
  */
 
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -290,6 +291,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     #endregion
 
+    private const string PageSizePreferenceKey = "Updates.PageSize";
+
     #region Constructor
 
     /// <summary>
@@ -352,6 +355,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
         // Initialize filter options
         ApprovalFilters = ["All", "Approved", "Unapproved", "Declined"];
+
+        // Apply configured default page size
+        _pageSize = _configService.Config.UI.DefaultPageSize;
+        EnsurePageSizeOption(_pageSize);
 
         // Initialize connection settings from config
         _inputServerName = _configService.WsusConnection.ServerName;
@@ -537,8 +544,15 @@ public partial class MainViewModel : ObservableObject, IDisposable
         var prefs = _preferencesService.Preferences;
         if (prefs != null)
         {
-            IsAutoRefreshEnabled = prefs.AutoRefreshEnabled;
+            IsAutoRefreshEnabled = _preferencesService.HasSavedPreferences
+                ? prefs.AutoRefreshEnabled
+                : _configService.Config.UI.AutoRefreshDefault;
             SelectedTabIndex = prefs.LastSelectedTabIndex;
+            PageSize = Math.Clamp(
+                _preferencesService.Get(PageSizePreferenceKey, _configService.Config.UI.DefaultPageSize),
+                10,
+                500);
+            EnsurePageSizeOption(PageSize);
 
             if (IsAutoRefreshEnabled)
             {
@@ -2604,12 +2618,27 @@ public partial class MainViewModel : ObservableObject, IDisposable
             prefs.AutoRefreshEnabled = IsAutoRefreshEnabled;
             prefs.LastSelectedTabIndex = SelectedTabIndex;
             prefs.LastSelectedGroupId = SelectedComputerGroup?.Id;
+            _preferencesService.Set(PageSizePreferenceKey, PageSize);
 
             await _preferencesService.SaveAsync();
         }
         catch (Exception ex)
         {
             await _loggingService.LogWarningAsync($"Failed to save preferences: {ex.Message}");
+        }
+    }
+
+    private void EnsurePageSizeOption(int pageSize)
+    {
+        if (!PageSizes.Contains(pageSize))
+        {
+            PageSizes.Add(pageSize);
+            var ordered = PageSizes.OrderBy(size => size).ToList();
+            PageSizes.Clear();
+            foreach (var size in ordered)
+            {
+                PageSizes.Add(size);
+            }
         }
     }
 

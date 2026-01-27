@@ -25,6 +25,7 @@ namespace WsusCommander;
 public partial class MainWindow : Window
 {
     private readonly IPreferencesService? _preferencesService;
+    private readonly IConfigurationService? _configService;
 
     /// <summary>
     /// Initializes a new instance of MainWindow.
@@ -35,6 +36,7 @@ public partial class MainWindow : Window
 
         // Get preferences service from App
         _preferencesService = (Application.Current as App)?.PreferencesService;
+        _configService = (Application.Current as App)?.ConfigService;
 
         Loaded += MainWindow_Loaded;
         Closing += MainWindow_Closing;
@@ -52,6 +54,13 @@ public partial class MainWindow : Window
 
     private void RestoreWindowState()
     {
+        var hasSavedPreferences = _preferencesService?.HasSavedPreferences == true;
+        if (!hasSavedPreferences)
+        {
+            ApplyStartupMode(_configService?.Config.UI.WindowStartupMode);
+            return;
+        }
+
         if (_preferencesService is null)
             return;
 
@@ -87,6 +96,27 @@ public partial class MainWindow : Window
         if (prefs.WindowMaximized)
         {
             WindowState = WindowState.Maximized;
+        }
+    }
+
+    private void ApplyStartupMode(string? mode)
+    {
+        var startupMode = mode?.ToLowerInvariant();
+
+        switch (startupMode)
+        {
+            case "maximized":
+                WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                WindowState = WindowState.Maximized;
+                break;
+            case "laststate":
+                WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                WindowState = WindowState.Normal;
+                break;
+            default:
+                WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                WindowState = WindowState.Normal;
+                break;
         }
     }
 

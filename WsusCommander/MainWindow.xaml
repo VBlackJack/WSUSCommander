@@ -154,8 +154,8 @@
 
     <!-- Keyboard Shortcuts -->
     <Window.InputBindings>
-        <KeyBinding Key="F5" Command="{Binding LoadUpdatesCommand}"/>
-        <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding LoadUpdatesCommand}"/>
+        <KeyBinding Key="F5" Command="{Binding RefreshUpdatesCommand}"/>
+        <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding RefreshUpdatesCommand}"/>
         <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding StartSyncCommand}"/>
         <KeyBinding Key="E" Modifiers="Ctrl" Command="{Binding ExportUpdatesCommand}"/>
         <KeyBinding Key="A" Modifiers="Ctrl" Command="{Binding ApproveUpdateCommand}"/>
@@ -1236,7 +1236,7 @@
                                     <TextBlock Text="{Binding SelectedUpdateDetails.IsSuperseded}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="2">
-                                    <TextBlock FontWeight="SemiBold" Text="Description"/>
+                                    <TextBlock FontWeight="SemiBold" Text="{x:Static p:Resources.ColDescription}"/>
                                     <TextBlock Text="{Binding SelectedUpdateDetails.Description}"
                                                TextWrapping="Wrap"
                                                MaxHeight="60"
@@ -1555,7 +1555,7 @@
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="{x:Static p:Resources.ColComputerName}" Binding="{Binding ComputerName}" Width="*"/>
                                     <DataGridTextColumn Header="{x:Static p:Resources.ColLastReport}" Binding="{Binding LastReportTime, StringFormat=g}" Width="150"/>
-                                    <DataGridTextColumn Header="Days" Binding="{Binding DaysSinceLastReport}" Width="80"/>
+                                    <DataGridTextColumn Header="{x:Static p:Resources.ColDaysSinceReport}" Binding="{Binding DaysSinceLastReport}" Width="80"/>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </GroupBox>

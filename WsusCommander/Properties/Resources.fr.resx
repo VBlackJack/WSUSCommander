@@ -324,10 +324,10 @@
     <value>Non conforme</value>
   </data>
   <data name="BtnGenerateReport" xml:space="preserve">
-    <value>Generer le rapport</value>
+    <value>Générer le rapport</value>
   </data>
   <data name="StatusGeneratingReport" xml:space="preserve">
-    <value>Generation du rapport...</value>
+    <value>Génération du rapport...</value>
   </data>
   <data name="ColDaysSinceReport" xml:space="preserve">
     <value>Jours depuis rapport</value>
@@ -356,16 +356,16 @@
     <value>Groupe parent :</value>
   </data>
   <data name="ConfirmDeleteGroup" xml:space="preserve">
-    <value>Supprimer le groupe '{0}' ? Cette action est irreversible.</value>
+    <value>Supprimer le groupe '{0}' ? Cette action est irréversible.</value>
   </data>
   <data name="StatusGroupCreated" xml:space="preserve">
-    <value>Groupe '{0}' cree avec succes.</value>
+    <value>Groupe '{0}' créé avec succès.</value>
   </data>
   <data name="StatusGroupDeleted" xml:space="preserve">
-    <value>Groupe '{0}' supprime avec succes.</value>
+    <value>Groupe '{0}' supprimé avec succès.</value>
   </data>
   <data name="ErrorCannotDeleteSystemGroup" xml:space="preserve">
-    <value>Impossible de supprimer le groupe systeme '{0}'.</value>
+    <value>Impossible de supprimer le groupe système '{0}'.</value>
   </data>
   <data name="ErrorGroupHasComputers" xml:space="preserve">
     <value>Impossible de supprimer un groupe contenant des ordinateurs.</value>
@@ -637,5 +637,386 @@
   </data>
   <data name="BtnDismiss" xml:space="preserve">
     <value>Fermer</value>
+  </data>
+  <data name="ActionApprove" xml:space="preserve">
+    <value>Approuver</value>
+  </data>
+  <data name="ActionDecline" xml:space="preserve">
+    <value>Refuser</value>
+  </data>
+  <data name="ActivityApproval" xml:space="preserve">
+    <value>Approbation</value>
+  </data>
+  <data name="ActivityDecline" xml:space="preserve">
+    <value>Refus</value>
+  </data>
+  <data name="ActivityDownload" xml:space="preserve">
+    <value>Téléchargement</value>
+  </data>
+  <data name="ActivitySync" xml:space="preserve">
+    <value>Synchronisation</value>
+  </data>
+  <data name="ApprovalApproved" xml:space="preserve">
+    <value>Approuvé</value>
+  </data>
+  <data name="ApprovalNotApproved" xml:space="preserve">
+    <value>Non approuvé</value>
+  </data>
+  <data name="BtnApplyRules" xml:space="preserve">
+    <value>Appliquer les règles</value>
+  </data>
+  <data name="BtnApproveCritical" xml:space="preserve">
+    <value>Approuver critiques</value>
+  </data>
+  <data name="BtnApproveSecurity" xml:space="preserve">
+    <value>Approuver sécurité</value>
+  </data>
+  <data name="BtnApproveSelected" xml:space="preserve">
+    <value>Approuver la sélection</value>
+  </data>
+  <data name="BtnClose" xml:space="preserve">
+    <value>Fermer</value>
+  </data>
+  <data name="BtnDeclineSelected" xml:space="preserve">
+    <value>Refuser la sélection</value>
+  </data>
+  <data name="BtnDeclineSuperseded" xml:space="preserve">
+    <value>Refuser les remplacées</value>
+  </data>
+  <data name="BtnDeletePreset" xml:space="preserve">
+    <value>Supprimer le préréglage</value>
+  </data>
+  <data name="BtnDeleteRule" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="BtnEditRule" xml:space="preserve">
+    <value>Modifier</value>
+  </data>
+  <data name="BtnFirstPage" xml:space="preserve">
+    <value>Première</value>
+  </data>
+  <data name="BtnLastPage" xml:space="preserve">
+    <value>Dernière</value>
+  </data>
+  <data name="BtnNewRule" xml:space="preserve">
+    <value>Nouvelle règle</value>
+  </data>
+  <data name="BtnNextPage" xml:space="preserve">
+    <value>Suivante</value>
+  </data>
+  <data name="BtnPreviousPage" xml:space="preserve">
+    <value>Précédente</value>
+  </data>
+  <data name="BtnSavePreset" xml:space="preserve">
+    <value>Enregistrer le préréglage</value>
+  </data>
+  <data name="ColAction" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="ColActivityType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ColApprovalStatus" xml:space="preserve">
+    <value>Approbation</value>
+  </data>
+  <data name="ColCondition" xml:space="preserve">
+    <value>Condition</value>
+  </data>
+  <data name="ColDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ColEnabled" xml:space="preserve">
+    <value>Activé</value>
+  </data>
+  <data name="ColPriority" xml:space="preserve">
+    <value>Priorité</value>
+  </data>
+  <data name="ColRuleName" xml:space="preserve">
+    <value>Nom de la règle</value>
+  </data>
+  <data name="ColStatus" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="ColTarget" xml:space="preserve">
+    <value>Cible</value>
+  </data>
+  <data name="ColTimestamp" xml:space="preserve">
+    <value>Heure</value>
+  </data>
+  <data name="ColTotal" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="ColUser" xml:space="preserve">
+    <value>Utilisateur</value>
+  </data>
+  <data name="ConditionClassification" xml:space="preserve">
+    <value>Classification</value>
+  </data>
+  <data name="ConditionKbArticle" xml:space="preserve">
+    <value>Article KB</value>
+  </data>
+  <data name="ConditionSuperseded" xml:space="preserve">
+    <value>Est remplacée</value>
+  </data>
+  <data name="ConditionTitleContains" xml:space="preserve">
+    <value>Titre contient</value>
+  </data>
+  <data name="ConfirmApproveCritical" xml:space="preserve">
+    <value>Approuver {0} mises à jour critiques non approuvées pour le groupe '{1}' ?</value>
+  </data>
+  <data name="ConfirmApproveSecurity" xml:space="preserve">
+    <value>Approuver {0} mises à jour de sécurité non approuvées pour le groupe '{1}' ?</value>
+  </data>
+  <data name="ConfirmApproveSelectedUpdates" xml:space="preserve">
+    <value>Approuver {0} mises à jour sélectionnées pour le groupe '{1}' ?</value>
+  </data>
+  <data name="ConfirmDeclineSelectedUpdates" xml:space="preserve">
+    <value>Refuser {0} mises à jour sélectionnées ? Les mises à jour refusées ne seront proposées à aucun ordinateur.</value>
+  </data>
+  <data name="ConfirmDeclineSuperseded" xml:space="preserve">
+    <value>Refuser {0} mises à jour remplacées ? Ces mises à jour ont été remplacées par des versions plus récentes.</value>
+  </data>
+  <data name="ConfirmDeleteRule" xml:space="preserve">
+    <value>Supprimer la règle '{0}' ?</value>
+  </data>
+  <data name="ConfirmStartSync" xml:space="preserve">
+    <value>Démarrer la synchronisation WSUS ? Cela peut prendre plusieurs minutes.</value>
+  </data>
+  <data name="DashboardActionRequired" xml:space="preserve">
+    <value>Action requise</value>
+  </data>
+  <data name="DashboardCompliance" xml:space="preserve">
+    <value>Conformité</value>
+  </data>
+  <data name="DashboardComputerStats" xml:space="preserve">
+    <value>Statistiques des ordinateurs</value>
+  </data>
+  <data name="DashboardCriticalPending" xml:space="preserve">
+    <value>Critiques en attente</value>
+  </data>
+  <data name="DashboardLastSync" xml:space="preserve">
+    <value>Dernière synchro</value>
+  </data>
+  <data name="DashboardNeedingUpdates" xml:space="preserve">
+    <value>Nécessitent des mises à jour</value>
+  </data>
+  <data name="DashboardNoActionRequired" xml:space="preserve">
+    <value>Aucune action immédiate requise</value>
+  </data>
+  <data name="DashboardQuickActions" xml:space="preserve">
+    <value>Actions rapides</value>
+  </data>
+  <data name="DashboardSecurityPending" xml:space="preserve">
+    <value>Sécurité en attente</value>
+  </data>
+  <data name="DashboardSuperseded" xml:space="preserve">
+    <value>Remplacées</value>
+  </data>
+  <data name="DashboardTitle" xml:space="preserve">
+    <value>Vue d'ensemble du serveur</value>
+  </data>
+  <data name="DashboardTotalComputers" xml:space="preserve">
+    <value>Total des ordinateurs</value>
+  </data>
+  <data name="DashboardTotalUpdates" xml:space="preserve">
+    <value>Total des mises à jour</value>
+  </data>
+  <data name="DashboardUnapproved" xml:space="preserve">
+    <value>Non approuvées</value>
+  </data>
+  <data name="DashboardUpToDate" xml:space="preserve">
+    <value>À jour</value>
+  </data>
+  <data name="DashboardUpdateDistribution" xml:space="preserve">
+    <value>Répartition des mises à jour</value>
+  </data>
+  <data name="DashboardUpdateStats" xml:space="preserve">
+    <value>Statistiques des mises à jour</value>
+  </data>
+  <data name="DialogComputerUpdates" xml:space="preserve">
+    <value>Mises à jour pour {0}</value>
+  </data>
+  <data name="DialogEditRule" xml:space="preserve">
+    <value>Modifier la règle d'approbation</value>
+  </data>
+  <data name="DialogNewRule" xml:space="preserve">
+    <value>Nouvelle règle d'approbation</value>
+  </data>
+  <data name="DialogSavePreset" xml:space="preserve">
+    <value>Enregistrer le préréglage de filtre</value>
+  </data>
+  <data name="ErrorCannotDeleteBuiltIn" xml:space="preserve">
+    <value>Impossible de supprimer les préréglages intégrés.</value>
+  </data>
+  <data name="ErrorNoCriticalUpdates" xml:space="preserve">
+    <value>Aucune mise à jour critique non approuvée trouvée.</value>
+  </data>
+  <data name="ErrorNoReport" xml:space="preserve">
+    <value>Aucun rapport disponible. Générez d'abord un rapport.</value>
+  </data>
+  <data name="ErrorNoSecurityUpdates" xml:space="preserve">
+    <value>Aucune mise à jour de sécurité non approuvée trouvée.</value>
+  </data>
+  <data name="ErrorNoSupersededUpdates" xml:space="preserve">
+    <value>Aucune mise à jour remplacée à refuser.</value>
+  </data>
+  <data name="FilterFailed" xml:space="preserve">
+    <value>Échec</value>
+  </data>
+  <data name="FilterNeeded" xml:space="preserve">
+    <value>Nécessaires</value>
+  </data>
+  <data name="FilterNotApproved" xml:space="preserve">
+    <value>Non approuvées</value>
+  </data>
+  <data name="LblConditionType" xml:space="preserve">
+    <value>Type de condition :</value>
+  </data>
+  <data name="LblConditionValue" xml:space="preserve">
+    <value>Valeur de condition :</value>
+  </data>
+  <data name="LblFilterPresets" xml:space="preserve">
+    <value>Préréglages :</value>
+  </data>
+  <data name="LblPageSize" xml:space="preserve">
+    <value>Éléments par page :</value>
+  </data>
+  <data name="LblPresetName" xml:space="preserve">
+    <value>Nom du préréglage :</value>
+  </data>
+  <data name="LblPriority" xml:space="preserve">
+    <value>Priorité :</value>
+  </data>
+  <data name="LblQuickActions" xml:space="preserve">
+    <value>Actions rapides :</value>
+  </data>
+  <data name="LblRuleAction" xml:space="preserve">
+    <value>Action :</value>
+  </data>
+  <data name="LblRuleName" xml:space="preserve">
+    <value>Nom de la règle :</value>
+  </data>
+  <data name="LblSuperseded" xml:space="preserve">
+    <value>Remplacée</value>
+  </data>
+  <data name="LblSupersededInfo" xml:space="preserve">
+    <value>Remplacée par : {0}</value>
+  </data>
+  <data name="LblTargetGroup" xml:space="preserve">
+    <value>Groupe cible :</value>
+  </data>
+  <data name="MenuMoveToGroup" xml:space="preserve">
+    <value>Déplacer vers le groupe</value>
+  </data>
+  <data name="MenuRefreshStatus" xml:space="preserve">
+    <value>Actualiser l'état</value>
+  </data>
+  <data name="MenuViewUpdates" xml:space="preserve">
+    <value>Voir les mises à jour</value>
+  </data>
+  <data name="PresetAllUpdates" xml:space="preserve">
+    <value>Toutes les mises à jour</value>
+  </data>
+  <data name="PresetCriticalUpdates" xml:space="preserve">
+    <value>Mises à jour critiques</value>
+  </data>
+  <data name="PresetDeclinedUpdates" xml:space="preserve">
+    <value>Mises à jour refusées</value>
+  </data>
+  <data name="PresetSecurityUpdates" xml:space="preserve">
+    <value>Mises à jour de sécurité</value>
+  </data>
+  <data name="PresetUnapprovedOnly" xml:space="preserve">
+    <value>Non approuvées uniquement</value>
+  </data>
+  <data name="ReportGenerated" xml:space="preserve">
+    <value>Rapport généré. Conformité : {0:F1}%</value>
+  </data>
+  <data name="RulesDescription" xml:space="preserve">
+    <value>Créez des règles pour approuver ou refuser automatiquement les mises à jour selon des conditions.</value>
+  </data>
+  <data name="StatusActivityLoaded" xml:space="preserve">
+    <value>{0} entrées d'activité chargées.</value>
+  </data>
+  <data name="StatusApplyingRules" xml:space="preserve">
+    <value>Application des règles...</value>
+  </data>
+  <data name="StatusApprovedCritical" xml:space="preserve">
+    <value>{0} mises à jour critiques approuvées. {1} échecs.</value>
+  </data>
+  <data name="StatusApprovedSecurity" xml:space="preserve">
+    <value>{0} mises à jour de sécurité approuvées. {1} échecs.</value>
+  </data>
+  <data name="StatusApprovingCritical" xml:space="preserve">
+    <value>Approbation des mises à jour critiques...</value>
+  </data>
+  <data name="StatusApprovingSecurity" xml:space="preserve">
+    <value>Approbation des mises à jour de sécurité...</value>
+  </data>
+  <data name="StatusDeclinedSuperseded" xml:space="preserve">
+    <value>{0} mises à jour remplacées refusées. {1} échecs.</value>
+  </data>
+  <data name="StatusDecliningSuperseded" xml:space="preserve">
+    <value>Refus des mises à jour remplacées...</value>
+  </data>
+  <data name="StatusDownloaded" xml:space="preserve">
+    <value>Téléchargé</value>
+  </data>
+  <data name="StatusFailed" xml:space="preserve">
+    <value>Échec</value>
+  </data>
+  <data name="StatusInstalled" xml:space="preserve">
+    <value>Installé</value>
+  </data>
+  <data name="StatusLoadingActivity" xml:space="preserve">
+    <value>Chargement du journal d'activité...</value>
+  </data>
+  <data name="StatusLoadingUpdates" xml:space="preserve">
+    <value>Chargement des mises à jour pour l'ordinateur...</value>
+  </data>
+  <data name="StatusNotApplicable" xml:space="preserve">
+    <value>Non applicable</value>
+  </data>
+  <data name="StatusNotInstalled" xml:space="preserve">
+    <value>Non installé</value>
+  </data>
+  <data name="StatusPagination" xml:space="preserve">
+    <value>Page {0} sur {1} ({2} éléments)</value>
+  </data>
+  <data name="StatusPendingReboot" xml:space="preserve">
+    <value>Redémarrage en attente</value>
+  </data>
+  <data name="StatusPresetDeleted" xml:space="preserve">
+    <value>Préréglage de filtre supprimé.</value>
+  </data>
+  <data name="StatusPresetSaved" xml:space="preserve">
+    <value>Préréglage de filtre enregistré.</value>
+  </data>
+  <data name="StatusRuleDeleted" xml:space="preserve">
+    <value>Règle supprimée.</value>
+  </data>
+  <data name="StatusRuleSaved" xml:space="preserve">
+    <value>Règle enregistrée avec succès.</value>
+  </data>
+  <data name="StatusRulesApplied" xml:space="preserve">
+    <value>Règles appliquées : {0} mises à jour traitées.</value>
+  </data>
+  <data name="StatusUpdatesLoadedForComputer" xml:space="preserve">
+    <value>{0} mises à jour chargées pour {1}.</value>
+  </data>
+  <data name="TabActivity" xml:space="preserve">
+    <value>Activité</value>
+  </data>
+  <data name="TabDashboard" xml:space="preserve">
+    <value>Tableau de bord</value>
+  </data>
+  <data name="TabRules" xml:space="preserve">
+    <value>Règles</value>
+  </data>
+  <data name="TipNotApproved" xml:space="preserve">
+    <value>Cette mise à jour n'a été approuvée pour aucun groupe.</value>
+  </data>
+  <data name="TipSuperseded" xml:space="preserve">
+    <value>Cette mise à jour a été remplacée par une plus récente. Pensez à la refuser.</value>
   </data>
 </root>
