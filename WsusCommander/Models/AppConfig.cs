@@ -49,6 +49,11 @@ public sealed class AppConfig
     public PerformanceConfig Performance { get; set; } = new();
 
     /// <summary>
+    /// Gets or sets the PowerShell configuration.
+    /// </summary>
+    public PowerShellConfig PowerShell { get; set; } = new();
+
+    /// <summary>
     /// Gets or sets the UI configuration.
     /// </summary>
     public UiConfig UI { get; set; } = new();
@@ -165,6 +170,18 @@ public sealed class SecurityConfig
     /// Gets or sets a value indicating whether to encrypt sensitive log data.
     /// </summary>
     public bool EncryptSensitiveLogs { get; set; } = false;
+
+    /// <summary>
+    /// Gets or sets the session timeout in minutes.
+    /// </summary>
+    [Range(5, 240, ErrorMessage = "Session timeout must be between 5 and 240 minutes.")]
+    public int SessionTimeoutMinutes { get; set; } = 30;
+
+    /// <summary>
+    /// Gets or sets the maximum number of failed authentication attempts.
+    /// </summary>
+    [Range(1, 10, ErrorMessage = "Max failed attempts must be between 1 and 10.")]
+    public int MaxFailedAttempts { get; set; } = 5;
 }
 
 /// <summary>
@@ -234,6 +251,29 @@ public sealed class PerformanceConfig
     /// </summary>
     [Range(100, 5000, ErrorMessage = "Initial retry delay must be between 100 and 5000 ms.")]
     public int InitialRetryDelayMs { get; set; } = 500;
+}
+
+/// <summary>
+/// Configuration model for PowerShell execution settings.
+/// </summary>
+public sealed class PowerShellConfig
+{
+    /// <summary>
+    /// Gets or sets the PowerShell execution policy.
+    /// </summary>
+    public string ExecutionPolicy { get; set; } = "RemoteSigned";
+
+    /// <summary>
+    /// Gets or sets the PowerShell script timeout in seconds.
+    /// </summary>
+    [Range(30, 900, ErrorMessage = "PowerShell timeout must be between 30 and 900 seconds.")]
+    public int TimeoutSeconds { get; set; } = 300;
+
+    /// <summary>
+    /// Gets or sets the JSON serialization depth.
+    /// </summary>
+    [Range(1, 50, ErrorMessage = "JSON depth must be between 1 and 50.")]
+    public int JsonDepth { get; set; } = 10;
 }
 
 /// <summary>

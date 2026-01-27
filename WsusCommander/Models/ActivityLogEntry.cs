@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using System.ComponentModel.DataAnnotations;
+
 namespace WsusCommander.Models;
 
 /// <summary>
@@ -24,31 +26,39 @@ public sealed class ActivityLogEntry
     /// <summary>
     /// Gets or sets the timestamp of the activity.
     /// </summary>
+    [Required]
     public DateTime Timestamp { get; set; }
 
     /// <summary>
     /// Gets or sets the type of activity.
     /// </summary>
+    [Required]
+    [StringLength(128, MinimumLength = 1)]
     public string ActivityType { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the description of the activity.
     /// </summary>
+    [Required]
+    [StringLength(1024, MinimumLength = 1)]
     public string Description { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the user who performed the activity.
     /// </summary>
+    [StringLength(256)]
     public string User { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the target of the activity (update title, computer name, etc.).
     /// </summary>
+    [StringLength(256)]
     public string Target { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the status of the activity.
     /// </summary>
+    [StringLength(128)]
     public string Status { get; set; } = string.Empty;
 
     /// <summary>

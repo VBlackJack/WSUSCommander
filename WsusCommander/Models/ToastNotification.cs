@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using System.ComponentModel.DataAnnotations;
+
 namespace WsusCommander.Models;
 
 /// <summary>
@@ -42,6 +44,8 @@ public sealed class ToastNotification
     /// <summary>
     /// Gets or sets the notification message.
     /// </summary>
+    [Required]
+    [StringLength(256, MinimumLength = 1)]
     public string Message { get; init; } = string.Empty;
 
     /// <summary>
@@ -52,10 +56,12 @@ public sealed class ToastNotification
     /// <summary>
     /// Gets or sets the duration in milliseconds.
     /// </summary>
+    [Range(100, 60000)]
     public int Duration { get; init; } = 3000;
 
     /// <summary>
     /// Gets or sets the unique identifier.
     /// </summary>
+    [Required]
     public Guid Id { get; init; } = Guid.NewGuid();
 }

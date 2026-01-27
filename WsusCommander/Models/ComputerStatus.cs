@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using System.ComponentModel.DataAnnotations;
+
 namespace WsusCommander.Models;
 
 /// <summary>
@@ -24,16 +26,21 @@ public sealed class ComputerStatus
     /// <summary>
     /// Gets or sets the computer identifier.
     /// </summary>
+    [Required]
+    [StringLength(128, MinimumLength = 1)]
     public string ComputerId { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the computer name.
     /// </summary>
+    [Required]
+    [StringLength(256, MinimumLength = 1)]
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the IP address of the computer.
     /// </summary>
+    [StringLength(64)]
     public string IpAddress { get; set; } = string.Empty;
 
     /// <summary>
@@ -44,21 +51,25 @@ public sealed class ComputerStatus
     /// <summary>
     /// Gets or sets the count of installed updates.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int InstalledCount { get; set; }
 
     /// <summary>
     /// Gets or sets the count of updates needed (pending installation).
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int NeededCount { get; set; }
 
     /// <summary>
     /// Gets or sets the count of failed update installations.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int FailedCount { get; set; }
 
     /// <summary>
     /// Gets or sets the computer group name.
     /// </summary>
+    [StringLength(256)]
     public string GroupName { get; set; } = string.Empty;
 
     /// <summary>

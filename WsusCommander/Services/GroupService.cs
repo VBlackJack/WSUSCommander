@@ -29,6 +29,7 @@ public sealed class GroupService : IGroupService
     private readonly ICacheService _cacheService;
     private readonly IValidationService _validationService;
     private readonly IConfigurationService _configService;
+    private readonly IRetryService _retryService;
 
     private static readonly string[] SystemGroupNames = ["All Computers", "Unassigned Computers"];
 
@@ -40,13 +41,15 @@ public sealed class GroupService : IGroupService
         ILoggingService loggingService,
         ICacheService cacheService,
         IValidationService validationService,
-        IConfigurationService configService)
+        IConfigurationService configService,
+        IRetryService retryService)
     {
         _powerShellService = powerShellService;
         _loggingService = loggingService;
         _cacheService = cacheService;
         _validationService = validationService;
         _configService = configService;
+        _retryService = retryService;
     }
 
     private Dictionary<string, object> GetConnectionParameters()
@@ -70,9 +73,13 @@ public sealed class GroupService : IGroupService
             cacheKey,
             async () =>
             {
-                var result = await _powerShellService.ExecuteScriptAsync(
-                    "Get-ComputerGroups.ps1",
-                    GetConnectionParameters());
+                var result = await _retryService.ExecuteWithRetryAsync(
+                    async ct => await _powerShellService.ExecuteScriptAsync(
+                        "Get-ComputerGroups.ps1",
+                        GetConnectionParameters(),
+                        ct),
+                    "Get-ComputerGroups",
+                    cancellationToken);
 
                 var groups = ParseGroups(result);
 
@@ -96,9 +103,13 @@ public sealed class GroupService : IGroupService
             var parameters = GetConnectionParameters();
             parameters["GroupId"] = groupId.ToString();
 
-            var result = await _powerShellService.ExecuteScriptAsync(
-                "Get-ComputerGroup.ps1",
-                parameters);
+            var result = await _retryService.ExecuteWithRetryAsync(
+                async ct => await _powerShellService.ExecuteScriptAsync(
+                    "Get-ComputerGroup.ps1",
+                    parameters,
+                    ct),
+                "Get-ComputerGroup",
+                cancellationToken);
 
             var groups = ParseGroups(result);
             return groups.FirstOrDefault();
@@ -136,9 +147,13 @@ public sealed class GroupService : IGroupService
             parameters["ParentGroupId"] = options.ParentGroupId.Value.ToString();
         }
 
-        var result = await _powerShellService.ExecuteScriptAsync(
-            "New-ComputerGroup.ps1",
-            parameters);
+        var result = await _retryService.ExecuteWithRetryAsync(
+            async ct => await _powerShellService.ExecuteScriptAsync(
+                "New-ComputerGroup.ps1",
+                parameters,
+                ct),
+            "New-ComputerGroup",
+            cancellationToken);
 
         _cacheService.Remove("groups_true");
         _cacheService.Remove("groups_false");
@@ -176,9 +191,13 @@ public sealed class GroupService : IGroupService
             parameters["Description"] = _validationService.Sanitize(options.Description);
         }
 
-        var result = await _powerShellService.ExecuteScriptAsync(
-            "Set-ComputerGroup.ps1",
-            parameters);
+        var result = await _retryService.ExecuteWithRetryAsync(
+            async ct => await _powerShellService.ExecuteScriptAsync(
+                "Set-ComputerGroup.ps1",
+                parameters,
+                ct),
+            "Set-ComputerGroup",
+            cancellationToken);
 
         _cacheService.Remove("groups_true");
         _cacheService.Remove("groups_false");
@@ -205,9 +224,13 @@ public sealed class GroupService : IGroupService
         var parameters = GetConnectionParameters();
         parameters["GroupId"] = groupId.ToString();
 
-        await _powerShellService.ExecuteScriptAsync(
-            "Remove-ComputerGroup.ps1",
-            parameters);
+        await _retryService.ExecuteWithRetryAsync(
+            async ct => await _powerShellService.ExecuteScriptAsync(
+                "Remove-ComputerGroup.ps1",
+                parameters,
+                ct),
+            "Remove-ComputerGroup",
+            cancellationToken);
 
         _cacheService.Remove("groups_true");
         _cacheService.Remove("groups_false");
@@ -225,9 +248,13 @@ public sealed class GroupService : IGroupService
             var parameters = GetConnectionParameters();
             parameters["GroupId"] = groupId.ToString();
 
-            var result = await _powerShellService.ExecuteScriptAsync(
-                "Get-ComputerStatus.ps1",
-                parameters);
+            var result = await _retryService.ExecuteWithRetryAsync(
+                async ct => await _powerShellService.ExecuteScriptAsync(
+                    "Get-ComputerStatus.ps1",
+                    parameters,
+                    ct),
+                "Get-ComputerStatus",
+                cancellationToken);
 
             return ParseComputers(result);
         }
@@ -248,9 +275,13 @@ public sealed class GroupService : IGroupService
             var parameters = GetConnectionParameters();
             parameters["ParentGroupId"] = parentGroupId.ToString();
 
-            var result = await _powerShellService.ExecuteScriptAsync(
-                "Get-ChildGroups.ps1",
-                parameters);
+            var result = await _retryService.ExecuteWithRetryAsync(
+                async ct => await _powerShellService.ExecuteScriptAsync(
+                    "Get-ChildGroups.ps1",
+                    parameters,
+                    ct),
+                "Get-ChildGroups",
+                cancellationToken);
 
             return ParseGroups(result);
         }

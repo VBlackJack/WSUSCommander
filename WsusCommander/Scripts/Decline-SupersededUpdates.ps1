@@ -3,9 +3,12 @@
 
 param(
     [Parameter(Mandatory = $true)]
+    [ValidateNotNullOrEmpty()]
+    [ValidatePattern('^[a-zA-Z0-9\-_.]+$')]
     [string]$ServerName,
 
     [Parameter(Mandatory = $true)]
+    [ValidateRange(1, 65535)]
     [int]$Port,
 
     [Parameter(Mandatory = $true)]
@@ -14,6 +17,9 @@ param(
     [Parameter(Mandatory = $false)]
     [switch]$CountOnly
 )
+
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
 
 try {
     # Defensive coding: Check if module exists
@@ -71,6 +77,13 @@ try {
     }
 }
 catch {
-    Write-Error "Failed to decline superseded updates: $_" -ErrorAction Stop
-    throw $_
+    $errorResult = @{
+        Success = $false
+        Error   = @{
+            Message = $_.Exception.Message
+            Type    = $_.Exception.GetType().Name
+        }
+    }
+    Write-Output ($errorResult | ConvertTo-Json -Depth 5 -Compress)
+    exit 1
 }

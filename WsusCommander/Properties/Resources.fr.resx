@@ -211,6 +211,9 @@
   <data name="ErrorPowerShellParameterNameRequired" xml:space="preserve">
     <value>Le nom du paramètre est requis.</value>
   </data>
+  <data name="ErrorClipboardFailed" xml:space="preserve">
+    <value>Echec de la copie dans le presse-papiers. Veuillez reessayer.</value>
+  </data>
 
   <!-- Operations en masse -->
   <data name="BtnBulkApprove" xml:space="preserve">
@@ -249,6 +252,87 @@
     <value>Exportation en cours...</value>
   </data>
   <data name="StatusExportComplete" xml:space="preserve">
+    <value>Exportation terminee : {0}</value>
+  </data>
+  <data name="ExportHeaderUpdateId" xml:space="preserve">
+    <value>Identifiant mise a jour</value>
+  </data>
+  <data name="ExportHeaderUpdateTitle" xml:space="preserve">
+    <value>Titre de la mise a jour</value>
+  </data>
+  <data name="ExportHeaderKBArticle" xml:space="preserve">
+    <value>Article KB</value>
+  </data>
+  <data name="ExportHeaderClassification" xml:space="preserve">
+    <value>Classification</value>
+  </data>
+  <data name="ExportHeaderCreationDate" xml:space="preserve">
+    <value>Date de creation</value>
+  </data>
+  <data name="ExportHeaderApprovalStatus" xml:space="preserve">
+    <value>Statut d'approbation</value>
+  </data>
+  <data name="ExportHeaderDeclineStatus" xml:space="preserve">
+    <value>Refuse</value>
+  </data>
+  <data name="ExportHeaderComputerId" xml:space="preserve">
+    <value>Identifiant ordinateur</value>
+  </data>
+  <data name="ExportHeaderComputerName" xml:space="preserve">
+    <value>Nom de l'ordinateur</value>
+  </data>
+  <data name="ExportHeaderIpAddress" xml:space="preserve">
+    <value>Adresse IP</value>
+  </data>
+  <data name="ExportHeaderGroupName" xml:space="preserve">
+    <value>Groupe</value>
+  </data>
+  <data name="ExportHeaderInstalledCount" xml:space="preserve">
+    <value>Installees</value>
+  </data>
+  <data name="ExportHeaderNeededCount" xml:space="preserve">
+    <value>Necessaires</value>
+  </data>
+  <data name="ExportHeaderFailedCount" xml:space="preserve">
+    <value>Echecs</value>
+  </data>
+  <data name="ExportHeaderLastContact" xml:space="preserve">
+    <value>Dernier contact</value>
+  </data>
+  <data name="ExportHeaderGroupId" xml:space="preserve">
+    <value>Identifiant groupe</value>
+  </data>
+  <data name="ExportHeaderGroupName" xml:space="preserve">
+    <value>Nom du groupe</value>
+  </data>
+  <data name="ExportHeaderGroupDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ExportHeaderGroupComputerCount" xml:space="preserve">
+    <value>Nombre d'ordinateurs</value>
+  </data>
+  <data name="ExportFilterCsv" xml:space="preserve">
+    <value>Fichiers CSV (*.csv)|*.csv</value>
+  </data>
+  <data name="ExportFilterTsv" xml:space="preserve">
+    <value>Fichiers TSV (*.tsv)|*.tsv</value>
+  </data>
+  <data name="ExportFilterJson" xml:space="preserve">
+    <value>Fichiers JSON (*.json)|*.json</value>
+  </data>
+  <data name="ExportFilterAll" xml:space="preserve">
+    <value>Tous les fichiers (*.*)|*.*</value>
+  </data>
+  <data name="LogExportingUpdates" xml:space="preserve">
+    <value>Exportation de {0} mises a jour vers {1}</value>
+  </data>
+  <data name="LogExportingComputers" xml:space="preserve">
+    <value>Exportation de {0} ordinateurs vers {1}</value>
+  </data>
+  <data name="LogExportingGroups" xml:space="preserve">
+    <value>Exportation de {0} groupes vers {1}</value>
+  </data>
+  <data name="LogExportCompleted" xml:space="preserve">
     <value>Exportation terminee : {0}</value>
   </data>
 
@@ -408,8 +492,20 @@
   <data name="BtnOk" xml:space="preserve">
     <value>OK</value>
   </data>
+  <data name="BtnLater" xml:space="preserve">
+    <value>Plus tard</value>
+  </data>
   <data name="BtnCancel" xml:space="preserve">
     <value>Annuler</value>
+  </data>
+  <data name="DialogAuthSetupTitle" xml:space="preserve">
+    <value>Configurer l'authentification</value>
+  </data>
+  <data name="DialogAuthSetupMessage" xml:space="preserve">
+    <value>L'authentification est activee par defaut. Configurez les groupes administrateurs et operateurs pour votre environnement.</value>
+  </data>
+  <data name="DialogAuthSetupFollowup" xml:space="preserve">
+    <value>Consultez l'onglet Securite pour confirmer les parametres d'authentification et les groupes.</value>
   </data>
   <data name="ConfirmApproveUpdate" xml:space="preserve">
     <value>Approuver la mise a jour '{0}' pour le groupe '{1}' ?</value>

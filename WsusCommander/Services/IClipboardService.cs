@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-using System.Management.Automation;
-
 namespace WsusCommander.Services;
 
 /// <summary>
-/// Interface for the PowerShell script execution service.
+/// Provides clipboard access for the application.
 /// </summary>
-public interface IPowerShellService
+public interface IClipboardService
 {
     /// <summary>
-    /// Executes a PowerShell script asynchronously.
+    /// Sets the clipboard text.
     /// </summary>
-    /// <param name="scriptName">The name of the script file (relative to Scripts folder).</param>
-    /// <param name="parameters">Optional dictionary of parameters to pass to the script.</param>
-    /// <returns>A collection of PSObject results from the script execution.</returns>
-    Task<PSDataCollection<PSObject>> ExecuteScriptAsync(
-        string scriptName,
-        Dictionary<string, object>? parameters = null,
-        CancellationToken cancellationToken = default);
+    /// <param name="text">The text to set.</param>
+    void SetText(string text);
+
+    /// <summary>
+    /// Gets the clipboard text.
+    /// </summary>
+    /// <returns>The clipboard text, if available.</returns>
+    string? GetText();
 }

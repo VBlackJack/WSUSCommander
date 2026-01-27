@@ -50,4 +50,9 @@ public interface ILoggingService
     /// Gets the current log file path.
     /// </summary>
     string CurrentLogFilePath { get; }
+
+    /// <summary>
+    /// Event raised when a logging failure occurs.
+    /// </summary>
+    event EventHandler<LoggingFailedEventArgs>? LoggingFailed;
 }

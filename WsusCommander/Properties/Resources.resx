@@ -214,6 +214,9 @@
   <data name="ErrorPowerShellParameterNameRequired" xml:space="preserve">
     <value>Parameter name is required.</value>
   </data>
+  <data name="ErrorClipboardFailed" xml:space="preserve">
+    <value>Failed to copy to clipboard. Please try again.</value>
+  </data>
 
   <!-- Bulk Operations -->
   <data name="BtnBulkApprove" xml:space="preserve">
@@ -252,6 +255,87 @@
     <value>Exporting data...</value>
   </data>
   <data name="StatusExportComplete" xml:space="preserve">
+    <value>Export completed: {0}</value>
+  </data>
+  <data name="ExportHeaderUpdateId" xml:space="preserve">
+    <value>Update Id</value>
+  </data>
+  <data name="ExportHeaderUpdateTitle" xml:space="preserve">
+    <value>Update Title</value>
+  </data>
+  <data name="ExportHeaderKBArticle" xml:space="preserve">
+    <value>KB Article</value>
+  </data>
+  <data name="ExportHeaderClassification" xml:space="preserve">
+    <value>Classification</value>
+  </data>
+  <data name="ExportHeaderCreationDate" xml:space="preserve">
+    <value>Creation Date</value>
+  </data>
+  <data name="ExportHeaderApprovalStatus" xml:space="preserve">
+    <value>Approval Status</value>
+  </data>
+  <data name="ExportHeaderDeclineStatus" xml:space="preserve">
+    <value>Declined</value>
+  </data>
+  <data name="ExportHeaderComputerId" xml:space="preserve">
+    <value>Computer Id</value>
+  </data>
+  <data name="ExportHeaderComputerName" xml:space="preserve">
+    <value>Computer Name</value>
+  </data>
+  <data name="ExportHeaderIpAddress" xml:space="preserve">
+    <value>IP Address</value>
+  </data>
+  <data name="ExportHeaderGroupName" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="ExportHeaderInstalledCount" xml:space="preserve">
+    <value>Installed</value>
+  </data>
+  <data name="ExportHeaderNeededCount" xml:space="preserve">
+    <value>Needed</value>
+  </data>
+  <data name="ExportHeaderFailedCount" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="ExportHeaderLastContact" xml:space="preserve">
+    <value>Last Contact</value>
+  </data>
+  <data name="ExportHeaderGroupId" xml:space="preserve">
+    <value>Group Id</value>
+  </data>
+  <data name="ExportHeaderGroupName" xml:space="preserve">
+    <value>Group Name</value>
+  </data>
+  <data name="ExportHeaderGroupDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ExportHeaderGroupComputerCount" xml:space="preserve">
+    <value>Computer Count</value>
+  </data>
+  <data name="ExportFilterCsv" xml:space="preserve">
+    <value>CSV files (*.csv)|*.csv</value>
+  </data>
+  <data name="ExportFilterTsv" xml:space="preserve">
+    <value>TSV files (*.tsv)|*.tsv</value>
+  </data>
+  <data name="ExportFilterJson" xml:space="preserve">
+    <value>JSON files (*.json)|*.json</value>
+  </data>
+  <data name="ExportFilterAll" xml:space="preserve">
+    <value>All files (*.*)|*.*</value>
+  </data>
+  <data name="LogExportingUpdates" xml:space="preserve">
+    <value>Exporting {0} updates to {1}</value>
+  </data>
+  <data name="LogExportingComputers" xml:space="preserve">
+    <value>Exporting {0} computers to {1}</value>
+  </data>
+  <data name="LogExportingGroups" xml:space="preserve">
+    <value>Exporting {0} groups to {1}</value>
+  </data>
+  <data name="LogExportCompleted" xml:space="preserve">
     <value>Export completed: {0}</value>
   </data>
 
@@ -407,6 +491,18 @@
   </data>
   <data name="DialogInfo" xml:space="preserve">
     <value>Information</value>
+  </data>
+  <data name="BtnLater" xml:space="preserve">
+    <value>Later</value>
+  </data>
+  <data name="DialogAuthSetupTitle" xml:space="preserve">
+    <value>Configure Authentication</value>
+  </data>
+  <data name="DialogAuthSetupMessage" xml:space="preserve">
+    <value>Authentication is enabled by default. Configure administrator and operator groups to match your environment.</value>
+  </data>
+  <data name="DialogAuthSetupFollowup" xml:space="preserve">
+    <value>Review the Security tab to confirm authentication settings and group membership.</value>
   </data>
   <data name="BtnYes" xml:space="preserve">
     <value>Yes</value>

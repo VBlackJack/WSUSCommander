@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using System.ComponentModel.DataAnnotations;
+
 namespace WsusCommander.Models;
 
 /// <summary>
@@ -54,11 +56,14 @@ public sealed class ApprovalRule
     /// <summary>
     /// Gets or sets the unique identifier.
     /// </summary>
+    [Required]
     public Guid Id { get; set; } = Guid.NewGuid();
 
     /// <summary>
     /// Gets or sets the rule name.
     /// </summary>
+    [Required]
+    [StringLength(256, MinimumLength = 1)]
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
@@ -74,6 +79,7 @@ public sealed class ApprovalRule
     /// <summary>
     /// Gets or sets the condition value (e.g., classification name, pattern).
     /// </summary>
+    [StringLength(256)]
     public string ConditionValue { get; set; } = string.Empty;
 
     /// <summary>
@@ -89,16 +95,19 @@ public sealed class ApprovalRule
     /// <summary>
     /// Gets or sets the target group name for display.
     /// </summary>
+    [StringLength(256)]
     public string TargetGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the priority (lower = higher priority).
     /// </summary>
+    [Range(0, 100)]
     public int Priority { get; set; }
 
     /// <summary>
     /// Gets or sets the creation date.
     /// </summary>
+    [Required]
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     /// <summary>
@@ -129,5 +138,6 @@ public sealed class ApprovalRulesCollection
     /// <summary>
     /// Gets or sets the list of rules.
     /// </summary>
+    [Required]
     public List<ApprovalRule> Rules { get; set; } = [];
 }

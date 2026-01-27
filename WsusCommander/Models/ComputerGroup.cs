@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using System.ComponentModel.DataAnnotations;
+
 namespace WsusCommander.Models;
 
 /// <summary>
@@ -24,21 +26,26 @@ public sealed class ComputerGroup
     /// <summary>
     /// Gets or sets the unique identifier of the computer group.
     /// </summary>
+    [Required]
     public Guid Id { get; set; }
 
     /// <summary>
     /// Gets or sets the name of the computer group.
     /// </summary>
+    [Required]
+    [StringLength(256, MinimumLength = 1)]
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the description of the computer group.
     /// </summary>
+    [StringLength(1024)]
     public string Description { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the number of computers in the group.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int ComputerCount { get; set; }
 
     /// <summary>

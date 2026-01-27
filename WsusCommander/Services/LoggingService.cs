@@ -15,6 +15,7 @@
  */
 
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -60,6 +61,9 @@ public sealed class LoggingService : ILoggingService, IDisposable
     /// Gets the current log file path.
     /// </summary>
     public string CurrentLogFilePath => Path.Combine(_logPath, _logFileName);
+
+    /// <inheritdoc/>
+    public event EventHandler<LoggingFailedEventArgs>? LoggingFailed;
 
     /// <inheritdoc/>
     public Task LogInfoAsync(string message)
@@ -158,9 +162,22 @@ public sealed class LoggingService : ILoggingService, IDisposable
             {
                 break;
             }
-            catch
+            catch (Exception ex)
             {
-                // Ignore logging errors to prevent cascade failures
+                // Write to Windows Event Log as fallback
+                try
+                {
+                    EventLog.WriteEntry(
+                        "WSUSCommander",
+                        $"Logging failure: {ex.Message}",
+                        EventLogEntryType.Warning);
+                }
+                catch
+                {
+                    // Last resort - ignore
+                }
+
+                LoggingFailed?.Invoke(this, new LoggingFailedEventArgs(ex));
             }
         }
 

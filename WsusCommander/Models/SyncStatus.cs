@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using System.ComponentModel.DataAnnotations;
+
 namespace WsusCommander.Models;
 
 /// <summary>
@@ -24,6 +26,8 @@ public sealed class SyncStatus
     /// <summary>
     /// Gets or sets the current synchronization status description.
     /// </summary>
+    [Required]
+    [StringLength(256)]
     public string Status { get; set; } = string.Empty;
 
     /// <summary>
@@ -44,5 +48,6 @@ public sealed class SyncStatus
     /// <summary>
     /// Gets or sets the result of the last synchronization.
     /// </summary>
+    [StringLength(256)]
     public string LastSyncResult { get; set; } = string.Empty;
 }

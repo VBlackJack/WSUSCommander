@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using System.ComponentModel.DataAnnotations;
+
 namespace WsusCommander.Models;
 
 /// <summary>
@@ -42,11 +44,14 @@ public sealed class ComplianceReport
     /// <summary>
     /// Gets or sets the report generation date.
     /// </summary>
+    [Required]
     public DateTime GeneratedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// Gets or sets the report title.
     /// </summary>
+    [Required]
+    [StringLength(256, MinimumLength = 1)]
     public string Title { get; set; } = string.Empty;
 
     /// <summary>
@@ -57,36 +62,43 @@ public sealed class ComplianceReport
     /// <summary>
     /// Gets or sets the overall compliance percentage.
     /// </summary>
+    [Range(0, 100)]
     public double CompliancePercent { get; set; }
 
     /// <summary>
     /// Gets or sets the total computer count.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int TotalComputers { get; set; }
 
     /// <summary>
     /// Gets or sets the compliant computer count.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int CompliantComputers { get; set; }
 
     /// <summary>
     /// Gets or sets the non-compliant computer count.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int NonCompliantComputers { get; set; }
 
     /// <summary>
     /// Gets or sets the total approved updates count.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int TotalApprovedUpdates { get; set; }
 
     /// <summary>
     /// Gets or sets compliance by group.
     /// </summary>
+    [Required]
     public List<GroupComplianceInfo> GroupCompliance { get; set; } = [];
 
     /// <summary>
     /// Gets or sets compliance by classification.
     /// </summary>
+    [Required]
     public List<ClassificationComplianceInfo> ClassificationCompliance { get; set; } = [];
 
     /// <summary>
@@ -97,6 +109,7 @@ public sealed class ComplianceReport
     /// <summary>
     /// Gets or sets stale computers list.
     /// </summary>
+    [Required]
     public List<StaleComputerInfo> StaleComputers { get; set; } = [];
 }
 
@@ -108,36 +121,44 @@ public sealed class GroupComplianceInfo
     /// <summary>
     /// Gets or sets the group ID.
     /// </summary>
+    [Required]
     public Guid GroupId { get; set; }
 
     /// <summary>
     /// Gets or sets the group name.
     /// </summary>
+    [Required]
+    [StringLength(256, MinimumLength = 1)]
     public string GroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the total computer count in the group.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int TotalComputers { get; set; }
 
     /// <summary>
     /// Gets or sets the compliant computer count.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int CompliantComputers { get; set; }
 
     /// <summary>
     /// Gets or sets the compliance percentage.
     /// </summary>
+    [Range(0, 100)]
     public double CompliancePercent { get; set; }
 
     /// <summary>
     /// Gets or sets the total needed updates.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int TotalNeededUpdates { get; set; }
 
     /// <summary>
     /// Gets or sets the total failed updates.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int TotalFailedUpdates { get; set; }
 }
 
@@ -149,31 +170,38 @@ public sealed class ClassificationComplianceInfo
     /// <summary>
     /// Gets or sets the classification name.
     /// </summary>
+    [Required]
+    [StringLength(128, MinimumLength = 1)]
     public string Classification { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the total updates in this classification.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int TotalUpdates { get; set; }
 
     /// <summary>
     /// Gets or sets the approved updates count.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int ApprovedUpdates { get; set; }
 
     /// <summary>
     /// Gets or sets the declined updates count.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int DeclinedUpdates { get; set; }
 
     /// <summary>
     /// Gets or sets the pending updates count.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int PendingUpdates { get; set; }
 
     /// <summary>
     /// Gets or sets the installation rate.
     /// </summary>
+    [Range(0, 100)]
     public double InstallationRate { get; set; }
 }
 
@@ -185,26 +213,31 @@ public sealed class CriticalUpdatesSummary
     /// <summary>
     /// Gets or sets the total critical updates.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int TotalCritical { get; set; }
 
     /// <summary>
     /// Gets or sets the approved critical updates.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int ApprovedCritical { get; set; }
 
     /// <summary>
     /// Gets or sets the unapproved critical updates.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int UnapprovedCritical { get; set; }
 
     /// <summary>
     /// Gets or sets the computers needing critical updates.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int ComputersNeedingCritical { get; set; }
 
     /// <summary>
     /// Gets or sets the list of unapproved critical updates.
     /// </summary>
+    [Required]
     public List<CriticalUpdateInfo> UnapprovedUpdates { get; set; } = [];
 }
 
@@ -216,31 +249,38 @@ public sealed class CriticalUpdateInfo
     /// <summary>
     /// Gets or sets the update ID.
     /// </summary>
+    [Required]
     public Guid UpdateId { get; set; }
 
     /// <summary>
     /// Gets or sets the update title.
     /// </summary>
+    [Required]
+    [StringLength(512, MinimumLength = 1)]
     public string Title { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the KB article.
     /// </summary>
+    [StringLength(256)]
     public string? KbArticle { get; set; }
 
     /// <summary>
     /// Gets or sets the severity.
     /// </summary>
+    [StringLength(128)]
     public string? Severity { get; set; }
 
     /// <summary>
     /// Gets or sets the release date.
     /// </summary>
+    [Required]
     public DateTime ReleaseDate { get; set; }
 
     /// <summary>
     /// Gets or sets the number of computers needing this update.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int ComputersNeeding { get; set; }
 }
 
@@ -252,11 +292,15 @@ public sealed class StaleComputerInfo
     /// <summary>
     /// Gets or sets the computer ID.
     /// </summary>
+    [Required]
+    [StringLength(128, MinimumLength = 1)]
     public string ComputerId { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the computer name.
     /// </summary>
+    [Required]
+    [StringLength(256, MinimumLength = 1)]
     public string ComputerName { get; set; } = string.Empty;
 
     /// <summary>
@@ -267,10 +311,12 @@ public sealed class StaleComputerInfo
     /// <summary>
     /// Gets or sets the days since last report.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int DaysSinceLastReport { get; set; }
 
     /// <summary>
     /// Gets or sets the group names.
     /// </summary>
+    [Required]
     public List<string> GroupNames { get; set; } = [];
 }

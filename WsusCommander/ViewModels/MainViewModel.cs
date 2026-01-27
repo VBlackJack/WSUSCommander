@@ -16,7 +16,6 @@
 
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using WsusCommander.Models;
@@ -53,6 +52,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private readonly IGroupService _groupService;
     private readonly IReportService _reportService;
     private readonly IThemeService _themeService;
+    private readonly IClipboardService _clipboardService;
+    private readonly INavigationService _navigationService;
 
     #endregion
 
@@ -379,7 +380,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
         IBulkOperationService bulkOperationService,
         IGroupService groupService,
         IReportService reportService,
-        IThemeService themeService)
+        IThemeService themeService,
+        IClipboardService clipboardService,
+        INavigationService navigationService)
     {
         _configService = configService;
         _psService = psService;
@@ -402,6 +405,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _groupService = groupService;
         _reportService = reportService;
         _themeService = themeService;
+        _clipboardService = clipboardService;
+        _navigationService = navigationService;
 
         // Configure timer
         _timerService.Interval = _configService.AppSettings.AutoRefreshInterval * 1000;
@@ -2165,11 +2170,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     /// </summary>
     private Task ShowComputerUpdatesDialogAsync(ComputerStatus computer, List<ComputerUpdateStatus> updates)
     {
-        var dialog = new Views.ComputerUpdatesWindow(computer, updates)
-        {
-            Owner = Application.Current.MainWindow
-        };
-        dialog.ShowDialog();
+        _navigationService.NavigateToComputerUpdates(computer, updates);
         return Task.CompletedTask;
     }
 
@@ -2428,7 +2429,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     /// Command to copy KB article number to clipboard.
     /// </summary>
     [RelayCommand]
-    private void CopyKbArticle()
+    private async Task CopyKbArticleAsync()
     {
         if (SelectedUpdate is null || string.IsNullOrEmpty(SelectedUpdate.KbArticle))
         {
@@ -2437,12 +2438,15 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
         try
         {
-            System.Windows.Clipboard.SetText(SelectedUpdate.KbArticle);
+            _clipboardService.SetText(SelectedUpdate.KbArticle);
             _dialogService.ShowSuccessToast(string.Format(Resources.StatusCopied, SelectedUpdate.KbArticle));
         }
         catch (Exception ex)
         {
-            _loggingService.LogErrorAsync("Failed to copy to clipboard", ex).ConfigureAwait(false);
+            await _loggingService.LogErrorAsync("Clipboard operation failed", ex);
+            await _dialogService.ShowErrorAsync(
+                Resources.DialogError,
+                Resources.ErrorClipboardFailed);
         }
     }
 

@@ -224,7 +224,8 @@ public sealed class HealthService : IHealthService, IDisposable
             // Simple PowerShell test using health check script
             var result = await _powerShellService.ExecuteScriptAsync(
                 "Get-PowerShellVersion.ps1",
-                new Dictionary<string, object>());
+                new Dictionary<string, object>(),
+                cancellationToken);
 
             sw.Stop();
 

@@ -72,7 +72,8 @@ public sealed class ReportService : IReportService
 
         var result = await _powerShellService.ExecuteScriptAsync(
             "Get-ComplianceReport.ps1",
-            parameters);
+            parameters,
+            cancellationToken);
 
         var report = ParseComplianceReport(result);
         await _loggingService.LogInfoAsync($"Compliance report generated: {report.CompliancePercent:F1}% compliant");
@@ -100,7 +101,8 @@ public sealed class ReportService : IReportService
                         ["Port"] = _configService.WsusConnection.Port,
                         ["UseSsl"] = _configService.WsusConnection.UseSsl,
                         ["StaleDays"] = staleDays
-                    });
+                    },
+                    cancellationToken);
 
                 return ParseStaleComputers(result);
             },
@@ -124,7 +126,8 @@ public sealed class ReportService : IReportService
                         ["ServerName"] = _configService.WsusConnection.ServerName,
                         ["Port"] = _configService.WsusConnection.Port,
                         ["UseSsl"] = _configService.WsusConnection.UseSsl
-                    });
+                    },
+                    cancellationToken);
 
                 return ParseCriticalUpdatesSummary(result);
             },
