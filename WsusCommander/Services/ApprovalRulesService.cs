@@ -122,7 +122,7 @@ public sealed class ApprovalRulesService : IApprovalRulesService
                 string.Equals(update.Classification, rule.ConditionValue, StringComparison.OrdinalIgnoreCase),
 
             RuleConditionType.IsSuperseded =>
-                update.IsDeclined, // Note: Would need IsSuperseded property on WsusUpdate
+                update.IsSuperseded,
 
             RuleConditionType.TitleContains =>
                 update.Title?.Contains(rule.ConditionValue, StringComparison.OrdinalIgnoreCase) ?? false,
