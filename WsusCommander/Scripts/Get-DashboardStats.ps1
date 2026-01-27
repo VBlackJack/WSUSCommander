@@ -23,22 +23,6 @@ try {
         Write-Error "Failed to connect to WSUS server: $ServerName" -ErrorAction Stop
     }
 
-    # Helper function to safely get property value
-    function Get-SafeProperty {
-        param($Object, [string]$PropertyName, $DefaultValue = $false)
-        try {
-            $prop = $Object.PSObject.Properties[$PropertyName]
-            if ($null -ne $prop) {
-                return $prop.Value
-            }
-            # Try direct access
-            return $Object.$PropertyName
-        }
-        catch {
-            return $DefaultValue
-        }
-    }
-
     # Get all updates using basic scope
     $scope = New-Object Microsoft.UpdateServices.Administration.UpdateScope
     $allRawUpdates = @($wsus.GetUpdates($scope))
@@ -56,10 +40,37 @@ try {
         $isApproved = $false
         $classification = ""
 
-        try { $isDeclined = $update.IsDeclined } catch { $isDeclined = $false }
-        try { $isSuperseded = $update.IsSuperseded } catch { $isSuperseded = $false }
-        try { $isApproved = $update.IsApproved } catch { $isApproved = $false }
-        try { $classification = $update.UpdateClassificationTitle } catch { $classification = "" }
+        try {
+            $declinedProperty = $update.PSObject.Properties["IsDeclined"]
+            $isDeclined = if ($null -ne $declinedProperty) { [bool]$declinedProperty.Value } else { $false }
+        }
+        catch {
+            $isDeclined = $false
+        }
+
+        try {
+            $supersededProperty = $update.PSObject.Properties["IsSuperseded"]
+            $isSuperseded = if ($null -ne $supersededProperty) { [bool]$supersededProperty.Value } else { $false }
+        }
+        catch {
+            $isSuperseded = $false
+        }
+
+        try {
+            $approvedProperty = $update.PSObject.Properties["IsApproved"]
+            $isApproved = if ($null -ne $approvedProperty) { [bool]$approvedProperty.Value } else { $false }
+        }
+        catch {
+            $isApproved = $false
+        }
+
+        try {
+            $classificationProperty = $update.PSObject.Properties["UpdateClassificationTitle"]
+            $classification = if ($null -ne $classificationProperty) { [string]$classificationProperty.Value } else { "" }
+        }
+        catch {
+            $classification = ""
+        }
 
         if (-not $isDeclined) {
             $totalUpdates++
