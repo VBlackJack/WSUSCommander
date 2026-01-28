@@ -112,6 +112,27 @@
   <data name="MenuDecline" xml:space="preserve">
     <value>Decline Update</value>
   </data>
+  <data name="MenuFile" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="MenuTools" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="MenuScheduler" xml:space="preserve">
+    <value>Scheduler</value>
+  </data>
+  <data name="MenuCleanup" xml:space="preserve">
+    <value>Cleanup</value>
+  </data>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>About</value>
+  </data>
   <data name="StatusApproved" xml:space="preserve">
     <value>Update approved for {0}.</value>
   </data>
@@ -495,6 +516,21 @@
   <data name="DialogInfo" xml:space="preserve">
     <value>Information</value>
   </data>
+  <data name="DialogMoveComputerTitle" xml:space="preserve">
+    <value>Move Computer</value>
+  </data>
+  <data name="DialogMoveComputerPrompt" xml:space="preserve">
+    <value>Enter the target group name. Available groups: {0}</value>
+  </data>
+  <data name="ErrorGroupNotFound" xml:space="preserve">
+    <value>Group '{0}' was not found.</value>
+  </data>
+  <data name="ConfirmRemoveComputer" xml:space="preserve">
+    <value>Remove '{0}' from WSUS? This action cannot be undone.</value>
+  </data>
+  <data name="ConfirmRestoreSettings" xml:space="preserve">
+    <value>Restoring settings will overwrite appsettings.json. Continue?</value>
+  </data>
   <data name="BtnLater" xml:space="preserve">
     <value>Later</value>
   </data>
@@ -659,6 +695,12 @@
   <data name="MenuMoveToGroup" xml:space="preserve">
     <value>Move to Group</value>
   </data>
+  <data name="MenuForceScan" xml:space="preserve">
+    <value>Force Scan</value>
+  </data>
+  <data name="MenuRemoveComputer" xml:space="preserve">
+    <value>Remove from WSUS</value>
+  </data>
 
   <!-- Computer Updates Dialog -->
   <data name="DialogComputerUpdates" xml:space="preserve">
@@ -815,6 +857,9 @@
   <data name="DashboardUpToDate" xml:space="preserve">
     <value>Up to Date</value>
   </data>
+  <data name="DashboardUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
   <data name="DashboardCompliance" xml:space="preserve">
     <value>Compliance</value>
   </data>
@@ -826,6 +871,15 @@
   </data>
   <data name="DashboardComputerStats" xml:space="preserve">
     <value>Computer Statistics</value>
+  </data>
+  <data name="DashboardComplianceTrend" xml:space="preserve">
+    <value>Compliance Trend</value>
+  </data>
+  <data name="DashboardUpdatesByClassification" xml:space="preserve">
+    <value>Updates by Classification</value>
+  </data>
+  <data name="DashboardComputerStatus" xml:space="preserve">
+    <value>Computer Status</value>
   </data>
   <data name="DashboardQuickActions" xml:space="preserve">
     <value>Quick Actions</value>
@@ -1047,6 +1101,9 @@
   <data name="BtnDeleteRule" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="BtnImportRules" xml:space="preserve">
+    <value>Import Rules</value>
+  </data>
   <data name="BtnApplyRules" xml:space="preserve">
     <value>Apply Rules</value>
   </data>
@@ -1203,6 +1260,24 @@
   <data name="ToastSyncComplete" xml:space="preserve">
     <value>WSUS synchronization completed</value>
   </data>
+  <data name="ToastComputerMoved" xml:space="preserve">
+    <value>Moved {0} to {1}</value>
+  </data>
+  <data name="ToastComputerScanQueued" xml:space="preserve">
+    <value>Scan queued for {0}</value>
+  </data>
+  <data name="ToastComputerRemoved" xml:space="preserve">
+    <value>Computer removed from WSUS</value>
+  </data>
+  <data name="ToastRulesImported" xml:space="preserve">
+    <value>Approval rules imported</value>
+  </data>
+  <data name="ToastSettingsExported" xml:space="preserve">
+    <value>Settings backup saved</value>
+  </data>
+  <data name="ToastSettingsImported" xml:space="preserve">
+    <value>Settings restored. Restart the app to apply changes.</value>
+  </data>
 
   <!-- Accessibility Labels -->
   <data name="GridUpdates" xml:space="preserve">
@@ -1265,6 +1340,9 @@
   <data name="SettingsHeaderExport" xml:space="preserve">
     <value>Export</value>
   </data>
+  <data name="SettingsHeaderBackup" xml:space="preserve">
+    <value>Backup &amp; Restore</value>
+  </data>
   <data name="SettingsLabelServer" xml:space="preserve">
     <value>Server</value>
   </data>
@@ -1288,6 +1366,12 @@
   </data>
   <data name="SettingsLabelExportFormat" xml:space="preserve">
     <value>Default export format</value>
+  </data>
+  <data name="BtnBackupSettings" xml:space="preserve">
+    <value>Backup Settings</value>
+  </data>
+  <data name="BtnRestoreSettings" xml:space="preserve">
+    <value>Restore Settings</value>
   </data>
   <data name="SettingsThemeLight" xml:space="preserve">
     <value>Light</value>
@@ -1411,6 +1495,36 @@
   </data>
   <data name="SchedulerWindowTitle" xml:space="preserve">
     <value>Scheduler</value>
+  </data>
+  <data name="CleanupWindowTitle" xml:space="preserve">
+    <value>Cleanup</value>
+  </data>
+  <data name="CleanupWindowDescription" xml:space="preserve">
+    <value>Select cleanup tasks to run against the WSUS server.</value>
+  </data>
+  <data name="CleanupOptionObsoleteUpdates" xml:space="preserve">
+    <value>Remove obsolete updates</value>
+  </data>
+  <data name="CleanupOptionObsoleteComputers" xml:space="preserve">
+    <value>Remove obsolete computers</value>
+  </data>
+  <data name="CleanupOptionExpiredUpdates" xml:space="preserve">
+    <value>Remove expired updates</value>
+  </data>
+  <data name="CleanupOptionCompressRevisions" xml:space="preserve">
+    <value>Compress update revisions</value>
+  </data>
+  <data name="CleanupOptionUnneededContent" xml:space="preserve">
+    <value>Remove unneeded content files</value>
+  </data>
+  <data name="CleanupRunButton" xml:space="preserve">
+    <value>Run Cleanup</value>
+  </data>
+  <data name="CleanupCompletedMessage" xml:space="preserve">
+    <value>Cleanup completed successfully.</value>
+  </data>
+  <data name="CleanupFailedMessage" xml:space="preserve">
+    <value>Cleanup failed: {0}</value>
   </data>
   <data name="SchedulerHeaderTasks" xml:space="preserve">
     <value>Scheduled Tasks</value>

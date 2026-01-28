@@ -31,6 +31,10 @@ public partial class ComputersViewModel : ObservableObject
     private readonly INotificationService _notificationService;
     private readonly IExportService _exportService;
     private readonly IFileDialogService _fileDialogService;
+    private readonly IBulkOperationService _bulkOperationService;
+    private readonly IGroupService _groupService;
+    private readonly IDialogService _dialogService;
+    private readonly IComputerActionService _computerActionService;
 
     [ObservableProperty]
     private ObservableCollection<ComputerStatus> _filteredComputerStatuses = [];
@@ -46,13 +50,21 @@ public partial class ComputersViewModel : ObservableObject
         ILoggingService loggingService,
         INotificationService notificationService,
         IExportService exportService,
-        IFileDialogService fileDialogService)
+        IFileDialogService fileDialogService,
+        IBulkOperationService bulkOperationService,
+        IGroupService groupService,
+        IDialogService dialogService,
+        IComputerActionService computerActionService)
     {
         _wsusService = wsusService;
         _loggingService = loggingService;
         _notificationService = notificationService;
         _exportService = exportService;
         _fileDialogService = fileDialogService;
+        _bulkOperationService = bulkOperationService;
+        _groupService = groupService;
+        _dialogService = dialogService;
+        _computerActionService = computerActionService;
     }
 
     [RelayCommand]
@@ -80,6 +92,75 @@ public partial class ComputersViewModel : ObservableObject
     {
         if (SelectedComputer is null) return;
         OnViewUpdatesRequested?.Invoke(this, SelectedComputer);
+    }
+
+    [RelayCommand]
+    private async Task MoveComputerToGroupAsync(CancellationToken cancellationToken)
+    {
+        if (SelectedComputer is null)
+            return;
+
+        var groups = await _groupService.GetAllGroupsAsync(true, cancellationToken);
+        var groupNames = string.Join(", ", groups.Select(g => g.Name).OrderBy(name => name));
+
+        var groupName = await _dialogService.ShowInputDialogAsync(
+            Resources.DialogMoveComputerTitle,
+            string.Format(Resources.DialogMoveComputerPrompt, groupNames));
+
+        if (string.IsNullOrWhiteSpace(groupName))
+            return;
+
+        var targetGroup = groups.FirstOrDefault(g => string.Equals(g.Name, groupName, StringComparison.OrdinalIgnoreCase));
+        if (targetGroup is null)
+        {
+            await _notificationService.ShowErrorAsync(
+                Resources.DialogError,
+                string.Format(Resources.ErrorGroupNotFound, groupName));
+            return;
+        }
+
+        await _bulkOperationService.MoveComputersToGroupAsync(
+            [SelectedComputer.ComputerId],
+            targetGroup.Id,
+            null,
+            cancellationToken);
+
+        SelectedComputer.GroupName = targetGroup.Name;
+        _notificationService.ShowToast(
+            string.Format(Resources.ToastComputerMoved, SelectedComputer.Name, targetGroup.Name),
+            ToastType.Success);
+    }
+
+    [RelayCommand]
+    private async Task ForceComputerScanAsync(CancellationToken cancellationToken)
+    {
+        if (SelectedComputer is null)
+            return;
+
+        await _computerActionService.ForceComputerScanAsync(SelectedComputer.ComputerId, cancellationToken);
+        _notificationService.ShowToast(
+            string.Format(Resources.ToastComputerScanQueued, SelectedComputer.Name),
+            ToastType.Success);
+    }
+
+    [RelayCommand]
+    private async Task RemoveComputerAsync(CancellationToken cancellationToken)
+    {
+        if (SelectedComputer is null)
+            return;
+
+        var confirmed = await _notificationService.ShowConfirmationAsync(
+            Resources.DialogConfirm,
+            string.Format(Resources.ConfirmRemoveComputer, SelectedComputer.Name));
+
+        if (!confirmed)
+            return;
+
+        await _computerActionService.RemoveComputerAsync(SelectedComputer.ComputerId, cancellationToken);
+        FilteredComputerStatuses.Remove(SelectedComputer);
+        SelectedComputer = null;
+
+        _notificationService.ShowToast(Resources.ToastComputerRemoved, ToastType.Success);
     }
 
     [RelayCommand]

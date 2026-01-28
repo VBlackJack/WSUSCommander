@@ -75,6 +75,32 @@ public sealed class ApprovalRulesService : IApprovalRulesService
     }
 
     /// <inheritdoc/>
+    public async Task ImportRulesAsync(string filePath)
+    {
+        try
+        {
+            var content = await File.ReadAllTextAsync(filePath);
+            var collection = JsonSerializer.Deserialize<ApprovalRulesCollection>(content);
+
+            if (collection?.Rules == null)
+            {
+                throw new InvalidDataException("Invalid approval rules file.");
+            }
+
+            _rules.Clear();
+            _rules.AddRange(collection.Rules);
+
+            await SaveToFileAsync();
+            await _loggingService.LogInfoAsync($"Imported {_rules.Count} approval rules from {filePath}.");
+        }
+        catch (Exception ex)
+        {
+            await _loggingService.LogErrorAsync("Failed to import approval rules", ex);
+            throw;
+        }
+    }
+
+    /// <inheritdoc/>
     public async Task SaveRuleAsync(ApprovalRule rule)
     {
         var existing = _rules.FirstOrDefault(r => r.Id == rule.Id);

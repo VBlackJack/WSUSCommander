@@ -27,16 +27,21 @@ public sealed class EmailService : IEmailService
 {
     private readonly IConfigurationService _configurationService;
     private readonly ILoggingService _loggingService;
+    private readonly ISmtpClientFactory _smtpClientFactory;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EmailService"/> class.
     /// </summary>
     /// <param name="configurationService">Configuration service.</param>
     /// <param name="loggingService">Logging service.</param>
-    public EmailService(IConfigurationService configurationService, ILoggingService loggingService)
+    public EmailService(
+        IConfigurationService configurationService,
+        ILoggingService loggingService,
+        ISmtpClientFactory smtpClientFactory)
     {
         _configurationService = configurationService;
         _loggingService = loggingService;
+        _smtpClientFactory = smtpClientFactory;
     }
 
     /// <inheritdoc/>
@@ -103,10 +108,7 @@ public sealed class EmailService : IEmailService
             message.To.Add(recipient);
         }
 
-        using var client = new SmtpClient(config.SmtpServer, config.SmtpPort)
-        {
-            EnableSsl = config.UseSsl
-        };
+        using var client = _smtpClientFactory.Create(config.SmtpServer, config.SmtpPort, config.UseSsl);
 
         await client.SendMailAsync(message, cancellationToken);
         await _loggingService.LogInfoAsync(string.Format(Resources.LogEmailSent, subject));

@@ -16,6 +16,8 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
 using WsusCommander.Models;
 using WsusCommander.Properties;
 using WsusCommander.Services;
@@ -112,6 +114,27 @@ public partial class DashboardViewModel : ObservableObject
     [ObservableProperty]
     private bool _canUserDecline = true;
 
+    [ObservableProperty]
+    private ISeries[] _complianceTrendSeries = Array.Empty<ISeries>();
+
+    [ObservableProperty]
+    private Axis[] _complianceTrendXAxis = Array.Empty<Axis>();
+
+    [ObservableProperty]
+    private Axis[] _complianceTrendYAxis = Array.Empty<Axis>();
+
+    [ObservableProperty]
+    private ISeries[] _classificationSeries = Array.Empty<ISeries>();
+
+    [ObservableProperty]
+    private ISeries[] _computerStatusSeries = Array.Empty<ISeries>();
+
+    [ObservableProperty]
+    private Axis[] _computerStatusXAxis = Array.Empty<Axis>();
+
+    [ObservableProperty]
+    private Axis[] _computerStatusYAxis = Array.Empty<Axis>();
+
     public DashboardViewModel(
         IWsusService wsusService,
         ILoggingService loggingService,
@@ -134,6 +157,7 @@ public partial class DashboardViewModel : ObservableObject
             ComplianceHistory = await _complianceService.GetHistoryAsync(30, cancellationToken);
 
             UpdateActionItems();
+            UpdateCharts();
 
             LastRefresh = DateTime.Now;
             DashboardLastSyncDisplay = DashboardStats?.LastSyncTime?.ToString("g") ?? Resources.StatusReady;
@@ -223,6 +247,87 @@ public partial class DashboardViewModel : ObservableObject
                 ActionCommand = NavigateToComputersCommand
             });
         }
+    }
+
+    private void UpdateCharts()
+    {
+        var history = ComplianceHistory
+            .OrderBy(snapshot => snapshot.Timestamp)
+            .ToList();
+
+        ComplianceTrendSeries = history.Count == 0
+            ? Array.Empty<ISeries>()
+            : new ISeries[]
+            {
+                new LineSeries<double>
+                {
+                    Values = history.Select(snapshot => snapshot.CompliancePercent).ToArray(),
+                    Name = Resources.DashboardCompliance,
+                    Fill = null
+                }
+            };
+
+        ComplianceTrendXAxis = history.Count == 0
+            ? Array.Empty<Axis>()
+            : new[]
+            {
+                new Axis
+                {
+                    Labels = history.Select(snapshot => snapshot.Timestamp.ToString("MM-dd")).ToArray()
+                }
+            };
+
+        ComplianceTrendYAxis =
+        [
+            new Axis
+            {
+                MinLimit = 0,
+                MaxLimit = 100
+            }
+        ];
+
+        var stats = DashboardStats;
+        ClassificationSeries = stats is null
+            ? Array.Empty<ISeries>()
+            :
+            [
+                new PieSeries<int> { Values = new[] { stats.CriticalPending }, Name = Resources.DashboardCriticalPending },
+                new PieSeries<int> { Values = new[] { stats.SecurityPending }, Name = Resources.DashboardSecurityPending },
+                new PieSeries<int> { Values = new[] { stats.UnapprovedUpdates }, Name = Resources.DashboardUnapproved },
+                new PieSeries<int> { Values = new[] { stats.SupersededUpdates }, Name = Resources.DashboardSuperseded }
+            ];
+
+        if (stats is null)
+        {
+            ComputerStatusSeries = Array.Empty<ISeries>();
+            ComputerStatusXAxis = Array.Empty<Axis>();
+            ComputerStatusYAxis = Array.Empty<Axis>();
+            return;
+        }
+
+        var unknownCount = Math.Max(0, stats.TotalComputers - stats.ComputersUpToDate - stats.ComputersNeedingUpdates);
+        ComputerStatusSeries =
+        [
+            new ColumnSeries<int> { Values = new[] { stats.ComputersUpToDate }, Name = Resources.DashboardUpToDate },
+            new ColumnSeries<int> { Values = new[] { stats.ComputersNeedingUpdates }, Name = Resources.DashboardNeedingUpdates },
+            new ColumnSeries<int> { Values = new[] { unknownCount }, Name = Resources.DashboardUnknown }
+        ];
+
+        ComputerStatusXAxis =
+        [
+            new Axis
+            {
+                Labels = [Resources.DashboardComputerStatus]
+            }
+        ];
+
+        ComputerStatusYAxis =
+        [
+            new Axis
+            {
+                MinLimit = 0
+            }
+        ];
     }
 
     [RelayCommand]

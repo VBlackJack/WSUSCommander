@@ -16,6 +16,9 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using WsusCommander.Interfaces;
+using WsusCommander.Models;
+using WsusCommander.Properties;
 using WsusCommander.Services;
 
 namespace WsusCommander.ViewModels;
@@ -24,6 +27,9 @@ public partial class SettingsViewModel : ObservableObject
 {
     private readonly IConfigurationService _configService;
     private readonly IPreferencesService _preferencesService;
+    private readonly IFileDialogService _fileDialogService;
+    private readonly INotificationService _notificationService;
+    private readonly ISettingsBackupService _settingsBackupService;
 
     [ObservableProperty]
     private string _selectedTheme = "System";
@@ -52,10 +58,18 @@ public partial class SettingsViewModel : ObservableObject
     [ObservableProperty]
     private string _defaultExportFormat = "Csv";
 
-    public SettingsViewModel(IConfigurationService configService, IPreferencesService preferencesService)
+    public SettingsViewModel(
+        IConfigurationService configService,
+        IPreferencesService preferencesService,
+        IFileDialogService fileDialogService,
+        INotificationService notificationService,
+        ISettingsBackupService settingsBackupService)
     {
         _configService = configService;
         _preferencesService = preferencesService;
+        _fileDialogService = fileDialogService;
+        _notificationService = notificationService;
+        _settingsBackupService = settingsBackupService;
 
         _autoRefreshIntervalSeconds = _configService.AppSettings.AutoRefreshInterval;
         _defaultServerName = _configService.WsusConnection.ServerName;
@@ -68,5 +82,58 @@ public partial class SettingsViewModel : ObservableObject
     private void ToggleAutoRefresh()
     {
         IsAutoRefreshEnabled = !IsAutoRefreshEnabled;
+    }
+
+    [RelayCommand]
+    private async Task BackupSettingsAsync(CancellationToken cancellationToken)
+    {
+        var filePath = _fileDialogService.ShowSaveFileDialog(
+            Resources.ExportFilterJson,
+            ".json",
+            "wsus-settings-backup");
+
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            return;
+        }
+
+        try
+        {
+            await _settingsBackupService.ExportSettingsAsync(filePath, cancellationToken);
+            _notificationService.ShowToast(Resources.ToastSettingsExported, ToastType.Success);
+        }
+        catch (Exception ex)
+        {
+            await _notificationService.ShowErrorAsync(Resources.DialogError, ex.Message);
+        }
+    }
+
+    [RelayCommand]
+    private async Task RestoreSettingsAsync(CancellationToken cancellationToken)
+    {
+        var filePath = _fileDialogService.ShowOpenFileDialog(Resources.ExportFilterJson);
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            return;
+        }
+
+        var confirmed = await _notificationService.ShowConfirmationAsync(
+            Resources.DialogConfirm,
+            Resources.ConfirmRestoreSettings);
+
+        if (!confirmed)
+        {
+            return;
+        }
+
+        try
+        {
+            await _settingsBackupService.ImportSettingsAsync(filePath, cancellationToken);
+            _notificationService.ShowToast(Resources.ToastSettingsImported, ToastType.Success);
+        }
+        catch (Exception ex)
+        {
+            await _notificationService.ShowErrorAsync(Resources.DialogError, ex.Message);
+        }
     }
 }

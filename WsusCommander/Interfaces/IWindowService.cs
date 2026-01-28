@@ -54,6 +54,16 @@ public interface IWindowService
     void ShowSettings();
 
     /// <summary>
+    /// Shows the scheduler window.
+    /// </summary>
+    void ShowScheduler();
+
+    /// <summary>
+    /// Shows the cleanup window.
+    /// </summary>
+    void ShowCleanup();
+
+    /// <summary>
     /// Shows the about dialog.
     /// </summary>
     void ShowAbout();
