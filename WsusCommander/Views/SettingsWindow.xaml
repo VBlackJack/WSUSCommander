@@ -7,13 +7,106 @@
         Width="520"
         WindowStartupLocation="CenterOwner"
         Background="#F5F5F5">
+
+    <Window.Resources>
+        <!-- Focus Visual Style -->
+        <Style x:Key="SettingsFocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Stroke="#FF6B00" StrokeThickness="2"
+                                   RadiusX="4" RadiusY="4" Margin="-2"
+                                   SnapsToDevicePixels="True"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Accessible TextBox Style -->
+        <Style x:Key="SettingsTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border"
+                                Background="White"
+                                BorderBrush="#E0E0E0"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="False"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF6B00"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                            <Trigger Property="Validation.HasError" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#DC3545"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Accessible CheckBox Style -->
+        <Style x:Key="SettingsCheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource SettingsFocusVisual}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+
+        <!-- Accessible ComboBox Style -->
+        <Style x:Key="SettingsComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource SettingsFocusVisual}"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+
+        <!-- Settings Button Style -->
+        <Style x:Key="SettingsButtonStyle" TargetType="Button">
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FocusVisualStyle" Value="{StaticResource SettingsFocusVisual}"/>
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.9"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="#6C757D"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="24" Orientation="Vertical" >
-            <TextBlock Text="{x:Static p:Resources.SettingsHeaderConnection}"
+        <StackPanel Margin="24" Orientation="Vertical">
+            <TextBlock x:Name="HeaderConnection"
+                       Text="{x:Static p:Resources.SettingsHeaderConnection}"
                        FontSize="16"
                        FontWeight="SemiBold"
                        Margin="0,0,0,12" />
-            <Grid Margin="0,0,0,16">
+            <Grid Margin="0,0,0,16"
+                  AutomationProperties.LabeledBy="{Binding ElementName=HeaderConnection}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -23,19 +116,33 @@
                     <ColumnDefinition Width="160"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelServer}" Margin="0,0,12,8"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DefaultServerName, UpdateSourceTrigger=PropertyChanged}"/>
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelPort}" Margin="0,0,12,8"/>
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding DefaultServerPort, UpdateSourceTrigger=PropertyChanged}"/>
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelSsl}" Margin="0,0,12,0"/>
-                <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding DefaultUseSsl}"/>
+                <TextBlock x:Name="LblServer" Grid.Row="0" Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelServer}" Margin="0,0,12,8" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="0" Grid.Column="1"
+                         Text="{Binding DefaultServerName, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource SettingsTextBoxStyle}"
+                         TabIndex="0"
+                         AutomationProperties.LabeledBy="{Binding ElementName=LblServer}"/>
+                <TextBlock x:Name="LblPort" Grid.Row="1" Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelPort}" Margin="0,0,12,8" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="1" Grid.Column="1"
+                         Text="{Binding DefaultServerPort, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource SettingsTextBoxStyle}"
+                         TabIndex="1"
+                         AutomationProperties.LabeledBy="{Binding ElementName=LblPort}"/>
+                <TextBlock x:Name="LblSsl" Grid.Row="2" Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelSsl}" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                <CheckBox Grid.Row="2" Grid.Column="1"
+                          IsChecked="{Binding DefaultUseSsl}"
+                          Style="{StaticResource SettingsCheckBoxStyle}"
+                          TabIndex="2"
+                          AutomationProperties.LabeledBy="{Binding ElementName=LblSsl}"/>
             </Grid>
 
-            <TextBlock Text="{x:Static p:Resources.SettingsHeaderRefresh}"
+            <TextBlock x:Name="HeaderRefresh"
+                       Text="{x:Static p:Resources.SettingsHeaderRefresh}"
                        FontSize="16"
                        FontWeight="SemiBold"
                        Margin="0,0,0,12" />
-            <Grid Margin="0,0,0,16">
+            <Grid Margin="0,0,0,16"
+                  AutomationProperties.LabeledBy="{Binding ElementName=HeaderRefresh}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -44,43 +151,65 @@
                     <ColumnDefinition Width="200"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelAutoRefresh}" Margin="0,0,12,8"/>
-                <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding IsAutoRefreshEnabled}"/>
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelRefreshInterval}" Margin="0,0,12,0"/>
+                <TextBlock x:Name="LblAutoRefresh" Grid.Row="0" Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelAutoRefresh}" Margin="0,0,12,8" VerticalAlignment="Center"/>
+                <CheckBox Grid.Row="0" Grid.Column="1"
+                          IsChecked="{Binding IsAutoRefreshEnabled}"
+                          Style="{StaticResource SettingsCheckBoxStyle}"
+                          TabIndex="3"
+                          AutomationProperties.LabeledBy="{Binding ElementName=LblAutoRefresh}"/>
+                <TextBlock x:Name="LblInterval" Grid.Row="1" Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelRefreshInterval}" Margin="0,0,12,0" VerticalAlignment="Center"/>
                 <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
-                    <TextBox Width="80" Text="{Binding AutoRefreshIntervalSeconds, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Width="80"
+                             Text="{Binding AutoRefreshIntervalSeconds, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource SettingsTextBoxStyle}"
+                             TabIndex="4"
+                             AutomationProperties.LabeledBy="{Binding ElementName=LblInterval}"/>
                     <TextBlock Margin="8,3,0,0" Text="{x:Static p:Resources.SettingsSeconds}"/>
                 </StackPanel>
             </Grid>
 
-            <TextBlock Text="{x:Static p:Resources.SettingsHeaderTheme}"
+            <TextBlock x:Name="HeaderTheme"
+                       Text="{x:Static p:Resources.SettingsHeaderTheme}"
                        FontSize="16"
                        FontWeight="SemiBold"
                        Margin="0,0,0,12" />
-            <Grid Margin="0,0,0,16">
+            <Grid Margin="0,0,0,16"
+                  AutomationProperties.LabeledBy="{Binding ElementName=HeaderTheme}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="160"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelTheme}" Margin="0,0,12,0"/>
-                <ComboBox Grid.Column="1" SelectedValue="{Binding SelectedTheme}" SelectedValuePath="Content">
+                <TextBlock x:Name="LblTheme" Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelTheme}" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                <ComboBox Grid.Column="1"
+                          SelectedValue="{Binding SelectedTheme}"
+                          SelectedValuePath="Content"
+                          Style="{StaticResource SettingsComboBoxStyle}"
+                          TabIndex="5"
+                          AutomationProperties.LabeledBy="{Binding ElementName=LblTheme}">
                     <ComboBoxItem Content="{x:Static p:Resources.SettingsThemeLight}"/>
                     <ComboBoxItem Content="{x:Static p:Resources.SettingsThemeDark}"/>
                     <ComboBoxItem Content="{x:Static p:Resources.SettingsThemeSystem}"/>
                 </ComboBox>
             </Grid>
 
-            <TextBlock Text="{x:Static p:Resources.SettingsHeaderExport}"
+            <TextBlock x:Name="HeaderExport"
+                       Text="{x:Static p:Resources.SettingsHeaderExport}"
                        FontSize="16"
                        FontWeight="SemiBold"
                        Margin="0,0,0,12" />
-            <Grid Margin="0,0,0,24">
+            <Grid Margin="0,0,0,24"
+                  AutomationProperties.LabeledBy="{Binding ElementName=HeaderExport}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="180"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelExportFormat}" Margin="0,0,12,0"/>
-                <ComboBox Grid.Column="1" SelectedValue="{Binding DefaultExportFormat}" SelectedValuePath="Content">
+                <TextBlock x:Name="LblExportFormat" Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelExportFormat}" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                <ComboBox Grid.Column="1"
+                          SelectedValue="{Binding DefaultExportFormat}"
+                          SelectedValuePath="Content"
+                          Style="{StaticResource SettingsComboBoxStyle}"
+                          TabIndex="6"
+                          AutomationProperties.LabeledBy="{Binding ElementName=LblExportFormat}">
                     <ComboBoxItem Content="{x:Static p:Resources.ExportFormatCsv}"/>
                     <ComboBoxItem Content="{x:Static p:Resources.ExportFormatTsv}"/>
                     <ComboBoxItem Content="{x:Static p:Resources.ExportFormatJson}"/>
@@ -97,16 +226,27 @@
                 <Button Content="{x:Static p:Resources.BtnBackupSettings}"
                         Command="{Binding BackupSettingsCommand}"
                         Width="160"
-                        Margin="0,0,12,0"/>
+                        Margin="0,0,12,0"
+                        Style="{StaticResource SettingsButtonStyle}"
+                        TabIndex="7"
+                        AutomationProperties.Name="{x:Static p:Resources.BtnBackupSettings}"/>
                 <Button Content="{x:Static p:Resources.BtnRestoreSettings}"
                         Command="{Binding RestoreSettingsCommand}"
-                        Width="160"/>
+                        Width="160"
+                        Style="{StaticResource SettingsButtonStyle}"
+                        TabIndex="8"
+                        AutomationProperties.Name="{x:Static p:Resources.BtnRestoreSettings}"/>
             </StackPanel>
 
             <Button Content="{x:Static p:Resources.BtnClose}"
                     Width="120"
                     HorizontalAlignment="Right"
-                    Click="CloseButton_Click" />
+                    Click="CloseButton_Click"
+                    Style="{StaticResource SettingsButtonStyle}"
+                    Background="#6C757D"
+                    TabIndex="9"
+                    IsCancel="True"
+                    AutomationProperties.Name="{x:Static p:Resources.BtnClose}"/>
         </StackPanel>
     </ScrollViewer>
 </Window>

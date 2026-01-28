@@ -10,8 +10,24 @@
         WindowStartupLocation="CenterOwner"
         Background="#F5F5F5">
 
+    <Window.Resources>
+        <!-- Focus Visual Style -->
+        <Style x:Key="WindowFocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Stroke="#FF6B00" StrokeThickness="2"
+                                   RadiusX="4" RadiusY="4" Margin="-2"
+                                   SnapsToDevicePixels="True"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid Margin="15">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -21,37 +37,54 @@
         <!-- Header -->
         <StackPanel Grid.Row="0" Margin="0,0,0,15">
             <TextBlock Text="{Binding ComputerName}" FontSize="18" FontWeight="Bold" Foreground="#2C3E50"/>
-            <TextBlock Text="{Binding Summary}" Foreground="#5D6D7E" Margin="0,5,0,0"/>
+            <TextBlock Text="{Binding Summary}" Foreground="#495057" Margin="0,5,0,0"/>
         </StackPanel>
 
         <!-- Filter Bar -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
-            <TextBlock Text="{x:Static p:Resources.LblFilter}" VerticalAlignment="Center" Margin="0,0,10,0"/>
-            <ComboBox x:Name="FilterCombo" SelectedIndex="0" Width="150" SelectionChanged="FilterCombo_SelectionChanged">
+            <TextBlock x:Name="LblFilter" Text="{x:Static p:Resources.LblFilter}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <ComboBox x:Name="FilterCombo"
+                      SelectedIndex="0"
+                      Width="150"
+                      SelectionChanged="FilterCombo_SelectionChanged"
+                      FocusVisualStyle="{StaticResource WindowFocusVisual}"
+                      AutomationProperties.LabeledBy="{Binding ElementName=LblFilter}">
                 <ComboBoxItem Content="{x:Static p:Resources.FilterAll}"/>
                 <ComboBoxItem Content="{x:Static p:Resources.FilterNotApproved}"/>
                 <ComboBoxItem Content="{x:Static p:Resources.FilterFailed}"/>
             </ComboBox>
             <TextBlock Text="{Binding FilteredCount, StringFormat='({0} items)'}"
-                       VerticalAlignment="Center" Margin="15,0,0,0" Foreground="#5D6D7E"/>
+                       VerticalAlignment="Center" Margin="15,0,0,0" Foreground="#495057"/>
         </StackPanel>
 
-        <!-- Updates DataGrid -->
-        <DataGrid Grid.Row="2"
-                  x:Name="UpdatesGrid"
-                  ItemsSource="{Binding FilteredUpdates}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  CanUserAddRows="False"
-                  CanUserDeleteRows="False"
-                  SelectionMode="Extended"
-                  GridLinesVisibility="Horizontal"
-                  HorizontalGridLinesBrush="#E0E0E0"
-                  Background="White"
-                  BorderThickness="1"
-                  BorderBrush="#E0E0E0"
-                  RowHeight="32"
-                  HeadersVisibility="Column">
+        <!-- Color Legend -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,10">
+            <Rectangle Width="16" Height="16" Fill="#FFF3E0" Stroke="#E0E0E0" StrokeThickness="1" RadiusX="2" RadiusY="2" Margin="0,0,5,0"/>
+            <TextBlock Text="{x:Static p:Resources.LegendSuperseded}" FontSize="11" Foreground="#495057" VerticalAlignment="Center" Margin="0,0,20,0"/>
+            <Rectangle Width="16" Height="16" Fill="#FFEBEE" Stroke="#E0E0E0" StrokeThickness="1" RadiusX="2" RadiusY="2" Margin="0,0,5,0"/>
+            <TextBlock Text="{x:Static p:Resources.LegendNeedsAttention}" FontSize="11" Foreground="#495057" VerticalAlignment="Center" Margin="0,0,20,0"/>
+            <Rectangle Width="16" Height="16" Fill="#E3F2FD" Stroke="#E0E0E0" StrokeThickness="1" RadiusX="2" RadiusY="2" Margin="0,0,5,0"/>
+            <TextBlock Text="{x:Static p:Resources.LegendSelected}" FontSize="11" Foreground="#495057" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- Updates DataGrid with horizontal scroll -->
+        <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+            <DataGrid x:Name="UpdatesGrid"
+                      ItemsSource="{Binding FilteredUpdates}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      SelectionMode="Extended"
+                      GridLinesVisibility="Horizontal"
+                      HorizontalGridLinesBrush="#E0E0E0"
+                      Background="White"
+                      BorderThickness="1"
+                      BorderBrush="#E0E0E0"
+                      RowHeight="32"
+                      HeadersVisibility="Column"
+                      AutomationProperties.Name="{x:Static p:Resources.AccessGridUpdates}"
+                      FocusVisualStyle="{StaticResource WindowFocusVisual}">
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="DataGridColumnHeader">
                     <Setter Property="Background" Value="#F8F9FA"/>
@@ -150,27 +183,38 @@
                                         IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
+        </ScrollViewer>
 
         <!-- Action Buttons -->
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
             <Button Content="{x:Static p:Resources.BtnClose}"
                     Click="CloseButton_Click"
                     MinWidth="80"
+                    MinHeight="36"
                     Padding="15,8"
-                    Background="#7B8D8E"
+                    Background="#6C757D"
                     Foreground="White"
                     BorderThickness="0"
-                    Cursor="Hand">
+                    Cursor="Hand"
+                    IsCancel="True"
+                    FocusVisualStyle="{StaticResource WindowFocusVisual}"
+                    AutomationProperties.Name="{x:Static p:Resources.BtnClose}">
                 <Button.Style>
                     <Style TargetType="Button">
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}"
+                                    <Border x:Name="border"
+                                            Background="{TemplateBinding Background}"
                                             CornerRadius="4"
                                             Padding="{TemplateBinding Padding}">
                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Opacity" Value="0.9"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>

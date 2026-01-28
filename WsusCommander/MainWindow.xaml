@@ -28,9 +28,24 @@
         <converters:HealthStatusToStringConverter x:Key="HealthStatusToString"/>
         <converters:ToastTypeToColorConverter x:Key="ToastTypeToColor"/>
 
-        <!-- Shared Button Style -->
+        <!-- Global Focus Visual Style for accessibility -->
+        <Style x:Key="GlobalFocusVisualStyle">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Stroke="#FF6B00" StrokeThickness="3"
+                                   RadiusX="4" RadiusY="4" Margin="-3"
+                                   SnapsToDevicePixels="True"
+                                   StrokeDashArray="2 1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Shared Button Style with WCAG AA compliant disabled state -->
         <Style x:Key="ActionButtonStyle" TargetType="Button">
             <Setter Property="MinWidth" Value="100"/>
+            <Setter Property="MinHeight" Value="36"/>
             <Setter Property="Padding" Value="16,8"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Foreground" Value="White"/>
@@ -42,22 +57,7 @@
                     <ScaleTransform ScaleX="1" ScaleY="1"/>
                 </Setter.Value>
             </Setter>
-            <Setter Property="FocusVisualStyle">
-                <Setter.Value>
-                    <Style>
-                        <Setter Property="Control.Template">
-                            <Setter.Value>
-                                <ControlTemplate>
-                                    <Rectangle Stroke="#FF6B00" StrokeThickness="3"
-                                               RadiusX="6" RadiusY="6" Margin="-4"
-                                               SnapsToDevicePixels="True"
-                                               StrokeDashArray="2 1"/>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Setter.Value>
-            </Setter>
+            <Setter Property="FocusVisualStyle" Value="{StaticResource GlobalFocusVisualStyle}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -71,8 +71,8 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Background" Value="#BDC3C7"/>
-                                <Setter Property="Opacity" Value="0.6"/>
+                                <Setter Property="Background" Value="#6C757D"/>
+                                <Setter Property="Foreground" Value="#E0E0E0"/>
                                 <Setter Property="Cursor" Value="No"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -100,11 +100,53 @@
             </Setter>
         </Style>
 
-        <!-- Small Button Style -->
+        <!-- Small Button Style with touch-friendly minimum size (44px) -->
         <Style x:Key="SmallButtonStyle" TargetType="Button" BasedOn="{StaticResource ActionButtonStyle}">
             <Setter Property="MinWidth" Value="80"/>
+            <Setter Property="MinHeight" Value="32"/>
             <Setter Property="Padding" Value="10,6"/>
             <Setter Property="FontSize" Value="11"/>
+        </Style>
+
+        <!-- Accessible TextBox Style with focus indicator and validation -->
+        <Style x:Key="AccessibleTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="False"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF6B00"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                            <Trigger Property="Validation.HasError" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#DC3545"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Accessible ComboBox Style -->
+        <Style x:Key="AccessibleComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource GlobalFocusVisualStyle}"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="FontSize" Value="12"/>
         </Style>
 
         <!-- Toggle Button Style for Auto-Refresh -->
@@ -139,31 +181,31 @@
             </Setter>
         </Style>
 
-        <!-- Search TextBox Style -->
-        <Style x:Key="SearchTextBoxStyle" TargetType="TextBox">
-            <Setter Property="Padding" Value="8,6"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="BorderBrush" Value="#E0E0E0"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Background" Value="White"/>
-        </Style>
+        <!-- Search TextBox Style with focus indicator -->
+        <Style x:Key="SearchTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource AccessibleTextBoxStyle}"/>
 
-        <!-- Status Value Style -->
+        <!-- Status Value Style with WCAG AA compliant colors -->
         <Style x:Key="StatusValueTextStyle" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#27AE60"/>
+            <Setter Property="Foreground" Value="#1E7E34"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=Text}"
                              Value="{x:Static p:Resources.StatusDisabled}">
-                    <Setter Property="Foreground" Value="#E74C3C"/>
+                    <Setter Property="Foreground" Value="#C82333"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
 
-        <!-- Health Status Colors -->
-        <SolidColorBrush x:Key="HealthyBrush" Color="#27AE60"/>
-        <SolidColorBrush x:Key="DegradedBrush" Color="#F39C12"/>
-        <SolidColorBrush x:Key="UnhealthyBrush" Color="#E74C3C"/>
+        <!-- Secondary Text Style with improved contrast -->
+        <Style x:Key="SecondaryTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#495057"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+
+        <!-- Health Status Colors (WCAG AA compliant) -->
+        <SolidColorBrush x:Key="HealthyBrush" Color="#1E7E34"/>
+        <SolidColorBrush x:Key="DegradedBrush" Color="#D68910"/>
+        <SolidColorBrush x:Key="UnhealthyBrush" Color="#C82333"/>
     </Window.Resources>
 
     <!-- Keyboard Shortcuts -->

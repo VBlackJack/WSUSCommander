@@ -1730,4 +1730,77 @@
   <data name="ColumnLastReported" xml:space="preserve">
     <value>Dernier rapport</value>
   </data>
+  <!-- Accessibility and UX Resources -->
+  <data name="EmptyStateUpdates" xml:space="preserve">
+    <value>Aucune mise à jour disponible. Cliquez sur Actualiser pour charger les données.</value>
+  </data>
+  <data name="EmptyStateComputers" xml:space="preserve">
+    <value>Aucun ordinateur trouvé. Vérifiez la connexion et cliquez sur Actualiser.</value>
+  </data>
+  <data name="EmptyStateGroups" xml:space="preserve">
+    <value>Aucun groupe disponible. Créez un groupe pour commencer.</value>
+  </data>
+  <data name="EmptyStateRules" xml:space="preserve">
+    <value>Aucune règle d'approbation définie. Créez une règle pour automatiser les approbations.</value>
+  </data>
+  <data name="EmptyStateActivity" xml:space="preserve">
+    <value>Aucune activité enregistrée.</value>
+  </data>
+  <data name="LegendSuperseded" xml:space="preserve">
+    <value>Remplacée</value>
+  </data>
+  <data name="LegendNeedsAttention" xml:space="preserve">
+    <value>Attention requise</value>
+  </data>
+  <data name="LegendSelected" xml:space="preserve">
+    <value>Sélectionné</value>
+  </data>
+  <data name="AccessGridUpdates" xml:space="preserve">
+    <value>Liste des mises à jour</value>
+  </data>
+  <data name="AccessGridComputers" xml:space="preserve">
+    <value>Liste des ordinateurs</value>
+  </data>
+  <data name="AccessGridGroups" xml:space="preserve">
+    <value>Liste des groupes d'ordinateurs</value>
+  </data>
+  <data name="AccessGridRules" xml:space="preserve">
+    <value>Liste des règles d'approbation</value>
+  </data>
+  <data name="AccessGridActivity" xml:space="preserve">
+    <value>Journal d'activité</value>
+  </data>
+  <data name="TipKeyboardRefresh" xml:space="preserve">
+    <value>Actualiser (F5 ou Ctrl+R)</value>
+  </data>
+  <data name="TipKeyboardSync" xml:space="preserve">
+    <value>Démarrer la synchronisation (Ctrl+S)</value>
+  </data>
+  <data name="TipKeyboardExport" xml:space="preserve">
+    <value>Exporter (Ctrl+E)</value>
+  </data>
+  <data name="TipKeyboardApprove" xml:space="preserve">
+    <value>Approuver (Ctrl+A)</value>
+  </data>
+  <data name="TipKeyboardDecline" xml:space="preserve">
+    <value>Refuser (Ctrl+D)</value>
+  </data>
+  <data name="TipDisabledNotConnected" xml:space="preserve">
+    <value>Connectez-vous d'abord à un serveur WSUS</value>
+  </data>
+  <data name="TipDisabledNoSelection" xml:space="preserve">
+    <value>Sélectionnez d'abord un ou plusieurs éléments</value>
+  </data>
+  <data name="BtnRetry" xml:space="preserve">
+    <value>Réessayer</value>
+  </data>
+  <data name="ValidationInvalidInterval" xml:space="preserve">
+    <value>L'intervalle doit être d'au moins 30 secondes</value>
+  </data>
+  <data name="ProgressApproving" xml:space="preserve">
+    <value>Approbation des mises à jour : {0} sur {1}</value>
+  </data>
+  <data name="ProgressDeclining" xml:space="preserve">
+    <value>Refus des mises à jour : {0} sur {1}</value>
+  </data>
 </root>

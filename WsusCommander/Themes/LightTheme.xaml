@@ -6,8 +6,16 @@
     <Color x:Key="SecondaryColor">#34495E</Color>
     <Color x:Key="AccentColor">#3498DB</Color>
     <Color x:Key="SuccessColor">#27AE60</Color>
-    <Color x:Key="WarningColor">#F39C12</Color>
-    <Color x:Key="DangerColor">#E74C3C</Color>
+    <Color x:Key="WarningColor">#E67E22</Color>
+    <Color x:Key="DangerColor">#C0392B</Color>
+    <Color x:Key="InfoColor">#2980B9</Color>
+    <Color x:Key="CriticalColor">#8E44AD</Color>
+
+    <!-- Accessibility Colors (WCAG AA compliant) -->
+    <Color x:Key="FocusColor">#FF6B00</Color>
+    <Color x:Key="DisabledColor">#6C757D</Color>
+    <Color x:Key="DisabledBackgroundColor">#ADB5BD</Color>
+    <Color x:Key="ValidationErrorColor">#DC3545</Color>
 
     <!-- Background Colors -->
     <Color x:Key="WindowBackgroundColor">#F5F5F5</Color>
@@ -15,10 +23,10 @@
     <Color x:Key="BorderColor">#E0E0E0</Color>
     <Color x:Key="HoverBackgroundColor">#F8F9FA</Color>
 
-    <!-- Text Colors -->
+    <!-- Text Colors (improved contrast for WCAG AA) -->
     <Color x:Key="PrimaryTextColor">#2C3E50</Color>
-    <Color x:Key="SecondaryTextColor">#7F8C8D</Color>
-    <Color x:Key="MutedTextColor">#95A5A6</Color>
+    <Color x:Key="SecondaryTextColor">#495057</Color>
+    <Color x:Key="MutedTextColor">#6C757D</Color>
 
     <!-- Status Bar -->
     <Color x:Key="StatusBarBackgroundColor">#ECF0F1</Color>
@@ -28,6 +36,8 @@
     <Color x:Key="DataGridAlternateRowColor">#F8F9FA</Color>
     <Color x:Key="DataGridSelectedRowColor">#E3F2FD</Color>
     <Color x:Key="DataGridHeaderBackgroundColor">#FAFAFA</Color>
+    <Color x:Key="DataGridSupersededRowColor">#FFF3E0</Color>
+    <Color x:Key="DataGridNeedsAttentionRowColor">#FFEBEE</Color>
 
     <!-- Brushes -->
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}"/>
@@ -36,6 +46,14 @@
     <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}"/>
     <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}"/>
     <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}"/>
+    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource InfoColor}"/>
+    <SolidColorBrush x:Key="CriticalBrush" Color="{StaticResource CriticalColor}"/>
+
+    <!-- Accessibility Brushes -->
+    <SolidColorBrush x:Key="FocusBrush" Color="{StaticResource FocusColor}"/>
+    <SolidColorBrush x:Key="DisabledBrush" Color="{StaticResource DisabledColor}"/>
+    <SolidColorBrush x:Key="DisabledBackgroundBrush" Color="{StaticResource DisabledBackgroundColor}"/>
+    <SolidColorBrush x:Key="ValidationErrorBrush" Color="{StaticResource ValidationErrorColor}"/>
 
     <SolidColorBrush x:Key="WindowBackgroundBrush" Color="{StaticResource WindowBackgroundColor}"/>
     <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}"/>
@@ -52,5 +70,7 @@
     <SolidColorBrush x:Key="DataGridAlternateRowBrush" Color="{StaticResource DataGridAlternateRowColor}"/>
     <SolidColorBrush x:Key="DataGridSelectedRowBrush" Color="{StaticResource DataGridSelectedRowColor}"/>
     <SolidColorBrush x:Key="DataGridHeaderBackgroundBrush" Color="{StaticResource DataGridHeaderBackgroundColor}"/>
+    <SolidColorBrush x:Key="DataGridSupersededRowBrush" Color="{StaticResource DataGridSupersededRowColor}"/>
+    <SolidColorBrush x:Key="DataGridNeedsAttentionRowBrush" Color="{StaticResource DataGridNeedsAttentionRowColor}"/>
 
 </ResourceDictionary>

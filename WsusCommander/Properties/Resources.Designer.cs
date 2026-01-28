@@ -629,4 +629,30 @@ public static class Resources
     public static string ColumnNeeded => ResourceManager.GetString("ColumnNeeded", resourceCulture) ?? string.Empty;
     public static string ColumnFailed => ResourceManager.GetString("ColumnFailed", resourceCulture) ?? string.Empty;
     public static string ColumnLastReported => ResourceManager.GetString("ColumnLastReported", resourceCulture) ?? string.Empty;
+
+    // Accessibility and UX Resources
+    public static string EmptyStateUpdates => ResourceManager.GetString("EmptyStateUpdates", resourceCulture) ?? string.Empty;
+    public static string EmptyStateComputers => ResourceManager.GetString("EmptyStateComputers", resourceCulture) ?? string.Empty;
+    public static string EmptyStateGroups => ResourceManager.GetString("EmptyStateGroups", resourceCulture) ?? string.Empty;
+    public static string EmptyStateRules => ResourceManager.GetString("EmptyStateRules", resourceCulture) ?? string.Empty;
+    public static string EmptyStateActivity => ResourceManager.GetString("EmptyStateActivity", resourceCulture) ?? string.Empty;
+    public static string LegendSuperseded => ResourceManager.GetString("LegendSuperseded", resourceCulture) ?? string.Empty;
+    public static string LegendNeedsAttention => ResourceManager.GetString("LegendNeedsAttention", resourceCulture) ?? string.Empty;
+    public static string LegendSelected => ResourceManager.GetString("LegendSelected", resourceCulture) ?? string.Empty;
+    public static string AccessGridUpdates => ResourceManager.GetString("AccessGridUpdates", resourceCulture) ?? string.Empty;
+    public static string AccessGridComputers => ResourceManager.GetString("AccessGridComputers", resourceCulture) ?? string.Empty;
+    public static string AccessGridGroups => ResourceManager.GetString("AccessGridGroups", resourceCulture) ?? string.Empty;
+    public static string AccessGridRules => ResourceManager.GetString("AccessGridRules", resourceCulture) ?? string.Empty;
+    public static string AccessGridActivity => ResourceManager.GetString("AccessGridActivity", resourceCulture) ?? string.Empty;
+    public static string TipKeyboardRefresh => ResourceManager.GetString("TipKeyboardRefresh", resourceCulture) ?? string.Empty;
+    public static string TipKeyboardSync => ResourceManager.GetString("TipKeyboardSync", resourceCulture) ?? string.Empty;
+    public static string TipKeyboardExport => ResourceManager.GetString("TipKeyboardExport", resourceCulture) ?? string.Empty;
+    public static string TipKeyboardApprove => ResourceManager.GetString("TipKeyboardApprove", resourceCulture) ?? string.Empty;
+    public static string TipKeyboardDecline => ResourceManager.GetString("TipKeyboardDecline", resourceCulture) ?? string.Empty;
+    public static string TipDisabledNotConnected => ResourceManager.GetString("TipDisabledNotConnected", resourceCulture) ?? string.Empty;
+    public static string TipDisabledNoSelection => ResourceManager.GetString("TipDisabledNoSelection", resourceCulture) ?? string.Empty;
+    public static string BtnRetry => ResourceManager.GetString("BtnRetry", resourceCulture) ?? string.Empty;
+    public static string ValidationInvalidInterval => ResourceManager.GetString("ValidationInvalidInterval", resourceCulture) ?? string.Empty;
+    public static string ProgressApproving => ResourceManager.GetString("ProgressApproving", resourceCulture) ?? string.Empty;
+    public static string ProgressDeclining => ResourceManager.GetString("ProgressDeclining", resourceCulture) ?? string.Empty;
 }

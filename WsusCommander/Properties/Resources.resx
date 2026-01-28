@@ -1748,4 +1748,77 @@
   <data name="ColumnLastReported" xml:space="preserve">
     <value>Last Reported</value>
   </data>
+  <!-- Accessibility and UX Resources -->
+  <data name="EmptyStateUpdates" xml:space="preserve">
+    <value>No updates available. Click Refresh to load data.</value>
+  </data>
+  <data name="EmptyStateComputers" xml:space="preserve">
+    <value>No computers found. Verify connection and click Refresh.</value>
+  </data>
+  <data name="EmptyStateGroups" xml:space="preserve">
+    <value>No groups available. Create a group to get started.</value>
+  </data>
+  <data name="EmptyStateRules" xml:space="preserve">
+    <value>No approval rules defined. Create a rule to automate approvals.</value>
+  </data>
+  <data name="EmptyStateActivity" xml:space="preserve">
+    <value>No activity recorded yet.</value>
+  </data>
+  <data name="LegendSuperseded" xml:space="preserve">
+    <value>Superseded</value>
+  </data>
+  <data name="LegendNeedsAttention" xml:space="preserve">
+    <value>Needs Attention</value>
+  </data>
+  <data name="LegendSelected" xml:space="preserve">
+    <value>Selected</value>
+  </data>
+  <data name="AccessGridUpdates" xml:space="preserve">
+    <value>Updates list</value>
+  </data>
+  <data name="AccessGridComputers" xml:space="preserve">
+    <value>Computers list</value>
+  </data>
+  <data name="AccessGridGroups" xml:space="preserve">
+    <value>Computer groups list</value>
+  </data>
+  <data name="AccessGridRules" xml:space="preserve">
+    <value>Approval rules list</value>
+  </data>
+  <data name="AccessGridActivity" xml:space="preserve">
+    <value>Activity log</value>
+  </data>
+  <data name="TipKeyboardRefresh" xml:space="preserve">
+    <value>Refresh (F5 or Ctrl+R)</value>
+  </data>
+  <data name="TipKeyboardSync" xml:space="preserve">
+    <value>Start Sync (Ctrl+S)</value>
+  </data>
+  <data name="TipKeyboardExport" xml:space="preserve">
+    <value>Export (Ctrl+E)</value>
+  </data>
+  <data name="TipKeyboardApprove" xml:space="preserve">
+    <value>Approve (Ctrl+A)</value>
+  </data>
+  <data name="TipKeyboardDecline" xml:space="preserve">
+    <value>Decline (Ctrl+D)</value>
+  </data>
+  <data name="TipDisabledNotConnected" xml:space="preserve">
+    <value>Connect to a WSUS server first</value>
+  </data>
+  <data name="TipDisabledNoSelection" xml:space="preserve">
+    <value>Select one or more items first</value>
+  </data>
+  <data name="BtnRetry" xml:space="preserve">
+    <value>Retry</value>
+  </data>
+  <data name="ValidationInvalidInterval" xml:space="preserve">
+    <value>Interval must be at least 30 seconds</value>
+  </data>
+  <data name="ProgressApproving" xml:space="preserve">
+    <value>Approving updates: {0} of {1}</value>
+  </data>
+  <data name="ProgressDeclining" xml:space="preserve">
+    <value>Declining updates: {0} of {1}</value>
+  </data>
 </root>
