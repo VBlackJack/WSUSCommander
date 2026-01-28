@@ -18,6 +18,7 @@ using System.IO;
 using FluentAssertions;
 using Moq;
 using WsusCommander.Models;
+using WsusCommander.Properties;
 using WsusCommander.Services;
 
 namespace WsusCommander.Tests.Services;
@@ -134,7 +135,7 @@ public class ExportServiceTests : IDisposable
         var content = await File.ReadAllTextAsync(filePath);
 
         // Assert
-        content.Should().Contain("Title");
+        content.Should().Contain(Resources.ExportHeaderUpdateTitle);
     }
 
     [Fact]

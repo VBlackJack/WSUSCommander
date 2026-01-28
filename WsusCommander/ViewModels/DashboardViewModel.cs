@@ -171,7 +171,7 @@ public partial class DashboardViewModel : ObservableObject
         HasSecurityAction = DashboardStats.SecurityPending > 0;
         HasSupersededAction = DashboardStats.SupersededUpdates > 0;
         HasSyncAction = DashboardStats.LastSyncTime is null;
-        HasComplianceAction = DashboardStats.TotalComputers > 0;
+        HasComplianceAction = (DashboardStats?.TotalComputers ?? 0) > 0;
         HasDashboardActions = HasCriticalAction || HasSecurityAction || HasSupersededAction || HasSyncAction || HasComplianceAction;
 
         if (HasCriticalAction)
