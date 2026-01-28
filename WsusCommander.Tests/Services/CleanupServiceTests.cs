@@ -72,11 +72,11 @@ public class CleanupServiceTests
         capturedParameters["ServerName"].Should().Be("wsus-test");
         capturedParameters["Port"].Should().Be(8530);
         capturedParameters["UseSsl"].Should().Be(true);
-        capturedParameters["RemoveObsoleteUpdates"].Should().BeTrue();
-        capturedParameters["RemoveObsoleteComputers"].Should().BeFalse();
-        capturedParameters["RemoveExpiredUpdates"].Should().BeTrue();
-        capturedParameters["CompressUpdateRevisions"].Should().BeFalse();
-        capturedParameters["RemoveUnneededContent"].Should().BeTrue();
+        capturedParameters["RemoveObsoleteUpdates"].Should().Be(true);
+        capturedParameters["RemoveObsoleteComputers"].Should().Be(false);
+        capturedParameters["RemoveExpiredUpdates"].Should().Be(true);
+        capturedParameters["CompressUpdateRevisions"].Should().Be(false);
+        capturedParameters["RemoveUnneededContent"].Should().Be(true);
     }
 
     [Fact]

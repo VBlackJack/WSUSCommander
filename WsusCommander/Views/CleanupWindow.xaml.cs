@@ -96,16 +96,16 @@ public sealed partial class CleanupWindow : Window
                 await _cleanupService.RunCleanupAsync(options);
 
                 MessageBox.Show(
-                    Resources.CleanupCompletedMessage,
-                    Resources.CleanupWindowTitle,
+                    Properties.Resources.CleanupCompletedMessage,
+                    Properties.Resources.CleanupWindowTitle,
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    string.Format(Resources.CleanupFailedMessage, ex.Message),
-                    Resources.CleanupWindowTitle,
+                    string.Format(Properties.Resources.CleanupFailedMessage, ex.Message),
+                    Properties.Resources.CleanupWindowTitle,
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
