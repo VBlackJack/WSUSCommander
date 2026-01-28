@@ -34,6 +34,15 @@ public partial class DashboardViewModel : ObservableObject
     private DashboardStats? _dashboardStats;
 
     [ObservableProperty]
+    private List<ComputerGroup> _availableGroups = [];
+
+    [ObservableProperty]
+    private ComputerGroup? _selectedGroup;
+
+    [ObservableProperty]
+    private string _namePattern = string.Empty;
+
+    [ObservableProperty]
     private bool _isLoading;
 
     [ObservableProperty]
@@ -152,7 +161,23 @@ public partial class DashboardViewModel : ObservableObject
 
         try
         {
-            DashboardStats = await _wsusService.GetDashboardStatsAsync(cancellationToken);
+            // Preserve current filter values before refreshing groups
+            var selectedGroupId = SelectedGroup?.Id;
+            var pattern = string.IsNullOrWhiteSpace(NamePattern) ? null : NamePattern;
+
+            // Load available groups for filtering
+            var groups = await _wsusService.GetGroupsAsync(cancellationToken);
+            AvailableGroups = [.. groups.OrderBy(g => g.Name)];
+
+            // Restore selected group after collection refresh
+            if (selectedGroupId.HasValue)
+            {
+                SelectedGroup = AvailableGroups.FirstOrDefault(g => g.Id == selectedGroupId.Value);
+            }
+
+            // Get stats with current filters
+            var groupId = selectedGroupId?.ToString();
+            DashboardStats = await _wsusService.GetDashboardStatsAsync(groupId, pattern, cancellationToken);
             HealthReport = await _wsusService.GetHealthReportAsync(cancellationToken);
             ComplianceHistory = await _complianceService.GetHistoryAsync(30, cancellationToken);
 
@@ -333,22 +358,19 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private void ReviewCriticalUpdates()
     {
-        OnApproveCriticalRequested?.Invoke(this, EventArgs.Empty);
-        OnNavigateToUpdatesRequested?.Invoke(this, EventArgs.Empty);
+        OnNavigateToUpdatesWithFilterRequested?.Invoke(this, "Critical");
     }
 
     [RelayCommand]
     private void ReviewSecurityUpdates()
     {
-        OnApproveSecurityRequested?.Invoke(this, EventArgs.Empty);
-        OnNavigateToUpdatesRequested?.Invoke(this, EventArgs.Empty);
+        OnNavigateToUpdatesWithFilterRequested?.Invoke(this, "Security");
     }
 
     [RelayCommand]
     private void ReviewSupersededUpdates()
     {
-        OnDeclineSupersededRequested?.Invoke(this, EventArgs.Empty);
-        OnNavigateToUpdatesRequested?.Invoke(this, EventArgs.Empty);
+        OnNavigateToUpdatesWithFilterRequested?.Invoke(this, "Superseded");
     }
 
     [RelayCommand]
@@ -391,7 +413,7 @@ public partial class DashboardViewModel : ObservableObject
     public event EventHandler? OnApproveCriticalRequested;
     public event EventHandler? OnApproveSecurityRequested;
     public event EventHandler? OnDeclineSupersededRequested;
-    public event EventHandler? OnNavigateToUpdatesRequested;
+    public event EventHandler<string>? OnNavigateToUpdatesWithFilterRequested;
     public event EventHandler? OnNavigateToComputersRequested;
     public event EventHandler? OnStartSyncRequested;
     public event EventHandler? OnOpenReportsRequested;

@@ -70,5 +70,15 @@ public sealed partial class AboutWindow : Window
         /// Gets the author name.
         /// </summary>
         public string Author => Properties.Resources.AboutAuthorValue;
+
+        /// <summary>
+        /// Gets the GitHub URL as Uri.
+        /// </summary>
+        public Uri GitHubUri => new(Properties.Resources.AboutGitHubUrl);
+
+        /// <summary>
+        /// Gets the GitHub URL as display string.
+        /// </summary>
+        public string GitHubUrl => Properties.Resources.AboutGitHubUrl;
     }
 }

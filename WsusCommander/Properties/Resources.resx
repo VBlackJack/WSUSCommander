@@ -175,6 +175,33 @@
   <data name="TabComputers" xml:space="preserve">
     <value>Computers</value>
   </data>
+  <data name="TabStaging" xml:space="preserve">
+    <value>Staging</value>
+  </data>
+  <data name="LblFilterGroup" xml:space="preserve">
+    <value>Group:</value>
+  </data>
+  <data name="LblFilterNamePattern" xml:space="preserve">
+    <value>Name pattern:</value>
+  </data>
+  <data name="ComboAllGroups" xml:space="preserve">
+    <value>(All Groups)</value>
+  </data>
+  <data name="PlaceholderNamePattern" xml:space="preserve">
+    <value>e.g. *SRV*, PADSEC*</value>
+  </data>
+  <data name="BtnApplyFilter" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="TabStagingDescription" xml:space="preserve">
+    <value>Computers being built (Unassigned)</value>
+  </data>
+  <data name="StatusStagingLoaded" xml:space="preserve">
+    <value>Loaded {0} staging computers.</value>
+  </data>
+  <data name="GridStagingComputers" xml:space="preserve">
+    <value>Staging computers list</value>
+  </data>
   <data name="ColComputerName" xml:space="preserve">
     <value>Computer Name</value>
   </data>
@@ -210,6 +237,12 @@
   </data>
   <data name="ColDeclined" xml:space="preserve">
     <value>Declined</value>
+  </data>
+  <data name="ColSuperseded" xml:space="preserve">
+    <value>Superseded</value>
+  </data>
+  <data name="ColSupersededBy" xml:space="preserve">
+    <value>Superseded By</value>
   </data>
   <data name="StatusLoadingGroups" xml:space="preserve">
     <value>Loading computer groups...</value>
@@ -684,6 +717,9 @@
   <data name="ErrorCircuitBreakerOpen" xml:space="preserve">
     <value>Service temporarily unavailable. Please try again later.</value>
   </data>
+  <data name="ErrorUnhandledException" xml:space="preserve">
+    <value>An unexpected error occurred: {0}</value>
+  </data>
 
   <!-- Computer Context Menu -->
   <data name="MenuViewUpdates" xml:space="preserve">
@@ -999,6 +1035,12 @@
   </data>
   <data name="PresetDeclinedUpdates" xml:space="preserve">
     <value>Declined Updates</value>
+  </data>
+  <data name="PresetSupersededOnly" xml:space="preserve">
+    <value>Superseded Only</value>
+  </data>
+  <data name="LblQuickFilters" xml:space="preserve">
+    <value>Quick Filters:</value>
   </data>
   <data name="LblFilterPresets" xml:space="preserve">
     <value>Presets:</value>
@@ -1681,5 +1723,29 @@
   </data>
   <data name="ReportNonCompliantComputersDisplay" xml:space="preserve">
     <value>Non-compliant computers: {0}</value>
+  </data>
+  <data name="ReportComputerDetails" xml:space="preserve">
+    <value>Computer Details</value>
+  </data>
+  <data name="ReportOS" xml:space="preserve">
+    <value>Operating System</value>
+  </data>
+  <data name="ColumnComputerName" xml:space="preserve">
+    <value>Computer Name</value>
+  </data>
+  <data name="ColumnIpAddress" xml:space="preserve">
+    <value>IP Address</value>
+  </data>
+  <data name="ColumnInstalled" xml:space="preserve">
+    <value>Installed</value>
+  </data>
+  <data name="ColumnNeeded" xml:space="preserve">
+    <value>Needed</value>
+  </data>
+  <data name="ColumnFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="ColumnLastReported" xml:space="preserve">
+    <value>Last Reported</value>
   </data>
 </root>

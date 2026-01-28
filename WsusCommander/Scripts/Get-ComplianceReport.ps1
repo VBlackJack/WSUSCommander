@@ -63,18 +63,26 @@ try {
         $groups = @($targetGroup)
     }
 
-    # Get computers
-    $allComputers = $wsus.GetComputerTargets()
-    $totalComputers = $allComputers.Count
-
     # Create update scope for later
     $updateScope = New-Object Microsoft.UpdateServices.Administration.UpdateScope
+
+    # Get computers - filter by group if specified
+    if ($targetGroup) {
+        $allComputers = $targetGroup.GetComputerTargets()
+    }
+    else {
+        $allComputers = $wsus.GetComputerTargets()
+    }
+    $totalComputers = $allComputers.Count
 
     # Calculate compliance per group
     $groupCompliance = @()
     $totalNeeded = 0
     $totalFailed = 0
     $compliantComputers = 0
+
+    # Computer details list
+    $computerDetails = @()
 
     foreach ($group in $groups) {
         # Skip "All Computers" group in per-group stats
@@ -122,14 +130,49 @@ try {
         $totalFailed += $groupFailed
     }
 
-    # Calculate overall compliance
+    # Calculate overall compliance and collect computer details
     foreach ($computer in $allComputers) {
         $status = $computer.GetUpdateInstallationSummary($updateScope)
         $needed = $status.NotInstalledCount + $status.DownloadedCount
         $failed = $status.FailedCount
+        $installed = $status.InstalledCount
+        $downloaded = $status.DownloadedCount
+        $notInstalled = $status.NotInstalledCount
 
-        if ($needed -eq 0 -and $failed -eq 0) {
+        $isCompliant = ($needed -eq 0 -and $failed -eq 0)
+        if ($isCompliant) {
             $compliantComputers++
+        }
+
+        # Calculate computer compliance percent
+        $totalApplicable = $installed + $needed + $failed
+        $computerCompliancePercent = if ($totalApplicable -gt 0) { ($installed / $totalApplicable) * 100 } else { 100 }
+
+        # Get computer's group memberships
+        $computerGroups = @()
+        try {
+            $computerGroupsObj = $computer.GetComputerTargetGroups()
+            $computerGroups = @($computerGroupsObj | ForEach-Object { $_.Name })
+        }
+        catch {
+            $computerGroups = @()
+        }
+
+        $computerDetails += [PSCustomObject]@{
+            ComputerId        = $computer.Id.ToString()
+            ComputerName      = $computer.FullDomainName
+            IpAddress         = $computer.IPAddress
+            LastReportedTime  = $computer.LastReportedStatusTime
+            LastSyncTime      = $computer.LastSyncTime
+            OSDescription     = $computer.OSDescription
+            IsCompliant       = $isCompliant
+            CompliancePercent = [math]::Round($computerCompliancePercent, 1)
+            InstalledCount    = $installed
+            NeededCount       = $needed
+            DownloadedCount   = $downloaded
+            NotInstalledCount = $notInstalled
+            FailedCount       = $failed
+            Groups            = $computerGroups
         }
     }
 
@@ -141,14 +184,15 @@ try {
     $approvedUpdates = $wsus.GetUpdates($approvedScope)
 
     return [PSCustomObject]@{
-        TotalComputers       = $totalComputers
-        CompliantComputers   = $compliantComputers
+        TotalComputers        = $totalComputers
+        CompliantComputers    = $compliantComputers
         NonCompliantComputers = $totalComputers - $compliantComputers
-        TotalApprovedUpdates = $approvedUpdates.Count
-        CompliancePercent    = [math]::Round($overallCompliancePercent, 1)
-        GroupCompliance      = $groupCompliance
-        TotalNeededUpdates   = $totalNeeded
-        TotalFailedUpdates   = $totalFailed
+        TotalApprovedUpdates  = $approvedUpdates.Count
+        CompliancePercent     = [math]::Round($overallCompliancePercent, 1)
+        GroupCompliance       = $groupCompliance
+        ComputerDetails       = $computerDetails
+        TotalNeededUpdates    = $totalNeeded
+        TotalFailedUpdates    = $totalFailed
     }
 }
 catch {

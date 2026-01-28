@@ -175,6 +175,33 @@
   <data name="TabComputers" xml:space="preserve">
     <value>Ordinateurs</value>
   </data>
+  <data name="TabStaging" xml:space="preserve">
+    <value>Staging</value>
+  </data>
+  <data name="LblFilterGroup" xml:space="preserve">
+    <value>Groupe :</value>
+  </data>
+  <data name="LblFilterNamePattern" xml:space="preserve">
+    <value>Pattern de nom :</value>
+  </data>
+  <data name="ComboAllGroups" xml:space="preserve">
+    <value>(Tous les groupes)</value>
+  </data>
+  <data name="PlaceholderNamePattern" xml:space="preserve">
+    <value>ex. *SRV*, PADSEC*</value>
+  </data>
+  <data name="BtnApplyFilter" xml:space="preserve">
+    <value>Appliquer</value>
+  </data>
+  <data name="TabStagingDescription" xml:space="preserve">
+    <value>Ordinateurs en cours de build (non assignes)</value>
+  </data>
+  <data name="StatusStagingLoaded" xml:space="preserve">
+    <value>{0} ordinateurs staging charges.</value>
+  </data>
+  <data name="GridStagingComputers" xml:space="preserve">
+    <value>Liste des ordinateurs staging</value>
+  </data>
   <data name="ColComputerName" xml:space="preserve">
     <value>Nom de l'ordinateur</value>
   </data>
@@ -207,6 +234,12 @@
   </data>
   <data name="ColDeclined" xml:space="preserve">
     <value>Refusé</value>
+  </data>
+  <data name="ColSuperseded" xml:space="preserve">
+    <value>Remplacée</value>
+  </data>
+  <data name="ColSupersededBy" xml:space="preserve">
+    <value>Remplacée par</value>
   </data>
   <data name="StatusLoadingGroups" xml:space="preserve">
     <value>Chargement des groupes...</value>
@@ -654,6 +687,9 @@
   </data>
   <data name="ErrorCircuitBreakerOpen" xml:space="preserve">
     <value>Service temporairement indisponible. Reessayez plus tard.</value>
+  </data>
+  <data name="ErrorUnhandledException" xml:space="preserve">
+    <value>Une erreur inattendue s'est produite : {0}</value>
   </data>
 
   <!-- Parametres de connexion -->
@@ -1211,6 +1247,12 @@
   <data name="PresetUnapprovedOnly" xml:space="preserve">
     <value>Non approuvées uniquement</value>
   </data>
+  <data name="PresetSupersededOnly" xml:space="preserve">
+    <value>Remplacées uniquement</value>
+  </data>
+  <data name="LblQuickFilters" xml:space="preserve">
+    <value>Filtres rapides :</value>
+  </data>
   <data name="ReportGenerated" xml:space="preserve">
     <value>Rapport généré. Conformité : {0:F1}%</value>
   </data>
@@ -1663,5 +1705,29 @@
   </data>
   <data name="ReportNonCompliantComputersDisplay" xml:space="preserve">
     <value>Ordinateurs non conformes : {0}</value>
+  </data>
+  <data name="ReportComputerDetails" xml:space="preserve">
+    <value>Détails des ordinateurs</value>
+  </data>
+  <data name="ReportOS" xml:space="preserve">
+    <value>Système d'exploitation</value>
+  </data>
+  <data name="ColumnComputerName" xml:space="preserve">
+    <value>Nom de l'ordinateur</value>
+  </data>
+  <data name="ColumnIpAddress" xml:space="preserve">
+    <value>Adresse IP</value>
+  </data>
+  <data name="ColumnInstalled" xml:space="preserve">
+    <value>Installées</value>
+  </data>
+  <data name="ColumnNeeded" xml:space="preserve">
+    <value>Nécessaires</value>
+  </data>
+  <data name="ColumnFailed" xml:space="preserve">
+    <value>Échouées</value>
+  </data>
+  <data name="ColumnLastReported" xml:space="preserve">
+    <value>Dernier rapport</value>
   </data>
 </root>

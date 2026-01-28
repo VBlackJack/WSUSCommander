@@ -55,6 +55,12 @@ public sealed class FilterPreset
     public string ApprovalFilter { get; set; } = "All";
 
     /// <summary>
+    /// Gets or sets the superseded filter value.
+    /// </summary>
+    [StringLength(64)]
+    public string SupersededFilter { get; set; } = "All";
+
+    /// <summary>
     /// Gets or sets whether this is a built-in preset.
     /// </summary>
     public bool IsBuiltIn { get; set; }

@@ -66,6 +66,7 @@ public static class Resources
     public static string AccessibilityReduceMotion => ResourceManager.GetString("AccessibilityReduceMotion", resourceCulture) ?? string.Empty;
     public static string AppTitle => ResourceManager.GetString("AppTitle", resourceCulture) ?? string.Empty;
     public static string BtnAutoRefresh => ResourceManager.GetString("BtnAutoRefresh", resourceCulture) ?? string.Empty;
+    public static string BtnApplyFilter => ResourceManager.GetString("BtnApplyFilter", resourceCulture) ?? string.Empty;
     public static string BtnBulkApprove => ResourceManager.GetString("BtnBulkApprove", resourceCulture) ?? string.Empty;
     public static string BtnBulkDecline => ResourceManager.GetString("BtnBulkDecline", resourceCulture) ?? string.Empty;
     public static string BtnCancel => ResourceManager.GetString("BtnCancel", resourceCulture) ?? string.Empty;
@@ -88,6 +89,8 @@ public static class Resources
     public static string ColDate => ResourceManager.GetString("ColDate", resourceCulture) ?? string.Empty;
     public static string ColDaysSinceReport => ResourceManager.GetString("ColDaysSinceReport", resourceCulture) ?? string.Empty;
     public static string ColDeclined => ResourceManager.GetString("ColDeclined", resourceCulture) ?? string.Empty;
+    public static string ColSuperseded => ResourceManager.GetString("ColSuperseded", resourceCulture) ?? string.Empty;
+    public static string ColSupersededBy => ResourceManager.GetString("ColSupersededBy", resourceCulture) ?? string.Empty;
     public static string ColFailed => ResourceManager.GetString("ColFailed", resourceCulture) ?? string.Empty;
     public static string ColGroup => ResourceManager.GetString("ColGroup", resourceCulture) ?? string.Empty;
     public static string ColInstalled => ResourceManager.GetString("ColInstalled", resourceCulture) ?? string.Empty;
@@ -98,6 +101,7 @@ public static class Resources
     public static string ColTitle => ResourceManager.GetString("ColTitle", resourceCulture) ?? string.Empty;
     public static string ColTotal => ResourceManager.GetString("ColTotal", resourceCulture) ?? string.Empty;
     public static string ComboSelectGroup => ResourceManager.GetString("ComboSelectGroup", resourceCulture) ?? string.Empty;
+    public static string ComboAllGroups => ResourceManager.GetString("ComboAllGroups", resourceCulture) ?? string.Empty;
     public static string ConfirmApproveUpdate => ResourceManager.GetString("ConfirmApproveUpdate", resourceCulture) ?? string.Empty;
     public static string ConfirmBulkApprove => ResourceManager.GetString("ConfirmBulkApprove", resourceCulture) ?? string.Empty;
     public static string ConfirmBulkDecline => ResourceManager.GetString("ConfirmBulkDecline", resourceCulture) ?? string.Empty;
@@ -114,6 +118,7 @@ public static class Resources
     public static string BtnLater => ResourceManager.GetString("BtnLater", resourceCulture) ?? string.Empty;
     public static string ErrorCannotDeleteSystemGroup => ResourceManager.GetString("ErrorCannotDeleteSystemGroup", resourceCulture) ?? string.Empty;
     public static string ErrorCircuitBreakerOpen => ResourceManager.GetString("ErrorCircuitBreakerOpen", resourceCulture) ?? string.Empty;
+    public static string ErrorUnhandledException => ResourceManager.GetString("ErrorUnhandledException", resourceCulture) ?? string.Empty;
     public static string ErrorConnectionFailed => ResourceManager.GetString("ErrorConnectionFailed", resourceCulture) ?? string.Empty;
     public static string ErrorGroupHasComputers => ResourceManager.GetString("ErrorGroupHasComputers", resourceCulture) ?? string.Empty;
     public static string ErrorNoGroupSelected => ResourceManager.GetString("ErrorNoGroupSelected", resourceCulture) ?? string.Empty;
@@ -187,6 +192,8 @@ public static class Resources
     public static string LblCveIds => ResourceManager.GetString("LblCveIds", resourceCulture) ?? string.Empty;
     public static string LblFileSize => ResourceManager.GetString("LblFileSize", resourceCulture) ?? string.Empty;
     public static string LblFilter => ResourceManager.GetString("LblFilter", resourceCulture) ?? string.Empty;
+    public static string LblFilterGroup => ResourceManager.GetString("LblFilterGroup", resourceCulture) ?? string.Empty;
+    public static string LblFilterNamePattern => ResourceManager.GetString("LblFilterNamePattern", resourceCulture) ?? string.Empty;
     public static string LblSupersededFilter => ResourceManager.GetString("LblSupersededFilter", resourceCulture) ?? string.Empty;
     public static string LblGroupDescription => ResourceManager.GetString("LblGroupDescription", resourceCulture) ?? string.Empty;
     public static string LblGroupName => ResourceManager.GetString("LblGroupName", resourceCulture) ?? string.Empty;
@@ -214,6 +221,7 @@ public static class Resources
     public static string MenuViewUpdates => ResourceManager.GetString("MenuViewUpdates", resourceCulture) ?? string.Empty;
     public static string PlaceholderSearch => ResourceManager.GetString("PlaceholderSearch", resourceCulture) ?? string.Empty;
     public static string PlaceholderServerName => ResourceManager.GetString("PlaceholderServerName", resourceCulture) ?? string.Empty;
+    public static string PlaceholderNamePattern => ResourceManager.GetString("PlaceholderNamePattern", resourceCulture) ?? string.Empty;
     public static string ReportCompliance => ResourceManager.GetString("ReportCompliance", resourceCulture) ?? string.Empty;
     public static string ReportCriticalUpdates => ResourceManager.GetString("ReportCriticalUpdates", resourceCulture) ?? string.Empty;
     public static string ReportGenerated => ResourceManager.GetString("ReportGenerated", resourceCulture) ?? string.Empty;
@@ -254,7 +262,11 @@ public static class Resources
     public static string TabComputers => ResourceManager.GetString("TabComputers", resourceCulture) ?? string.Empty;
     public static string TabGroups => ResourceManager.GetString("TabGroups", resourceCulture) ?? string.Empty;
     public static string TabReports => ResourceManager.GetString("TabReports", resourceCulture) ?? string.Empty;
+    public static string TabStaging => ResourceManager.GetString("TabStaging", resourceCulture) ?? string.Empty;
+    public static string TabStagingDescription => ResourceManager.GetString("TabStagingDescription", resourceCulture) ?? string.Empty;
     public static string TabUpdates => ResourceManager.GetString("TabUpdates", resourceCulture) ?? string.Empty;
+    public static string StatusStagingLoaded => ResourceManager.GetString("StatusStagingLoaded", resourceCulture) ?? string.Empty;
+    public static string GridStagingComputers => ResourceManager.GetString("GridStagingComputers", resourceCulture) ?? string.Empty;
     public static string ValidationInvalidFormat => ResourceManager.GetString("ValidationInvalidFormat", resourceCulture) ?? string.Empty;
     public static string ValidationInvalidHostname => ResourceManager.GetString("ValidationInvalidHostname", resourceCulture) ?? string.Empty;
     public static string ValidationInvalidPort => ResourceManager.GetString("ValidationInvalidPort", resourceCulture) ?? string.Empty;
@@ -357,6 +369,8 @@ public static class Resources
     public static string PresetCriticalUpdates => ResourceManager.GetString("PresetCriticalUpdates", resourceCulture) ?? string.Empty;
     public static string PresetSecurityUpdates => ResourceManager.GetString("PresetSecurityUpdates", resourceCulture) ?? string.Empty;
     public static string PresetDeclinedUpdates => ResourceManager.GetString("PresetDeclinedUpdates", resourceCulture) ?? string.Empty;
+    public static string PresetSupersededOnly => ResourceManager.GetString("PresetSupersededOnly", resourceCulture) ?? string.Empty;
+    public static string LblQuickFilters => ResourceManager.GetString("LblQuickFilters", resourceCulture) ?? string.Empty;
     public static string LblFilterPresets => ResourceManager.GetString("LblFilterPresets", resourceCulture) ?? string.Empty;
     public static string BtnSavePreset => ResourceManager.GetString("BtnSavePreset", resourceCulture) ?? string.Empty;
     public static string BtnDeletePreset => ResourceManager.GetString("BtnDeletePreset", resourceCulture) ?? string.Empty;
@@ -607,4 +621,12 @@ public static class Resources
     public static string DashboardUpdatesByClassification => ResourceManager.GetString("DashboardUpdatesByClassification", resourceCulture) ?? string.Empty;
     public static string DashboardComputerStatus => ResourceManager.GetString("DashboardComputerStatus", resourceCulture) ?? string.Empty;
     public static string DashboardUnknown => ResourceManager.GetString("DashboardUnknown", resourceCulture) ?? string.Empty;
+    public static string ReportComputerDetails => ResourceManager.GetString("ReportComputerDetails", resourceCulture) ?? string.Empty;
+    public static string ReportOS => ResourceManager.GetString("ReportOS", resourceCulture) ?? string.Empty;
+    public static string ColumnComputerName => ResourceManager.GetString("ColumnComputerName", resourceCulture) ?? string.Empty;
+    public static string ColumnIpAddress => ResourceManager.GetString("ColumnIpAddress", resourceCulture) ?? string.Empty;
+    public static string ColumnInstalled => ResourceManager.GetString("ColumnInstalled", resourceCulture) ?? string.Empty;
+    public static string ColumnNeeded => ResourceManager.GetString("ColumnNeeded", resourceCulture) ?? string.Empty;
+    public static string ColumnFailed => ResourceManager.GetString("ColumnFailed", resourceCulture) ?? string.Empty;
+    public static string ColumnLastReported => ResourceManager.GetString("ColumnLastReported", resourceCulture) ?? string.Empty;
 }

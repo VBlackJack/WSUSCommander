@@ -187,6 +187,57 @@ public sealed class ReportService : IReportService
         report.TotalApprovedUpdates = GetPropertyInt(item, "TotalApprovedUpdates");
         report.CompliancePercent = GetPropertyDouble(item, "CompliancePercent");
 
+        // Parse group compliance
+        var groupComplianceValue = item.Properties["GroupCompliance"]?.Value;
+        if (groupComplianceValue is object[] groupArray)
+        {
+            foreach (var groupItem in groupArray)
+            {
+                if (groupItem is PSObject groupObj)
+                {
+                    report.GroupCompliance.Add(new GroupComplianceInfo
+                    {
+                        GroupId = Guid.TryParse(GetPropertyString(groupObj, "GroupId"), out var gid) ? gid : Guid.Empty,
+                        GroupName = GetPropertyString(groupObj, "GroupName"),
+                        TotalComputers = GetPropertyInt(groupObj, "TotalComputers"),
+                        CompliantComputers = GetPropertyInt(groupObj, "CompliantComputers"),
+                        CompliancePercent = GetPropertyDouble(groupObj, "CompliancePercent"),
+                        TotalNeededUpdates = GetPropertyInt(groupObj, "TotalNeededUpdates"),
+                        TotalFailedUpdates = GetPropertyInt(groupObj, "TotalFailedUpdates")
+                    });
+                }
+            }
+        }
+
+        // Parse computer details
+        var computerDetailsValue = item.Properties["ComputerDetails"]?.Value;
+        if (computerDetailsValue is object[] computerArray)
+        {
+            foreach (var computerItem in computerArray)
+            {
+                if (computerItem is PSObject compObj)
+                {
+                    report.ComputerDetails.Add(new ComputerComplianceInfo
+                    {
+                        ComputerId = GetPropertyString(compObj, "ComputerId"),
+                        ComputerName = GetPropertyString(compObj, "ComputerName"),
+                        IpAddress = GetPropertyString(compObj, "IpAddress"),
+                        LastReportedTime = GetPropertyDateTime(compObj, "LastReportedTime"),
+                        LastSyncTime = GetPropertyDateTime(compObj, "LastSyncTime"),
+                        OsDescription = GetPropertyString(compObj, "OSDescription"),
+                        IsCompliant = GetPropertyBool(compObj, "IsCompliant"),
+                        CompliancePercent = GetPropertyDouble(compObj, "CompliancePercent"),
+                        InstalledCount = GetPropertyInt(compObj, "InstalledCount"),
+                        NeededCount = GetPropertyInt(compObj, "NeededCount"),
+                        DownloadedCount = GetPropertyInt(compObj, "DownloadedCount"),
+                        NotInstalledCount = GetPropertyInt(compObj, "NotInstalledCount"),
+                        FailedCount = GetPropertyInt(compObj, "FailedCount"),
+                        Groups = GetPropertyStringList(compObj, "Groups")
+                    });
+                }
+            }
+        }
+
         // Determine overall status
         report.OverallStatus = report.CompliancePercent switch
         {
@@ -232,6 +283,8 @@ public sealed class ReportService : IReportService
         sb.AppendLine($"<h2>{Resources.ReportComplianceByGroup}</h2>");
         sb.AppendLine(BuildGroupComplianceChart(report.GroupCompliance));
         sb.AppendLine(BuildGroupComplianceTable(report.GroupCompliance));
+
+        sb.AppendLine(BuildComputerDetailsTable(report.ComputerDetails));
 
         sb.AppendLine("</body>");
         sb.AppendLine("</html>");
@@ -283,6 +336,49 @@ public sealed class ReportService : IReportService
             sb.AppendLine($"<td>{group.CompliancePercent:F1}%</td>");
             sb.AppendLine($"<td>{group.TotalNeededUpdates}</td>");
             sb.AppendLine($"<td>{group.TotalFailedUpdates}</td>");
+            sb.AppendLine("</tr>");
+        }
+        sb.AppendLine("</tbody></table>");
+        return sb.ToString();
+    }
+
+    private static string BuildComputerDetailsTable(IReadOnlyList<ComputerComplianceInfo> computers)
+    {
+        if (computers.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        var sb = new StringBuilder();
+        sb.AppendLine($"<h2>{Resources.ReportComputerDetails}</h2>");
+        sb.AppendLine("<table>");
+        sb.AppendLine("<thead><tr>");
+        sb.AppendLine($"<th>{Resources.ColumnComputerName}</th>");
+        sb.AppendLine($"<th>{Resources.ColumnIpAddress}</th>");
+        sb.AppendLine($"<th>{Resources.ReportOS}</th>");
+        sb.AppendLine($"<th>{Resources.ReportCompliancePercent}</th>");
+        sb.AppendLine($"<th>{Resources.ColumnInstalled}</th>");
+        sb.AppendLine($"<th>{Resources.ColumnNeeded}</th>");
+        sb.AppendLine($"<th>{Resources.ColumnFailed}</th>");
+        sb.AppendLine($"<th>{Resources.ColumnLastReported}</th>");
+        sb.AppendLine($"<th>{Resources.ReportGroupName}</th>");
+        sb.AppendLine("</tr></thead>");
+        sb.AppendLine("<tbody>");
+
+        // Sort by non-compliant first (most needed + failed updates)
+        foreach (var computer in computers.OrderByDescending(c => c.NeededCount + c.FailedCount))
+        {
+            var statusColor = computer.IsCompliant ? "#27ae60" : (computer.FailedCount > 0 ? "#e74c3c" : "#f39c12");
+            sb.AppendLine("<tr>");
+            sb.AppendLine($"<td>{computer.ComputerName}</td>");
+            sb.AppendLine($"<td>{computer.IpAddress}</td>");
+            sb.AppendLine($"<td>{computer.OsDescription}</td>");
+            sb.AppendLine($"<td style=\"color:{statusColor};font-weight:bold\">{computer.CompliancePercent:F1}%</td>");
+            sb.AppendLine($"<td>{computer.InstalledCount}</td>");
+            sb.AppendLine($"<td>{computer.NeededCount}</td>");
+            sb.AppendLine($"<td style=\"color:{(computer.FailedCount > 0 ? "#e74c3c" : "inherit")}\">{computer.FailedCount}</td>");
+            sb.AppendLine($"<td>{computer.LastReportedTime?.ToString("yyyy-MM-dd HH:mm") ?? "-"}</td>");
+            sb.AppendLine($"<td>{string.Join(", ", computer.Groups)}</td>");
             sb.AppendLine("</tr>");
         }
         sb.AppendLine("</tbody></table>");
@@ -342,6 +438,41 @@ public sealed class ReportService : IReportService
                                 table.Cell().Text(group.TotalComputers.ToString());
                                 table.Cell().Text(group.CompliantComputers.ToString());
                                 table.Cell().Text($"{group.CompliancePercent:F1}%");
+                            }
+                        });
+                    }
+
+                    // Computer Details section
+                    if (report.ComputerDetails.Count > 0)
+                    {
+                        column.Item().PaddingTop(10).Text(Resources.ReportComputerDetails).FontSize(14).SemiBold();
+                        column.Item().Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn(4);
+                                columns.RelativeColumn(2);
+                                columns.RelativeColumn(1);
+                                columns.RelativeColumn(1);
+                                columns.RelativeColumn(1);
+                            });
+
+                            table.Header(header =>
+                            {
+                                header.Cell().Text(Resources.ColumnComputerName).SemiBold();
+                                header.Cell().Text(Resources.ReportCompliancePercent).SemiBold();
+                                header.Cell().Text(Resources.ColumnInstalled).SemiBold();
+                                header.Cell().Text(Resources.ColumnNeeded).SemiBold();
+                                header.Cell().Text(Resources.ColumnFailed).SemiBold();
+                            });
+
+                            foreach (var computer in report.ComputerDetails.OrderByDescending(c => c.NeededCount + c.FailedCount))
+                            {
+                                table.Cell().Text(computer.ComputerName);
+                                table.Cell().Text($"{computer.CompliancePercent:F1}%");
+                                table.Cell().Text(computer.InstalledCount.ToString());
+                                table.Cell().Text(computer.NeededCount.ToString());
+                                table.Cell().Text(computer.FailedCount.ToString());
                             }
                         });
                     }
@@ -414,6 +545,36 @@ public sealed class ReportService : IReportService
         return value != null ? Convert.ToDouble(value) : 0;
     }
 
+    private static bool GetPropertyBool(PSObject item, string propertyName)
+    {
+        var value = item.Properties[propertyName]?.Value;
+        if (value is bool b) return b;
+        if (bool.TryParse(value?.ToString(), out var result)) return result;
+        return false;
+    }
+
+    private static DateTime? GetPropertyDateTime(PSObject item, string propertyName)
+    {
+        var value = item.Properties[propertyName]?.Value;
+        if (value is DateTime dt && dt != DateTime.MinValue) return dt;
+
+        var str = value?.ToString();
+        if (string.IsNullOrEmpty(str)) return null;
+
+        // Handle WCF JSON date format: /Date(milliseconds)/
+        if (str.StartsWith("/Date(") && str.EndsWith(")/"))
+        {
+            var msStr = str[6..^2];
+            if (long.TryParse(msStr, out var ms) && ms > 0)
+            {
+                return DateTimeOffset.FromUnixTimeMilliseconds(ms).LocalDateTime;
+            }
+        }
+
+        if (DateTime.TryParse(str, out var result) && result != DateTime.MinValue) return result;
+        return null;
+    }
+
     private static string GetPropertyString(PSObject item, string propertyName)
     {
         return item.Properties[propertyName]?.Value?.ToString() ?? string.Empty;
@@ -471,6 +632,17 @@ public sealed class ReportService : IReportService
             foreach (var computer in report.StaleComputers)
             {
                 sb.AppendLine($"{EscapeCsv(computer.ComputerName)},{computer.LastReportTime?.ToString("yyyy-MM-dd") ?? "Never"},{computer.DaysSinceLastReport},{EscapeCsv(string.Join("; ", computer.GroupNames))}");
+            }
+            sb.AppendLine();
+        }
+
+        if (report.ComputerDetails.Count > 0)
+        {
+            sb.AppendLine("Computer Details");
+            sb.AppendLine("Computer Name,IP Address,OS,Compliant,Compliance %,Installed,Needed,Downloaded,Failed,Last Report,Last Sync,Groups");
+            foreach (var computer in report.ComputerDetails.OrderByDescending(c => c.NeededCount + c.FailedCount))
+            {
+                sb.AppendLine($"{EscapeCsv(computer.ComputerName)},{computer.IpAddress},{EscapeCsv(computer.OsDescription)},{(computer.IsCompliant ? "Yes" : "No")},{computer.CompliancePercent:F1},{computer.InstalledCount},{computer.NeededCount},{computer.DownloadedCount},{computer.FailedCount},{computer.LastReportedTime?.ToString("yyyy-MM-dd HH:mm") ?? "Never"},{computer.LastSyncTime?.ToString("yyyy-MM-dd HH:mm") ?? "Never"},{EscapeCsv(string.Join("; ", computer.Groups))}");
             }
         }
 

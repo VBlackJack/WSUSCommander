@@ -30,6 +30,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     public DashboardViewModel Dashboard { get; }
     public UpdatesViewModel Updates { get; }
     public ComputersViewModel Computers { get; }
+    public StagingViewModel Staging { get; }
     public GroupsViewModel Groups { get; }
     public ReportsViewModel Reports { get; }
     public RulesViewModel Rules { get; }
@@ -50,6 +51,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         DashboardViewModel dashboard,
         UpdatesViewModel updates,
         ComputersViewModel computers,
+        StagingViewModel staging,
         GroupsViewModel groups,
         ReportsViewModel reports,
         RulesViewModel rules,
@@ -61,6 +63,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         Dashboard = dashboard;
         Updates = updates;
         Computers = computers;
+        Staging = staging;
         Groups = groups;
         Reports = reports;
         Rules = rules;
@@ -71,9 +74,13 @@ public partial class MainViewModel : ObservableObject, IDisposable
         Connection.OnConnected += async (_, _) => await OnConnectedAsync();
         Connection.OnDisconnected += (_, _) => OnDisconnected();
 
-        Dashboard.OnNavigateToUpdatesRequested += (_, _) => SelectedTabIndex = 1;
         Dashboard.OnNavigateToComputersRequested += (_, _) => SelectedTabIndex = 2;
-        Dashboard.OnOpenReportsRequested += (_, _) => SelectedTabIndex = 3;
+        Dashboard.OnOpenReportsRequested += (_, _) => SelectedTabIndex = 4;
+        Dashboard.OnNavigateToUpdatesWithFilterRequested += (_, filterName) =>
+        {
+            Updates.ApplyPresetCommand.Execute(filterName);
+            SelectedTabIndex = 1;
+        };
     }
 
     [RelayCommand]
@@ -109,7 +116,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
             Dashboard.LoadDashboardCommand.ExecuteAsync(null),
             Updates.LoadUpdatesCommand.ExecuteAsync(null),
             Computers.LoadComputerStatusesCommand.ExecuteAsync(null),
-            Groups.LoadGroupsCommand.ExecuteAsync(null));
+            Staging.LoadStagingComputersCommand.ExecuteAsync(null),
+            Groups.LoadGroupsCommand.ExecuteAsync(null),
+            Reports.LoadReportsCommand.ExecuteAsync(null));
 
         IsBusy = false;
     }

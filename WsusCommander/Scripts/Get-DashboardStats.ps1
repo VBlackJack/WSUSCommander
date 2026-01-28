@@ -9,7 +9,16 @@ param(
     [int]$Port,
 
     [Parameter(Mandatory = $true)]
-    [bool]$UseSsl
+    [bool]$UseSsl,
+
+    [Parameter(Mandatory = $false)]
+    [int]$ComplianceThresholdDays = 3,
+
+    [Parameter(Mandatory = $false)]
+    [string]$GroupId = "",
+
+    [Parameter(Mandatory = $false)]
+    [string]$NamePattern = ""
 )
 
 try {
@@ -94,20 +103,116 @@ try {
         }
     }
 
-    # Get computer stats
-    $allComputersGroup = $wsus.GetComputerTargetGroups() | Where-Object { $_.Name -eq "All Computers" } | Select-Object -First 1
+    # Get computer stats - exclude "Unassigned Computers" from compliance calculations
+    # Compliance is based on Critical/Security updates approved more than $ComplianceThresholdDays days ago
+    # Optional filters: GroupId (specific group) and NamePattern (wildcard match on computer name)
+    $targetGroup = $null
+    if ($GroupId -and $GroupId -ne "") {
+        $groupGuid = [Guid]$GroupId
+        $targetGroup = $wsus.GetComputerTargetGroup($groupGuid)
+    }
+    else {
+        $targetGroup = $wsus.GetComputerTargetGroups() | Where-Object { $_.Name -eq "All Computers" } | Select-Object -First 1
+    }
+
+    $unassignedGroup = $wsus.GetComputerTargetGroups() | Where-Object { $_.Name -eq "Unassigned Computers" } | Select-Object -First 1
     $totalComputers = 0
     $computersNeedingUpdates = 0
     $computersUpToDate = 0
 
-    if ($allComputersGroup) {
-        $computers = $wsus.GetComputerTargetGroup($allComputersGroup.Id).GetComputerTargets()
-        $totalComputers = @($computers).Count
+    # Build list of mandatory update IDs (Critical/Security approved > threshold days ago)
+    $thresholdDate = (Get-Date).AddDays(-$ComplianceThresholdDays)
+    $mandatoryUpdateIds = @{}
+
+    foreach ($update in $allRawUpdates) {
+        try {
+            $isDeclined = $false
+            $isApproved = $false
+            $classification = ""
+
+            $declinedProperty = $update.PSObject.Properties["IsDeclined"]
+            $isDeclined = if ($null -ne $declinedProperty) { [bool]$declinedProperty.Value } else { $false }
+
+            if ($isDeclined) { continue }
+
+            $approvedProperty = $update.PSObject.Properties["IsApproved"]
+            $isApproved = if ($null -ne $approvedProperty) { [bool]$approvedProperty.Value } else { $false }
+
+            if (-not $isApproved) { continue }
+
+            $classificationProperty = $update.PSObject.Properties["UpdateClassificationTitle"]
+            $classification = if ($null -ne $classificationProperty) { [string]$classificationProperty.Value } else { "" }
+
+            # Only Critical and Security updates count for compliance
+            if ($classification -ne "Critical Updates" -and $classification -ne "Security Updates") { continue }
+
+            # Check approval date - only count if approved more than threshold days ago
+            $approvals = $update.GetUpdateApprovals()
+            $isOldEnough = $false
+            foreach ($approval in $approvals) {
+                if ($approval.Action -eq [Microsoft.UpdateServices.Administration.UpdateApprovalAction]::Install) {
+                    if ($approval.GoLiveTime -lt $thresholdDate) {
+                        $isOldEnough = $true
+                        break
+                    }
+                }
+            }
+
+            if ($isOldEnough) {
+                $mandatoryUpdateIds[$update.Id.UpdateId.ToString()] = $true
+            }
+        }
+        catch {
+            # Skip updates with access issues
+        }
+    }
+
+    if ($targetGroup) {
+        $computers = $wsus.GetComputerTargetGroup($targetGroup.Id).GetComputerTargets()
+
+        # Build list of unassigned computer IDs to exclude (only if not filtering by specific group)
+        $unassignedIds = @()
+        if (-not $GroupId -and $unassignedGroup) {
+            $unassignedComputers = $wsus.GetComputerTargetGroup($unassignedGroup.Id).GetComputerTargets()
+            $unassignedIds = @($unassignedComputers | ForEach-Object { $_.Id })
+        }
 
         foreach ($computer in $computers) {
+            # Skip computers in Unassigned Computers group (unless filtering by specific group)
+            if ($unassignedIds -contains $computer.Id) {
+                continue
+            }
+
+            # Apply name pattern filter if specified
+            if ($NamePattern -and $NamePattern -ne "") {
+                if ($computer.FullDomainName -notlike $NamePattern) {
+                    continue
+                }
+            }
+
+            $totalComputers++
+
             try {
-                $summary = $computer.GetUpdateInstallationSummary()
-                if ($summary.NotInstalledCount -gt 0 -or $summary.DownloadedCount -gt 0 -or $summary.FailedCount -gt 0) {
+                # Check if computer has any mandatory updates not installed
+                $hasNonCompliantUpdates = $false
+
+                if ($mandatoryUpdateIds.Count -gt 0) {
+                    $computerScope = New-Object Microsoft.UpdateServices.Administration.UpdateScope
+                    $computerScope.ApprovedStates = [Microsoft.UpdateServices.Administration.ApprovedStates]::HasStaleUpdateApprovals -bor [Microsoft.UpdateServices.Administration.ApprovedStates]::LatestRevisionApproved
+                    $computerScope.IncludedInstallationStates = [Microsoft.UpdateServices.Administration.UpdateInstallationStates]::NotInstalled -bor [Microsoft.UpdateServices.Administration.UpdateInstallationStates]::Downloaded -bor [Microsoft.UpdateServices.Administration.UpdateInstallationStates]::Failed
+
+                    $pendingUpdates = $computer.GetUpdateInstallationInfoPerUpdate($computerScope)
+
+                    foreach ($updateInfo in $pendingUpdates) {
+                        $updateIdStr = $updateInfo.UpdateId.ToString()
+                        if ($mandatoryUpdateIds.ContainsKey($updateIdStr)) {
+                            $hasNonCompliantUpdates = $true
+                            break
+                        }
+                    }
+                }
+
+                if ($hasNonCompliantUpdates) {
                     $computersNeedingUpdates++
                 }
                 else {
@@ -115,7 +220,8 @@ try {
                 }
             }
             catch {
-                # Skip computers with access issues
+                # Skip computers with access issues - count as up to date to avoid false negatives
+                $computersUpToDate++
             }
         }
     }

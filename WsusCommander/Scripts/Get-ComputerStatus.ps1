@@ -12,7 +12,10 @@ param(
     [bool]$UseSsl,
 
     [Parameter(Mandatory = $false)]
-    [string]$GroupId = ""
+    [string]$GroupId = "",
+
+    [Parameter(Mandatory = $false)]
+    [bool]$ExcludeUnassigned = $false
 )
 
 try {
@@ -41,6 +44,16 @@ try {
     }
     else {
         $wsus.GetComputerTargets() | Select-Object -First 100
+    }
+
+    # Filter out unassigned computers if requested
+    if ($ExcludeUnassigned) {
+        $unassignedGroup = $wsus.GetComputerTargetGroups() | Where-Object { $_.Name -eq "Unassigned Computers" } | Select-Object -First 1
+        if ($unassignedGroup) {
+            $unassignedComputers = $wsus.GetComputerTargetGroup($unassignedGroup.Id).GetComputerTargets()
+            $unassignedIds = @($unassignedComputers | ForEach-Object { $_.Id })
+            $computers = $computers | Where-Object { $unassignedIds -notcontains $_.Id }
+        }
     }
 
     # Create update scope for counting

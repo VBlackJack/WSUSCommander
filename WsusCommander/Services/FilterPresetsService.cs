@@ -92,6 +92,17 @@ public sealed class FilterPresetsService : IFilterPresetsService
                 SearchText = string.Empty,
                 Classification = string.Empty,
                 ApprovalFilter = "Declined",
+                SupersededFilter = "All",
+                IsBuiltIn = true
+            },
+            new FilterPreset
+            {
+                Id = Guid.Parse("00000000-0000-0000-0001-000000000006"),
+                Name = Resources.PresetSupersededOnly,
+                SearchText = string.Empty,
+                Classification = string.Empty,
+                ApprovalFilter = "All",
+                SupersededFilter = Resources.FilterSupersededOnly,
                 IsBuiltIn = true
             }
         ];

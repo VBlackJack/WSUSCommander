@@ -15,6 +15,7 @@
  */
 
 using System.Windows;
+using System.Windows.Threading;
 using WsusCommander.Interfaces;
 using WsusCommander.Services;
 using WsusCommander.ViewModels;
@@ -29,6 +30,7 @@ public partial class App : Application
 {
     private MainViewModel? _mainViewModel;
     private readonly List<IDisposable> _disposables = [];
+    private ILoggingService? _loggingService;
 
     /// <summary>
     /// Gets the preferences service for window state persistence.
@@ -52,6 +54,7 @@ public partial class App : Application
         IConfigurationService configService = new ConfigurationService();
         ConfigService = configService;
         ILoggingService loggingService = new LoggingService(configService);
+        _loggingService = loggingService;
         IDialogService dialogService = new DialogService();
         INotificationService notificationService = new NotificationService(dialogService);
         IFileDialogService fileDialogService = new FileDialogService();
@@ -60,12 +63,14 @@ public partial class App : Application
         PreferencesService = preferencesService;
         IApprovalRulesService approvalRulesService = new ApprovalRulesService(configService, loggingService);
         IComplianceHistoryService complianceHistoryService = new ComplianceHistoryService();
-        IWsusService wsusService = new WsusService();
 
         ICacheService cacheService = new CacheService(configService);
         IValidationService validationService = new ValidationService();
         IRetryService retryService = new RetryService(configService, loggingService);
         IPowerShellService psService = new PowerShellService(loggingService, configService);
+
+        IWsusService wsusService = new WsusService(psService, configService, loggingService);
+
         IBulkOperationService bulkOperationService = new BulkOperationService(psService, loggingService, configService);
         IGroupService groupService = new GroupService(
             psService, loggingService, cacheService, validationService, configService, retryService);
@@ -87,6 +92,9 @@ public partial class App : Application
         _disposables.Add((IDisposable)cacheService);
         _disposables.Add((IDisposable)schedulerService);
 
+        IFilterPresetsService filterPresetsService = new FilterPresetsService(configService, loggingService);
+        await filterPresetsService.LoadAsync();
+
         var connectionViewModel = new ConnectionViewModel(
             wsusService,
             loggingService,
@@ -101,7 +109,9 @@ public partial class App : Application
             loggingService,
             notificationService,
             exportService,
-            fileDialogService);
+            fileDialogService,
+            filterPresetsService,
+            dialogService);
         var computersViewModel = new ComputersViewModel(
             wsusService,
             loggingService,
@@ -112,13 +122,23 @@ public partial class App : Application
             groupService,
             dialogService,
             computerActionService);
+        var stagingViewModel = new StagingViewModel(
+            wsusService,
+            loggingService,
+            notificationService,
+            bulkOperationService,
+            groupService,
+            dialogService,
+            computerActionService);
         var groupsViewModel = new GroupsViewModel(
             groupService,
             loggingService,
             notificationService);
         var reportsViewModel = new ReportsViewModel(
             reportService,
-            fileDialogService);
+            fileDialogService,
+            wsusService,
+            loggingService);
         var rulesViewModel = new RulesViewModel(approvalRulesService, fileDialogService, notificationService);
         var activityViewModel = new ActivityViewModel(loggingService);
         var settingsViewModel = new SettingsViewModel(
@@ -135,6 +155,7 @@ public partial class App : Application
             dashboardViewModel,
             updatesViewModel,
             computersViewModel,
+            stagingViewModel,
             groupsViewModel,
             reportsViewModel,
             rulesViewModel,
@@ -193,5 +214,32 @@ public partial class App : Application
                 Res.DialogAuthSetupTitle,
                 Res.DialogAuthSetupFollowup);
         }
+    }
+
+    /// <summary>
+    /// Handles unhandled exceptions to prevent crashes and log errors.
+    /// </summary>
+    /// <param name="sender">Event sender.</param>
+    /// <param name="e">Exception event arguments.</param>
+    private async void Application_DispatcherUnhandledException(
+        object sender,
+        DispatcherUnhandledExceptionEventArgs e)
+    {
+        e.Handled = true;
+
+        var message = e.Exception.InnerException?.Message ?? e.Exception.Message;
+
+        if (_loggingService is not null)
+        {
+            await _loggingService.LogErrorAsync(
+                $"Unhandled exception: {message}",
+                e.Exception);
+        }
+
+        MessageBox.Show(
+            string.Format(Res.ErrorUnhandledException, message),
+            Res.DialogError,
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
     }
 }

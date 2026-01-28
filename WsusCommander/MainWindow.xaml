@@ -355,7 +355,6 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
@@ -424,236 +423,52 @@
                 </StackPanel>
             </Grid>
 
-            <!-- Sync Status and Computer Groups Panel -->
-            <Grid Grid.Row="1" Margin="0,0,0,15">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+            <!-- Sync Status Panel -->
+            <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,15">
+                <TextBlock Text="{x:Static p:Resources.LblSyncStatus}"
+                           FontSize="12"
+                           Foreground="#5D6D7E"
+                           VerticalAlignment="Center"
+                           Margin="0,0,5,0"/>
+                <TextBlock FontSize="12"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center"
+                           Margin="0,0,15,0">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Text" Value="{Binding Dashboard.SyncStatus.Status}"/>
+                            <Setter Property="Foreground" Value="#27AE60"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Dashboard.SyncStatus.IsSyncing}" Value="True">
+                                    <Setter Property="Foreground" Value="#3498DB"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
 
-                <!-- Sync Status -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="{x:Static p:Resources.LblSyncStatus}"
-                               FontSize="12"
-                               Foreground="#5D6D7E"
-                               VerticalAlignment="Center"
-                               Margin="0,0,5,0"/>
-                    <TextBlock FontSize="12"
-                               FontWeight="SemiBold"
-                               VerticalAlignment="Center"
-                               Margin="0,0,15,0">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="Text" Value="{Binding Dashboard.SyncStatus.Status}"/>
-                                <Setter Property="Foreground" Value="#27AE60"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Dashboard.SyncStatus.IsSyncing}" Value="True">
-                                        <Setter Property="Foreground" Value="#3498DB"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
+                <TextBlock Text="{x:Static p:Resources.LblLastSync}"
+                           FontSize="12"
+                           Foreground="#5D6D7E"
+                           VerticalAlignment="Center"
+                           Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding Dashboard.SyncStatus.LastSyncTime, StringFormat=g}"
+                           FontSize="12"
+                           Foreground="#2C3E50"
+                           VerticalAlignment="Center"
+                           Margin="0,0,15,0"/>
 
-                    <TextBlock Text="{x:Static p:Resources.LblLastSync}"
-                               FontSize="12"
-                               Foreground="#5D6D7E"
-                               VerticalAlignment="Center"
-                               Margin="0,0,5,0"/>
-                    <TextBlock Text="{Binding Dashboard.SyncStatus.LastSyncTime, StringFormat=g}"
-                               FontSize="12"
-                               Foreground="#2C3E50"
-                               VerticalAlignment="Center"
-                               Margin="0,0,15,0"/>
-
-                    <!-- Sync Now Button -->
-                    <Button Content="{x:Static p:Resources.BtnStartSync}"
-                            Command="{Binding Dashboard.StartSyncCommand}"
-                            Background="#9B59B6"
-                            Style="{StaticResource SmallButtonStyle}"
-                            ToolTip="{x:Static p:Resources.TooltipSyncShortcut}"
-                            AutomationProperties.Name="{x:Static p:Resources.BtnStartSync}"/>
-                </StackPanel>
-
-                <!-- Computer Groups Selector -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="{x:Static p:Resources.LblComputerGroups}"
-                               FontSize="12"
-                               Foreground="#5D6D7E"
-                               VerticalAlignment="Center"
-                               Margin="0,0,10,0"/>
-                    <ComboBox ItemsSource="{Binding Updates.ComputerGroups}"
-                              SelectedItem="{Binding Updates.SelectedComputerGroup}"
-                              DisplayMemberPath="Name"
-                              MinWidth="200"
-                              Padding="8,6"
-                              FontSize="12"
-                              AutomationProperties.Name="{x:Static p:Resources.LblComputerGroups}"/>
-                </StackPanel>
-            </Grid>
-
-            <!-- Search and Filter Bar -->
-            <Border Grid.Row="2" Background="White" CornerRadius="4" Padding="15,10" Margin="0,0,0,10"
-                    DataContext="{Binding Updates}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="200"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Filter Presets -->
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,15,0">
-                        <TextBlock Text="{x:Static p:Resources.LblFilterPresets}"
-                                   VerticalAlignment="Center"
-                                   Margin="0,0,5,0"
-                                   FontSize="12"
-                                   Foreground="#5D6D7E"/>
-                        <ComboBox ItemsSource="{Binding FilterPresets}"
-                                  SelectedItem="{Binding SelectedFilterPreset}"
-                                  DisplayMemberPath="Name"
-                                  MinWidth="150"
-                                  Padding="8,6"
-                                  FontSize="12"
-                                  AutomationProperties.Name="{x:Static p:Resources.LblFilterPresets}"/>
-                        <Button Content="{x:Static p:Resources.BtnSavePreset}"
-                                Command="{Binding SaveFilterPresetCommand}"
-                                Background="#3498DB"
-                                Style="{StaticResource SmallButtonStyle}"
-                                Margin="5,0,0,0"
-                                ToolTip="{x:Static p:Resources.BtnSavePreset}"
-                                AutomationProperties.Name="{x:Static p:Resources.BtnSavePreset}"/>
-                    </StackPanel>
-
-                    <!-- Search Box with Placeholder -->
-                    <Grid Grid.Column="1" Margin="0,0,10,0">
-                        <TextBox x:Name="SearchTextBox"
-                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Delay=300}"
-                                 Style="{StaticResource SearchTextBoxStyle}"
-                                 TabIndex="0"
-                                 AutomationProperties.Name="{x:Static p:Resources.LblSearch}">
-                            <TextBox.InputBindings>
-                                <KeyBinding Key="Return" Command="{Binding ApplySearchCommand}"/>
-                            </TextBox.InputBindings>
-                        </TextBox>
-                        <TextBlock Text="{x:Static p:Resources.PlaceholderSearch}"
-                                   Foreground="#AAAAAA"
-                                   FontSize="12"
-                                   Margin="10,8,0,0"
-                                   IsHitTestVisible="False"
-                                   Visibility="{Binding SearchText, Converter={StaticResource EmptyToVisibility}}"/>
-                    </Grid>
-
-                    <!-- Classification Filter -->
-                    <ComboBox Grid.Column="3"
-                              ItemsSource="{Binding Classifications}"
-                              SelectedItem="{Binding SelectedClassification}"
-                              MinWidth="150"
-                              Padding="8,6"
-                              FontSize="12"
-                              Margin="0,0,10,0"
-                              TabIndex="2"
-                              AutomationProperties.Name="{x:Static p:Resources.LblFilter}">
-                        <ComboBox.Style>
-                            <Style TargetType="ComboBox">
-                                <Style.Triggers>
-                                    <Trigger Property="SelectedItem" Value="{x:Null}">
-                                        <Setter Property="Background" Value="#ECF0F1"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ComboBox.Style>
-                    </ComboBox>
-
-                    <!-- Superseded Filter -->
-                    <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,0,10,0">
-                        <TextBlock Text="{x:Static p:Resources.LblSupersededFilter}"
-                                   VerticalAlignment="Center"
-                                   Margin="0,0,5,0"
-                                   FontSize="12"
-                                   Foreground="#5D6D7E"/>
-                        <ComboBox ItemsSource="{Binding SupersededFilters}"
-                                  SelectedItem="{Binding SelectedSupersededFilter}"
-                                  MinWidth="150"
-                                  Padding="8,6"
-                                  FontSize="12"
-                                  TabIndex="1"
-                                  AutomationProperties.Name="{x:Static p:Resources.LblSupersededFilter}"/>
-                    </StackPanel>
-
-                    <!-- Approval Status Filter -->
-                    <ComboBox Grid.Column="4"
-                              ItemsSource="{Binding ApprovalFilters}"
-                              SelectedItem="{Binding SelectedApprovalFilter}"
-                              MinWidth="120"
-                              Padding="8,6"
-                              FontSize="12"
-                              Margin="0,0,10,0"
-                              TabIndex="3"
-                              AutomationProperties.Name="{x:Static p:Resources.LblFilter}"/>
-
-                    <!-- Clear Filter Button -->
-                    <Button Grid.Column="5"
-                            Content="{x:Static p:Resources.BtnClearFilter}"
-                            Command="{Binding ClearFiltersCommand}"
-                            Background="#7B8D8E"
-                            Style="{StaticResource SmallButtonStyle}"
-                            Margin="0,0,10,0"
-                            TabIndex="4"
-                            AutomationProperties.Name="{x:Static p:Resources.BtnClearFilter}"/>
-
-                    <!-- Bulk Operations Buttons -->
-                    <StackPanel Grid.Column="6" Orientation="Horizontal">
-                        <Button Content="{x:Static p:Resources.BtnBulkApprove}"
-                                Command="{Binding BulkApproveCommand}"
-                                Background="#27AE60"
-                                Style="{StaticResource SmallButtonStyle}"
-                                Margin="0,0,5,0"
-                                Visibility="{Binding CanUserApprove, Converter={StaticResource BoolToVisibility}}"
-                                AutomationProperties.Name="{x:Static p:Resources.BtnBulkApprove}"/>
-                        <Button Content="{x:Static p:Resources.BtnBulkDecline}"
-                                Command="{Binding BulkDeclineCommand}"
-                                Background="#E74C3C"
-                                Style="{StaticResource SmallButtonStyle}"
-                                Visibility="{Binding CanUserDecline, Converter={StaticResource BoolToVisibility}}"
-                                AutomationProperties.Name="{x:Static p:Resources.BtnBulkDecline}"/>
-
-                        <!-- Quick Actions Separator -->
-                        <Separator Margin="10,0" Background="#E0E0E0"/>
-
-                        <!-- One-Click Actions -->
-                        <Button Content="{x:Static p:Resources.BtnDeclineSuperseded}"
-                                Command="{Binding DeclineAllSupersededCommand}"
-                                Background="#E67E22"
-                                Style="{StaticResource SmallButtonStyle}"
-                                Margin="0,0,5,0"
-                                ToolTip="{x:Static p:Resources.TipSuperseded}"
-                                Visibility="{Binding CanUserDecline, Converter={StaticResource BoolToVisibility}}"
-                                AutomationProperties.Name="{x:Static p:Resources.BtnDeclineSuperseded}"/>
-                        <Button Content="{x:Static p:Resources.BtnApproveCritical}"
-                                Command="{Binding ApproveAllCriticalCommand}"
-                                Background="#C0392B"
-                                Style="{StaticResource SmallButtonStyle}"
-                                Margin="0,0,5,0"
-                                Visibility="{Binding CanUserApprove, Converter={StaticResource BoolToVisibility}}"
-                                AutomationProperties.Name="{x:Static p:Resources.BtnApproveCritical}"/>
-                        <Button Content="{x:Static p:Resources.BtnApproveSecurity}"
-                                Command="{Binding ApproveAllSecurityCommand}"
-                                Background="#8E44AD"
-                                Style="{StaticResource SmallButtonStyle}"
-                                Visibility="{Binding CanUserApprove, Converter={StaticResource BoolToVisibility}}"
-                                AutomationProperties.Name="{x:Static p:Resources.BtnApproveSecurity}"/>
-                    </StackPanel>
-                </Grid>
-            </Border>
+                <!-- Sync Now Button -->
+                <Button Content="{x:Static p:Resources.BtnStartSync}"
+                        Command="{Binding Dashboard.StartSyncCommand}"
+                        Background="#9B59B6"
+                        Style="{StaticResource SmallButtonStyle}"
+                        ToolTip="{x:Static p:Resources.TooltipSyncShortcut}"
+                        AutomationProperties.Name="{x:Static p:Resources.BtnStartSync}"/>
+            </StackPanel>
 
             <!-- Bulk Operation Progress -->
-            <Grid Grid.Row="3" Margin="0,0,0,10"
+            <Grid Grid.Row="2" Margin="0,0,0,10"
                   DataContext="{Binding Updates}"
                   Visibility="{Binding IsBulkOperationRunning, Converter={StaticResource BoolToVisibility}}">
                 <ProgressBar Value="{Binding BulkProgress}"
@@ -668,7 +483,7 @@
             </Grid>
 
             <!-- Loading Indicator (Dashboard) -->
-            <ProgressBar Grid.Row="3"
+            <ProgressBar Grid.Row="2"
                          IsIndeterminate="True"
                          Height="3"
                          Margin="0,0,0,10"
@@ -677,7 +492,7 @@
                          Background="#ECF0F1"/>
 
             <!-- Tab Control for Updates, Computers, Reports, and Groups -->
-            <TabControl Grid.Row="4"
+            <TabControl Grid.Row="3"
                         Background="White"
                         BorderBrush="#E0E0E0"
                         SelectedIndex="{Binding SelectedTabIndex}"
@@ -713,20 +528,67 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <!-- Header -->
-                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
-                                <TextBlock Text="{x:Static p:Resources.DashboardTitle}"
-                                           FontSize="20"
-                                           FontWeight="Bold"
-                                           Foreground="#2C3E50"
-                                           VerticalAlignment="Center"/>
-                                <Button Content="{x:Static p:Resources.BtnRefresh}"
-                                        Command="{Binding LoadDashboardCommand}"
-                                        Background="#3498DB"
-                                        Style="{StaticResource SmallButtonStyle}"
-                                        Margin="20,0,0,0"
-                                        AutomationProperties.Name="{x:Static p:Resources.BtnRefresh}"/>
-                            </StackPanel>
+                            <!-- Header and Filters -->
+                            <Grid Grid.Row="0" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Title and Refresh -->
+                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                    <TextBlock Text="{x:Static p:Resources.DashboardTitle}"
+                                               FontSize="20"
+                                               FontWeight="Bold"
+                                               Foreground="#2C3E50"
+                                               VerticalAlignment="Center"/>
+                                    <Button Content="{x:Static p:Resources.BtnRefresh}"
+                                            Command="{Binding LoadDashboardCommand}"
+                                            Background="#3498DB"
+                                            Style="{StaticResource SmallButtonStyle}"
+                                            Margin="20,0,0,0"
+                                            AutomationProperties.Name="{x:Static p:Resources.BtnRefresh}"/>
+                                </StackPanel>
+
+                                <!-- Filter Controls -->
+                                <Border Grid.Column="2" Background="#F8F9FA" CornerRadius="8" Padding="10" HorizontalAlignment="Right">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{x:Static p:Resources.LblFilterGroup}"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,5,0"
+                                                   Foreground="#5D6D7E"/>
+                                        <ComboBox ItemsSource="{Binding AvailableGroups}"
+                                                  SelectedItem="{Binding SelectedGroup}"
+                                                  DisplayMemberPath="Name"
+                                                  Width="150"
+                                                  Margin="0,0,15,0"
+                                                  AutomationProperties.Name="{x:Static p:Resources.LblFilterGroup}">
+                                            <ComboBox.Style>
+                                                <Style TargetType="ComboBox">
+                                                    <Setter Property="Text" Value="{x:Static p:Resources.ComboAllGroups}"/>
+                                                </Style>
+                                            </ComboBox.Style>
+                                        </ComboBox>
+
+                                        <TextBlock Text="{x:Static p:Resources.LblFilterNamePattern}"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,5,0"
+                                                   Foreground="#5D6D7E"/>
+                                        <TextBox Text="{Binding NamePattern, UpdateSourceTrigger=PropertyChanged}"
+                                                 Width="120"
+                                                 Margin="0,0,10,0"
+                                                 ToolTip="{x:Static p:Resources.PlaceholderNamePattern}"
+                                                 AutomationProperties.Name="{x:Static p:Resources.LblFilterNamePattern}"/>
+
+                                        <Button Content="{x:Static p:Resources.BtnApplyFilter}"
+                                                Command="{Binding LoadDashboardCommand}"
+                                                Background="#27AE60"
+                                                Style="{StaticResource SmallButtonStyle}"
+                                                AutomationProperties.Name="{x:Static p:Resources.BtnApplyFilter}"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
 
                             <!-- Update Statistics -->
                             <GroupBox Grid.Row="1" Header="{x:Static p:Resources.DashboardUpdateStats}" Margin="0,0,0,15">
@@ -1318,13 +1180,197 @@
                          DataContext="{Binding Updates}">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
+                        <!-- Filter Bar -->
+                        <Border Grid.Row="0" Background="#F8F9FA" CornerRadius="8" Padding="12" Margin="10,10,10,10">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Quick Filters Row -->
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                                    <TextBlock Text="{x:Static p:Resources.LblQuickFilters}"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,10,0"
+                                               FontSize="12"
+                                               FontWeight="SemiBold"
+                                               Foreground="#5D6D7E"/>
+                                    <Button Content="{x:Static p:Resources.PresetAllUpdates}"
+                                            Command="{Binding ApplyPresetCommand}"
+                                            CommandParameter="All"
+                                            Background="#3498DB"
+                                            Style="{StaticResource SmallButtonStyle}"
+                                            Margin="0,0,5,0"/>
+                                    <Button Content="{x:Static p:Resources.PresetCriticalUpdates}"
+                                            Command="{Binding ApplyPresetCommand}"
+                                            CommandParameter="Critical"
+                                            Background="#C0392B"
+                                            Style="{StaticResource SmallButtonStyle}"
+                                            Margin="0,0,5,0"/>
+                                    <Button Content="{x:Static p:Resources.PresetSecurityUpdates}"
+                                            Command="{Binding ApplyPresetCommand}"
+                                            CommandParameter="Security"
+                                            Background="#8E44AD"
+                                            Style="{StaticResource SmallButtonStyle}"
+                                            Margin="0,0,5,0"/>
+                                    <Button Content="{x:Static p:Resources.PresetUnapprovedOnly}"
+                                            Command="{Binding ApplyPresetCommand}"
+                                            CommandParameter="Unapproved"
+                                            Background="#E67E22"
+                                            Style="{StaticResource SmallButtonStyle}"
+                                            Margin="0,0,5,0"/>
+                                    <Button Content="{x:Static p:Resources.PresetSupersededOnly}"
+                                            Command="{Binding ApplyPresetCommand}"
+                                            CommandParameter="Superseded"
+                                            Background="#7F8C8D"
+                                            Style="{StaticResource SmallButtonStyle}"
+                                            Margin="0,0,5,0"/>
+                                </StackPanel>
+
+                                <!-- Detailed Filters Row -->
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="180"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Filter Presets -->
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,10,0">
+                                        <TextBlock Text="{x:Static p:Resources.LblFilterPresets}"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,5,0"
+                                                   FontSize="12"
+                                                   Foreground="#5D6D7E"/>
+                                        <ComboBox ItemsSource="{Binding FilterPresets}"
+                                                  SelectedItem="{Binding SelectedFilterPreset}"
+                                                  DisplayMemberPath="Name"
+                                                  MinWidth="130"
+                                                  Padding="8,6"
+                                                  FontSize="12"
+                                                  AutomationProperties.Name="{x:Static p:Resources.LblFilterPresets}"/>
+                                        <Button Content="{x:Static p:Resources.BtnSavePreset}"
+                                                Command="{Binding SaveFilterPresetCommand}"
+                                                Background="#3498DB"
+                                                Style="{StaticResource SmallButtonStyle}"
+                                                Margin="5,0,0,0"
+                                                ToolTip="{x:Static p:Resources.BtnSavePreset}"
+                                                AutomationProperties.Name="{x:Static p:Resources.BtnSavePreset}"/>
+                                    </StackPanel>
+
+                                    <!-- Search Box -->
+                                    <Grid Grid.Column="1" Margin="0,0,10,0">
+                                        <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Delay=300}"
+                                                 Style="{StaticResource SearchTextBoxStyle}"
+                                                 AutomationProperties.Name="{x:Static p:Resources.LblSearch}">
+                                            <TextBox.InputBindings>
+                                                <KeyBinding Key="Return" Command="{Binding ApplySearchCommand}"/>
+                                            </TextBox.InputBindings>
+                                        </TextBox>
+                                        <TextBlock Text="{x:Static p:Resources.PlaceholderSearch}"
+                                                   Foreground="#AAAAAA"
+                                                   FontSize="12"
+                                                   Margin="10,8,0,0"
+                                                   IsHitTestVisible="False"
+                                                   Visibility="{Binding SearchText, Converter={StaticResource EmptyToVisibility}}"/>
+                                    </Grid>
+
+                                    <!-- Classification Filter -->
+                                    <ComboBox Grid.Column="2"
+                                              ItemsSource="{Binding Classifications}"
+                                              SelectedItem="{Binding SelectedClassification}"
+                                              MinWidth="140"
+                                              Padding="8,6"
+                                              FontSize="12"
+                                              Margin="0,0,10,0"
+                                              AutomationProperties.Name="{x:Static p:Resources.LblFilter}"/>
+
+                                    <!-- Approval Status Filter -->
+                                    <ComboBox Grid.Column="3"
+                                              ItemsSource="{Binding ApprovalFilters}"
+                                              SelectedItem="{Binding SelectedApprovalFilter}"
+                                              MinWidth="100"
+                                              Padding="8,6"
+                                              FontSize="12"
+                                              Margin="0,0,10,0"
+                                              AutomationProperties.Name="{x:Static p:Resources.LblFilter}"/>
+
+                                    <!-- Superseded Filter -->
+                                    <ComboBox Grid.Column="4"
+                                              ItemsSource="{Binding SupersededFilters}"
+                                              SelectedItem="{Binding SelectedSupersededFilter}"
+                                              MinWidth="130"
+                                              Padding="8,6"
+                                              FontSize="12"
+                                              Margin="0,0,10,0"
+                                              AutomationProperties.Name="{x:Static p:Resources.LblSupersededFilter}"/>
+
+                                    <!-- Target Group Selector -->
+                                    <StackPanel Grid.Column="5" Orientation="Horizontal" Margin="0,0,10,0">
+                                        <TextBlock Text="{x:Static p:Resources.LblComputerGroups}"
+                                                   FontSize="12"
+                                                   Foreground="#5D6D7E"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,5,0"/>
+                                        <ComboBox ItemsSource="{Binding ComputerGroups}"
+                                                  SelectedItem="{Binding SelectedComputerGroup}"
+                                                  DisplayMemberPath="Name"
+                                                  MinWidth="150"
+                                                  Padding="8,6"
+                                                  FontSize="12"
+                                                  AutomationProperties.Name="{x:Static p:Resources.LblComputerGroups}"/>
+                                    </StackPanel>
+
+                                    <!-- Clear Filter Button -->
+                                    <Button Grid.Column="6"
+                                            Content="{x:Static p:Resources.BtnClearFilter}"
+                                            Command="{Binding ClearFiltersCommand}"
+                                            Background="#7B8D8E"
+                                            Style="{StaticResource SmallButtonStyle}"
+                                            Margin="0,0,15,0"
+                                            AutomationProperties.Name="{x:Static p:Resources.BtnClearFilter}"/>
+
+                                    <!-- Action Buttons -->
+                                    <StackPanel Grid.Column="7" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,0,0,0">
+                                        <Button Content="{x:Static p:Resources.BtnBulkApprove}"
+                                                Command="{Binding BulkApproveCommand}"
+                                                Background="#27AE60"
+                                                Style="{StaticResource SmallButtonStyle}"
+                                                Margin="0,0,5,0"
+                                                Visibility="{Binding CanUserApprove, Converter={StaticResource BoolToVisibility}}"
+                                                AutomationProperties.Name="{x:Static p:Resources.BtnBulkApprove}"/>
+                                        <Button Content="{x:Static p:Resources.BtnBulkDecline}"
+                                                Command="{Binding BulkDeclineCommand}"
+                                                Background="#E74C3C"
+                                                Style="{StaticResource SmallButtonStyle}"
+                                                Margin="0,0,5,0"
+                                                Visibility="{Binding CanUserDecline, Converter={StaticResource BoolToVisibility}}"
+                                                AutomationProperties.Name="{x:Static p:Resources.BtnBulkDecline}"/>
+                                        <Button Content="{x:Static p:Resources.BtnDeclineSuperseded}"
+                                                Command="{Binding DeclineAllSupersededCommand}"
+                                                Background="#E67E22"
+                                                Style="{StaticResource SmallButtonStyle}"
+                                                ToolTip="{x:Static p:Resources.TipSuperseded}"
+                                                Visibility="{Binding CanUserDecline, Converter={StaticResource BoolToVisibility}}"
+                                                AutomationProperties.Name="{x:Static p:Resources.BtnDeclineSuperseded}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </Border>
+
                         <!-- Loading Indicator Overlay -->
-                        <Border Grid.Row="0"
+                        <Border Grid.Row="1"
                                 Background="#B3FFFFFF"
                                 Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"
                                 Panel.ZIndex="100">
@@ -1356,7 +1402,7 @@
                             </StackPanel>
                         </Border>
 
-                        <DataGrid Grid.Row="0"
+                        <DataGrid Grid.Row="1"
                                   ItemsSource="{Binding FilteredUpdates}"
                                   SelectedItem="{Binding SelectedUpdate}"
                                   behaviors:DataGridSelectedItemsBehavior.SelectedItems="{Binding SelectedUpdates}"
@@ -1500,11 +1546,34 @@
                                         </Style>
                                     </DataGridCheckBoxColumn.ElementStyle>
                                 </DataGridCheckBoxColumn>
+                                <DataGridCheckBoxColumn Header="{x:Static p:Resources.ColSuperseded}"
+                                                        Binding="{Binding IsSuperseded, Mode=OneWay}"
+                                                        Width="90">
+                                    <DataGridCheckBoxColumn.ElementStyle>
+                                        <Style TargetType="CheckBox">
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="IsHitTestVisible" Value="False"/>
+                                        </Style>
+                                    </DataGridCheckBoxColumn.ElementStyle>
+                                </DataGridCheckBoxColumn>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColSupersededBy}"
+                                                    Binding="{Binding SupersededBy}"
+                                                    Width="150">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                            <Setter Property="ToolTip" Value="{Binding SupersededBy}"/>
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
                             </DataGrid.Columns>
                         </DataGrid>
 
                         <!-- Pagination Controls -->
-                        <Border Grid.Row="1" Background="#F8F9FA" Padding="10,8" Margin="0,5,0,0">
+                        <Border Grid.Row="2" Background="#F8F9FA" Padding="10,8" Margin="0,5,0,0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -1822,6 +1891,209 @@
                     </Grid>
                 </TabItem>
 
+                <!-- Staging Tab -->
+                <TabItem Header="{x:Static p:Resources.TabStaging}"
+                         AutomationProperties.Name="{x:Static p:Resources.TabStaging}"
+                         ToolTip="{x:Static p:Resources.TabStagingDescription}"
+                         DataContext="{Binding Staging}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Load Staging Computers Button -->
+                        <Button Grid.Row="0"
+                                Content="{x:Static p:Resources.BtnRefresh}"
+                                Command="{Binding LoadStagingComputersCommand}"
+                                HorizontalAlignment="Left"
+                                Margin="10,10,10,10"
+                                Background="#9B59B6"
+                                Style="{StaticResource ActionButtonStyle}"
+                                AutomationProperties.Name="{x:Static p:Resources.BtnRefresh}"/>
+
+                        <!-- Loading Indicator Overlay -->
+                        <Border Grid.Row="1"
+                                Background="#B3FFFFFF"
+                                Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"
+                                Panel.ZIndex="100">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Style.Triggers>
+                                        <Trigger Property="Visibility" Value="Visible">
+                                            <Trigger.EnterActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                                         From="0" To="1" Duration="0:0:0.2"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.EnterActions>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ProgressBar IsIndeterminate="True"
+                                             Width="200"
+                                             Height="4"
+                                             Margin="0,0,0,10"/>
+                                <TextBlock Text="{x:Static p:Resources.StatusLoading}"
+                                           HorizontalAlignment="Center"
+                                           Foreground="#2C3E50"
+                                           FontSize="13"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Staging Computers DataGrid -->
+                        <DataGrid Grid.Row="1"
+                                  ItemsSource="{Binding StagingComputers}"
+                                  SelectedItem="{Binding SelectedComputer}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  SelectionMode="Single"
+                                  GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#E0E0E0"
+                                  Background="White"
+                                  BorderThickness="0"
+                                  RowHeight="32"
+                                  HeadersVisibility="Column"
+                                  AutomationProperties.Name="{x:Static p:Resources.GridStagingComputers}">
+                            <DataGrid.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="{x:Static p:Resources.MenuMoveToGroup}"
+                                              Command="{Binding MoveComputerToGroupCommand}"
+                                              AutomationProperties.Name="{x:Static p:Resources.MenuMoveToGroup}"/>
+                                    <MenuItem Header="{x:Static p:Resources.MenuForceScan}"
+                                              Command="{Binding ForceComputerScanCommand}"
+                                              AutomationProperties.Name="{x:Static p:Resources.MenuForceScan}"/>
+                                    <MenuItem Header="{x:Static p:Resources.MenuRemoveComputer}"
+                                              Command="{Binding RemoveComputerCommand}"
+                                              AutomationProperties.Name="{x:Static p:Resources.MenuRemoveComputer}"/>
+                                    <Separator/>
+                                    <MenuItem Header="{x:Static p:Resources.MenuRefreshStatus}"
+                                              Command="{Binding LoadStagingComputersCommand}"
+                                              AutomationProperties.Name="{x:Static p:Resources.MenuRefreshStatus}"/>
+                                </ContextMenu>
+                            </DataGrid.ContextMenu>
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#F8F9FA"/>
+                                    <Setter Property="Foreground" Value="#2C3E50"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="FontSize" Value="12"/>
+                                    <Setter Property="Padding" Value="10,8"/>
+                                    <Setter Property="BorderBrush" Value="#E0E0E0"/>
+                                    <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                    <Setter Property="AutomationProperties.Name"
+                                            Value="{Binding RelativeSource={RelativeSource Self}, Path=Content}"/>
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+                            <DataGrid.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="Padding" Value="10,6"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="#9B59B6"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="BorderBrush" Value="#8E44AD"/>
+                                            <Setter Property="BorderThickness" Value="1"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.CellStyle>
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#EBEBEB"/>
+                                            <Setter Property="BorderBrush" Value="#9B59B6"/>
+                                            <Setter Property="BorderThickness" Value="3,0,0,0"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColComputerName}"
+                                                    Binding="{Binding Name}"
+                                                    Width="*">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                            <Setter Property="ToolTip" Value="{Binding Name}"/>
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColIpAddress}"
+                                                    Binding="{Binding IpAddress}"
+                                                    Width="120">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColInstalled}"
+                                                    Binding="{Binding InstalledCount}"
+                                                    Width="80">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            <Setter Property="Foreground" Value="#27AE60"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColNeeded}"
+                                                    Binding="{Binding NeededCount}"
+                                                    Width="80">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            <Setter Property="Foreground" Value="#F39C12"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColFailed}"
+                                                    Binding="{Binding FailedCount}"
+                                                    Width="80">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            <Setter Property="Foreground" Value="#E74C3C"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="{x:Static p:Resources.ColLastReport}"
+                                                    Binding="{Binding LastReportedTime, StringFormat=g}"
+                                                    Width="140">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+
                 <!-- Reports Tab -->
                 <TabItem Header="{x:Static p:Resources.TabReports}"
                          AutomationProperties.Name="{x:Static p:Resources.TabReports}"
@@ -1835,6 +2107,21 @@
 
                         <!-- Report Actions -->
                         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
+                            <TextBlock Text="{x:Static p:Resources.LblComputerGroups}"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,8,0"/>
+                            <ComboBox ItemsSource="{Binding AvailableGroups}"
+                                      SelectedItem="{Binding SelectedGroup}"
+                                      DisplayMemberPath="Name"
+                                      Width="200"
+                                      Margin="0,0,15,0"
+                                      AutomationProperties.Name="{x:Static p:Resources.LblComputerGroups}">
+                                <ComboBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ComboBox.ItemsPanel>
+                            </ComboBox>
                             <Button Content="{x:Static p:Resources.BtnGenerateReport}"
                                     Command="{Binding GenerateComplianceReportCommand}"
                                     Background="#3498DB"
@@ -1851,6 +2138,12 @@
                                        VerticalAlignment="Center"
                                        FontWeight="Bold"
                                        Foreground="#27AE60"/>
+                            <ProgressBar IsIndeterminate="{Binding IsLoading}"
+                                         Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"
+                                         Width="100"
+                                         Height="4"
+                                         Margin="15,0,0,0"
+                                         VerticalAlignment="Center"/>
                         </StackPanel>
 
                         <!-- Compliance Summary -->

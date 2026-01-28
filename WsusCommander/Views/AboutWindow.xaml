@@ -22,8 +22,8 @@
         <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
             <TextBlock Text="{x:Static p:Resources.AboutGitHubLabel}" Width="120"/>
             <TextBlock>
-                <Hyperlink NavigateUri="{x:Static p:Resources.AboutGitHubUrl}" RequestNavigate="Hyperlink_RequestNavigate">
-                    <Run Text="{x:Static p:Resources.AboutGitHubUrl}"/>
+                <Hyperlink NavigateUri="{Binding GitHubUri}" RequestNavigate="Hyperlink_RequestNavigate">
+                    <Run Text="{Binding GitHubUrl, Mode=OneWay}"/>
                 </Hyperlink>
             </TextBlock>
         </StackPanel>

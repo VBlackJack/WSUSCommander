@@ -78,4 +78,10 @@ public sealed class WsusUpdate
     /// Gets or sets a value indicating whether the update has been superseded.
     /// </summary>
     public bool IsSuperseded { get; set; }
+
+    /// <summary>
+    /// Gets or sets the KB articles of updates that supersede this one.
+    /// </summary>
+    [StringLength(512)]
+    public string SupersededBy { get; set; } = string.Empty;
 }

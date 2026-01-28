@@ -28,6 +28,8 @@ public partial class ReportsViewModel : ObservableObject
 {
     private readonly IReportService _reportService;
     private readonly IFileDialogService _fileDialogService;
+    private readonly IWsusService _wsusService;
+    private readonly ILoggingService _loggingService;
 
     [ObservableProperty]
     private ComplianceReport? _complianceReport;
@@ -35,18 +37,78 @@ public partial class ReportsViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<StaleComputerInfo> _staleComputers = [];
 
-    public ReportsViewModel(IReportService reportService, IFileDialogService fileDialogService)
+    [ObservableProperty]
+    private List<ComputerGroup> _availableGroups = [];
+
+    [ObservableProperty]
+    private ComputerGroup? _selectedGroup;
+
+    [ObservableProperty]
+    private bool _isLoading;
+
+    public ReportsViewModel(
+        IReportService reportService,
+        IFileDialogService fileDialogService,
+        IWsusService wsusService,
+        ILoggingService loggingService)
     {
         _reportService = reportService;
         _fileDialogService = fileDialogService;
+        _wsusService = wsusService;
+        _loggingService = loggingService;
+    }
+
+    [RelayCommand]
+    private async Task LoadReportsAsync(CancellationToken cancellationToken)
+    {
+        IsLoading = true;
+
+        try
+        {
+            var selectedGroupId = SelectedGroup?.Id;
+
+            var groups = await _wsusService.GetGroupsAsync(cancellationToken);
+            AvailableGroups = [.. groups.OrderBy(g => g.Name)];
+
+            if (selectedGroupId.HasValue)
+            {
+                SelectedGroup = AvailableGroups.FirstOrDefault(g => g.Id == selectedGroupId.Value);
+            }
+        }
+        catch (Exception ex)
+        {
+            await _loggingService.LogErrorAsync($"Failed to load groups: {ex.Message}", ex);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
     [RelayCommand]
     private async Task GenerateComplianceReportAsync(CancellationToken cancellationToken)
     {
-        ComplianceReport = await _reportService.GenerateComplianceReportAsync(cancellationToken: cancellationToken);
-        var stale = await _reportService.GetStaleComputersAsync(cancellationToken: cancellationToken);
-        StaleComputers = new ObservableCollection<StaleComputerInfo>(stale);
+        IsLoading = true;
+
+        try
+        {
+            var options = new ReportOptions
+            {
+                GroupId = SelectedGroup?.Id
+            };
+
+            ComplianceReport = await _reportService.GenerateComplianceReportAsync(options, cancellationToken);
+            var stale = await _reportService.GetStaleComputersAsync(options.StaleDays, cancellationToken);
+            StaleComputers = new ObservableCollection<StaleComputerInfo>(stale);
+        }
+        catch (Exception ex)
+        {
+            await _loggingService.LogErrorAsync($"Failed to generate report: {ex.Message}", ex);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
     [RelayCommand]

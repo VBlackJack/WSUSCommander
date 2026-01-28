@@ -32,6 +32,8 @@ public partial class UpdatesViewModel : ObservableObject
     private readonly INotificationService _notificationService;
     private readonly IExportService _exportService;
     private readonly IFileDialogService _fileDialogService;
+    private readonly IFilterPresetsService _filterPresetsService;
+    private readonly IDialogService _dialogService;
 
     private readonly ObservableCollection<WsusUpdate> _allUpdates = new();
 
@@ -57,7 +59,7 @@ public partial class UpdatesViewModel : ObservableObject
     private string _searchText = string.Empty;
 
     [ObservableProperty]
-    private string _selectedClassification = string.Empty;
+    private string _selectedClassification = "All";
 
     [ObservableProperty]
     private string _selectedApprovalFilter = "All";
@@ -133,19 +135,51 @@ public partial class UpdatesViewModel : ObservableObject
         ILoggingService loggingService,
         INotificationService notificationService,
         IExportService exportService,
-        IFileDialogService fileDialogService)
+        IFileDialogService fileDialogService,
+        IFilterPresetsService filterPresetsService,
+        IDialogService dialogService)
     {
         _wsusService = wsusService;
         _loggingService = loggingService;
         _notificationService = notificationService;
         _exportService = exportService;
         _fileDialogService = fileDialogService;
+        _filterPresetsService = filterPresetsService;
+        _dialogService = dialogService;
+
+        LoadFilterPresets();
     }
 
     partial void OnSearchTextChanged(string value) => ApplyFilters();
     partial void OnSelectedClassificationChanged(string value) => ApplyFilters();
     partial void OnSelectedApprovalFilterChanged(string value) => ApplyFilters();
     partial void OnSelectedSupersededFilterChanged(string value) => ApplyFilters();
+
+    partial void OnSelectedFilterPresetChanged(FilterPreset? value)
+    {
+        if (value == null) return;
+
+        SearchText = value.SearchText;
+        SelectedClassification = string.IsNullOrEmpty(value.Classification)
+            ? Resources.FilterAll
+            : value.Classification;
+        SelectedApprovalFilter = value.ApprovalFilter;
+        SelectedSupersededFilter = string.IsNullOrEmpty(value.SupersededFilter) || value.SupersededFilter == "All"
+            ? Resources.FilterSupersededAll
+            : value.SupersededFilter;
+
+        ApplyFilters();
+    }
+
+    private void LoadFilterPresets()
+    {
+        var presets = _filterPresetsService.GetPresets();
+        FilterPresets = new ObservableCollection<FilterPreset>(presets);
+
+        // Default to "All Updates" preset
+        SelectedFilterPreset = FilterPresets.FirstOrDefault(p =>
+            p.Name == Resources.PresetAllUpdates) ?? FilterPresets.FirstOrDefault();
+    }
 
     [RelayCommand]
     private async Task LoadUpdatesAsync(CancellationToken cancellationToken)
@@ -166,7 +200,11 @@ public partial class UpdatesViewModel : ObservableObject
             ApplyFilters();
 
             Classifications = new ObservableCollection<string>(
-                new[] { string.Empty }.Concat(updates.Select(u => u.Classification).Distinct().OrderBy(c => c)));
+                new[] { Resources.FilterAll }.Concat(updates.Select(u => u.Classification).Distinct().OrderBy(c => c)));
+
+            // Load computer groups for target group selection
+            var groups = await _wsusService.GetGroupsAsync(cancellationToken);
+            ComputerGroups = new ObservableCollection<ComputerGroup>(groups.OrderBy(g => g.Name));
 
             StatusMessage = string.Format(Resources.StatusUpdatesLoaded, _allUpdates.Count);
 
@@ -209,7 +247,9 @@ public partial class UpdatesViewModel : ObservableObject
             }
         }
 
-        if (!string.IsNullOrWhiteSpace(SelectedClassification) && update.Classification != SelectedClassification)
+        if (!string.IsNullOrWhiteSpace(SelectedClassification) &&
+            SelectedClassification != Resources.FilterAll &&
+            update.Classification != SelectedClassification)
             return false;
 
         if (SelectedApprovalFilter == "Approved" && !update.IsApproved) return false;
@@ -226,9 +266,11 @@ public partial class UpdatesViewModel : ObservableObject
     private void ClearFilters()
     {
         SearchText = string.Empty;
-        SelectedClassification = string.Empty;
+        SelectedClassification = Resources.FilterAll;
         SelectedApprovalFilter = "All";
         SelectedSupersededFilter = Resources.FilterSupersededAll;
+        SelectedFilterPreset = FilterPresets.FirstOrDefault(p =>
+            p.Name == Resources.PresetAllUpdates) ?? FilterPresets.FirstOrDefault();
         ApplyFilters();
     }
 
@@ -239,9 +281,38 @@ public partial class UpdatesViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private Task SaveFilterPresetAsync()
+    private async Task SaveFilterPresetAsync()
     {
-        return Task.CompletedTask;
+        var presetName = await _dialogService.ShowInputDialogAsync(
+            Resources.DialogSavePreset,
+            Resources.LblPresetName);
+
+        if (string.IsNullOrWhiteSpace(presetName)) return;
+
+        var preset = new FilterPreset
+        {
+            Name = presetName,
+            SearchText = SearchText,
+            Classification = SelectedClassification,
+            ApprovalFilter = SelectedApprovalFilter,
+            SupersededFilter = SelectedSupersededFilter,
+            IsBuiltIn = false
+        };
+
+        await _filterPresetsService.SavePresetAsync(preset);
+        LoadFilterPresets();
+        _notificationService.ShowToast(Resources.StatusPresetSaved, ToastType.Success);
+    }
+
+    [RelayCommand]
+    private void ApplyPreset(string presetName)
+    {
+        var preset = FilterPresets.FirstOrDefault(p =>
+            p.Name.Contains(presetName, StringComparison.OrdinalIgnoreCase));
+        if (preset != null)
+        {
+            SelectedFilterPreset = preset;
+        }
     }
 
     private bool CanApproveUpdate() => SelectedUpdate is not null && SelectedComputerGroup is not null && !IsLoading;

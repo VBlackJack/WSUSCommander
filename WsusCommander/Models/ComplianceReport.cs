@@ -111,6 +111,101 @@ public sealed class ComplianceReport
     /// </summary>
     [Required]
     public List<StaleComputerInfo> StaleComputers { get; set; } = [];
+
+    /// <summary>
+    /// Gets or sets computer details.
+    /// </summary>
+    [Required]
+    public List<ComputerComplianceInfo> ComputerDetails { get; set; } = [];
+}
+
+/// <summary>
+/// Individual computer compliance information.
+/// </summary>
+public sealed class ComputerComplianceInfo
+{
+    /// <summary>
+    /// Gets or sets the computer ID.
+    /// </summary>
+    [Required]
+    [StringLength(128, MinimumLength = 1)]
+    public string ComputerId { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the computer name.
+    /// </summary>
+    [Required]
+    [StringLength(256, MinimumLength = 1)]
+    public string ComputerName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the IP address.
+    /// </summary>
+    [StringLength(64)]
+    public string IpAddress { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the last reported time.
+    /// </summary>
+    public DateTime? LastReportedTime { get; set; }
+
+    /// <summary>
+    /// Gets or sets the last sync time.
+    /// </summary>
+    public DateTime? LastSyncTime { get; set; }
+
+    /// <summary>
+    /// Gets or sets the OS description.
+    /// </summary>
+    [StringLength(256)]
+    public string OsDescription { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets whether the computer is compliant.
+    /// </summary>
+    public bool IsCompliant { get; set; }
+
+    /// <summary>
+    /// Gets or sets the compliance percentage.
+    /// </summary>
+    [Range(0, 100)]
+    public double CompliancePercent { get; set; }
+
+    /// <summary>
+    /// Gets or sets the installed updates count.
+    /// </summary>
+    [Range(0, int.MaxValue)]
+    public int InstalledCount { get; set; }
+
+    /// <summary>
+    /// Gets or sets the needed updates count.
+    /// </summary>
+    [Range(0, int.MaxValue)]
+    public int NeededCount { get; set; }
+
+    /// <summary>
+    /// Gets or sets the downloaded updates count.
+    /// </summary>
+    [Range(0, int.MaxValue)]
+    public int DownloadedCount { get; set; }
+
+    /// <summary>
+    /// Gets or sets the not installed updates count.
+    /// </summary>
+    [Range(0, int.MaxValue)]
+    public int NotInstalledCount { get; set; }
+
+    /// <summary>
+    /// Gets or sets the failed updates count.
+    /// </summary>
+    [Range(0, int.MaxValue)]
+    public int FailedCount { get; set; }
+
+    /// <summary>
+    /// Gets or sets the group memberships.
+    /// </summary>
+    [Required]
+    public List<string> Groups { get; set; } = [];
 }
 
 /// <summary>

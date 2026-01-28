@@ -39,6 +39,14 @@ public interface IWsusService
     Task<DashboardStats> GetDashboardStatsAsync(CancellationToken cancellationToken);
 
     /// <summary>
+    /// Gets dashboard statistics with optional filters.
+    /// </summary>
+    /// <param name="groupId">Optional group ID to filter computers.</param>
+    /// <param name="namePattern">Optional wildcard pattern to filter computer names (e.g., "*SRV*", "PADSEC*").</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    Task<DashboardStats> GetDashboardStatsAsync(string? groupId, string? namePattern, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Gets the current health report.
     /// </summary>
     Task<HealthReport> GetHealthReportAsync(CancellationToken cancellationToken);
@@ -59,9 +67,16 @@ public interface IWsusService
     Task DeclineUpdateAsync(Guid updateId, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Gets computer statuses.
+    /// Gets computer statuses, optionally excluding unassigned computers.
     /// </summary>
-    Task<IReadOnlyList<ComputerStatus>> GetComputersAsync(CancellationToken cancellationToken);
+    /// <param name="excludeUnassigned">If true, excludes computers in the "Unassigned Computers" group.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    Task<IReadOnlyList<ComputerStatus>> GetComputersAsync(bool excludeUnassigned, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Gets staging computers (computers in the "Unassigned Computers" group).
+    /// </summary>
+    Task<IReadOnlyList<ComputerStatus>> GetStagingComputersAsync(CancellationToken cancellationToken);
 
     /// <summary>
     /// Gets computer groups.

@@ -24,20 +24,21 @@ using WsusCommander.Services;
 
 namespace WsusCommander.ViewModels;
 
-public partial class ComputersViewModel : ObservableObject
+/// <summary>
+/// ViewModel for the Staging tab displaying computers in "Unassigned Computers" group.
+/// </summary>
+public sealed partial class StagingViewModel : ObservableObject
 {
     private readonly IWsusService _wsusService;
     private readonly ILoggingService _loggingService;
     private readonly INotificationService _notificationService;
-    private readonly IExportService _exportService;
-    private readonly IFileDialogService _fileDialogService;
     private readonly IBulkOperationService _bulkOperationService;
     private readonly IGroupService _groupService;
     private readonly IDialogService _dialogService;
     private readonly IComputerActionService _computerActionService;
 
     [ObservableProperty]
-    private ObservableCollection<ComputerStatus> _filteredComputerStatuses = [];
+    private ObservableCollection<ComputerStatus> _stagingComputers = [];
 
     [ObservableProperty]
     private ComputerStatus? _selectedComputer;
@@ -45,12 +46,13 @@ public partial class ComputersViewModel : ObservableObject
     [ObservableProperty]
     private bool _isLoading;
 
-    public ComputersViewModel(
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StagingViewModel"/> class.
+    /// </summary>
+    public StagingViewModel(
         IWsusService wsusService,
         ILoggingService loggingService,
         INotificationService notificationService,
-        IExportService exportService,
-        IFileDialogService fileDialogService,
         IBulkOperationService bulkOperationService,
         IGroupService groupService,
         IDialogService dialogService,
@@ -59,27 +61,28 @@ public partial class ComputersViewModel : ObservableObject
         _wsusService = wsusService;
         _loggingService = loggingService;
         _notificationService = notificationService;
-        _exportService = exportService;
-        _fileDialogService = fileDialogService;
         _bulkOperationService = bulkOperationService;
         _groupService = groupService;
         _dialogService = dialogService;
         _computerActionService = computerActionService;
     }
 
+    /// <summary>
+    /// Loads computers from the "Unassigned Computers" staging group.
+    /// </summary>
     [RelayCommand]
-    private async Task LoadComputerStatusesAsync(CancellationToken cancellationToken)
+    private async Task LoadStagingComputersAsync(CancellationToken cancellationToken)
     {
         IsLoading = true;
 
         try
         {
-            var computers = await _wsusService.GetComputersAsync(excludeUnassigned: true, cancellationToken);
-            FilteredComputerStatuses = new ObservableCollection<ComputerStatus>(computers);
+            var computers = await _wsusService.GetStagingComputersAsync(cancellationToken);
+            StagingComputers = new ObservableCollection<ComputerStatus>(computers);
         }
         catch (Exception ex)
         {
-            await _loggingService.LogErrorAsync($"Failed to load computers: {ex.Message}", ex);
+            await _loggingService.LogErrorAsync($"Failed to load staging computers: {ex.Message}", ex);
         }
         finally
         {
@@ -87,13 +90,9 @@ public partial class ComputersViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
-    private void ViewComputerUpdates()
-    {
-        if (SelectedComputer is null) return;
-        OnViewUpdatesRequested?.Invoke(this, SelectedComputer);
-    }
-
+    /// <summary>
+    /// Moves the selected computer to a different group.
+    /// </summary>
     [RelayCommand]
     private async Task MoveComputerToGroupAsync(CancellationToken cancellationToken)
     {
@@ -101,7 +100,10 @@ public partial class ComputersViewModel : ObservableObject
             return;
 
         var groups = await _groupService.GetAllGroupsAsync(true, cancellationToken);
-        var groupNames = string.Join(", ", groups.Select(g => g.Name).OrderBy(name => name));
+        var groupNames = string.Join(", ", groups
+            .Where(g => !string.Equals(g.Name, "Unassigned Computers", StringComparison.OrdinalIgnoreCase))
+            .Select(g => g.Name)
+            .OrderBy(name => name));
 
         var groupName = await _dialogService.ShowInputDialogAsync(
             Resources.DialogMoveComputerTitle,
@@ -125,32 +127,32 @@ public partial class ComputersViewModel : ObservableObject
             null,
             cancellationToken);
 
-        SelectedComputer.GroupName = targetGroup.Name;
+        // Remove from staging list since it's no longer unassigned
+        StagingComputers.Remove(SelectedComputer);
         _notificationService.ShowToast(
             string.Format(Resources.ToastComputerMoved, SelectedComputer.Name, targetGroup.Name),
             ToastType.Success);
+        SelectedComputer = null;
     }
 
+    /// <summary>
+    /// Forces a scan on the selected computer.
+    /// </summary>
     [RelayCommand]
     private async Task ForceComputerScanAsync(CancellationToken cancellationToken)
     {
         if (SelectedComputer is null)
             return;
 
-        try
-        {
-            await _computerActionService.ForceComputerScanAsync(SelectedComputer.ComputerId, cancellationToken);
-            _notificationService.ShowToast(
-                string.Format(Resources.ToastComputerScanQueued, SelectedComputer.Name),
-                ToastType.Success);
-        }
-        catch (Exception ex)
-        {
-            await _loggingService.LogErrorAsync($"Failed to force scan for {SelectedComputer.Name}: {ex.Message}", ex);
-            await _notificationService.ShowErrorAsync(Resources.DialogError, ex.Message);
-        }
+        await _computerActionService.ForceComputerScanAsync(SelectedComputer.ComputerId, cancellationToken);
+        _notificationService.ShowToast(
+            string.Format(Resources.ToastComputerScanQueued, SelectedComputer.Name),
+            ToastType.Success);
     }
 
+    /// <summary>
+    /// Removes the selected computer from WSUS.
+    /// </summary>
     [RelayCommand]
     private async Task RemoveComputerAsync(CancellationToken cancellationToken)
     {
@@ -165,39 +167,9 @@ public partial class ComputersViewModel : ObservableObject
             return;
 
         await _computerActionService.RemoveComputerAsync(SelectedComputer.ComputerId, cancellationToken);
-        FilteredComputerStatuses.Remove(SelectedComputer);
+        StagingComputers.Remove(SelectedComputer);
         SelectedComputer = null;
 
         _notificationService.ShowToast(Resources.ToastComputerRemoved, ToastType.Success);
     }
-
-    [RelayCommand]
-    private async Task ExportComputersAsync(CancellationToken cancellationToken)
-    {
-        var filePath = _fileDialogService.ShowSaveFileDialog(
-            Resources.ExportFilterCsv,
-            ".csv",
-            "computers_export");
-
-        if (string.IsNullOrEmpty(filePath)) return;
-
-        IsLoading = true;
-
-        try
-        {
-            var format = filePath.EndsWith(".json") ? ExportFormat.Json :
-                        filePath.EndsWith(".tsv") ? ExportFormat.Tsv : ExportFormat.Csv;
-            await _exportService.ExportComputersAsync(FilteredComputerStatuses, filePath, format);
-        }
-        catch (Exception ex)
-        {
-            await _notificationService.ShowErrorAsync(Resources.DialogError, ex.Message);
-        }
-        finally
-        {
-            IsLoading = false;
-        }
-    }
-
-    public event EventHandler<ComputerStatus>? OnViewUpdatesRequested;
 }
