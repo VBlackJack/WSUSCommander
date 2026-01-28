@@ -89,6 +89,20 @@
                 </ComboBox>
             </Grid>
 
+            <TextBlock Text="{x:Static p:Resources.SettingsHeaderBackup}"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,12" />
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
+                <Button Content="{x:Static p:Resources.BtnBackupSettings}"
+                        Command="{Binding BackupSettingsCommand}"
+                        Width="160"
+                        Margin="0,0,12,0"/>
+                <Button Content="{x:Static p:Resources.BtnRestoreSettings}"
+                        Command="{Binding RestoreSettingsCommand}"
+                        Width="160"/>
+            </StackPanel>
+
             <Button Content="{x:Static p:Resources.BtnClose}"
                     Width="120"
                     HorizontalAlignment="Right"

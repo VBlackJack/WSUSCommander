@@ -18,13 +18,17 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using WsusCommander.Models;
+using WsusCommander.Properties;
 using WsusCommander.Services;
+using WsusCommander.Interfaces;
 
 namespace WsusCommander.ViewModels;
 
 public partial class RulesViewModel : ObservableObject
 {
     private readonly IApprovalRulesService _rulesService;
+    private readonly IFileDialogService _fileDialogService;
+    private readonly INotificationService _notificationService;
 
     [ObservableProperty]
     private ObservableCollection<ApprovalRule> _approvalRules = [];
@@ -32,9 +36,14 @@ public partial class RulesViewModel : ObservableObject
     [ObservableProperty]
     private ApprovalRule? _selectedRule;
 
-    public RulesViewModel(IApprovalRulesService rulesService)
+    public RulesViewModel(
+        IApprovalRulesService rulesService,
+        IFileDialogService fileDialogService,
+        INotificationService notificationService)
     {
         _rulesService = rulesService;
+        _fileDialogService = fileDialogService;
+        _notificationService = notificationService;
         LoadRules();
     }
 
@@ -64,6 +73,27 @@ public partial class RulesViewModel : ObservableObject
         await _rulesService.DeleteRuleAsync(SelectedRule.Id);
         ApprovalRules.Remove(SelectedRule);
         SelectedRule = null;
+    }
+
+    [RelayCommand]
+    private async Task ImportRulesAsync(CancellationToken cancellationToken)
+    {
+        var filePath = _fileDialogService.ShowOpenFileDialog(Resources.ExportFilterJson);
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            return;
+        }
+
+        try
+        {
+            await _rulesService.ImportRulesAsync(filePath);
+            LoadRules();
+            _notificationService.ShowToast(Resources.ToastRulesImported, ToastType.Success);
+        }
+        catch (Exception ex)
+        {
+            await _notificationService.ShowErrorAsync(Resources.DialogError, ex.Message);
+        }
     }
 
     [RelayCommand]

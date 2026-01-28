@@ -17,11 +17,15 @@
 using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using WsusCommander.Interfaces;
 
 namespace WsusCommander.ViewModels;
 
 public partial class MainViewModel : ObservableObject, IDisposable
 {
+    private readonly IWindowService _windowService;
+
     public ConnectionViewModel Connection { get; }
     public DashboardViewModel Dashboard { get; }
     public UpdatesViewModel Updates { get; }
@@ -50,7 +54,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
         ReportsViewModel reports,
         RulesViewModel rules,
         ActivityViewModel activity,
-        SettingsViewModel settings)
+        SettingsViewModel settings,
+        IWindowService windowService)
     {
         Connection = connection;
         Dashboard = dashboard;
@@ -61,6 +66,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         Rules = rules;
         Activity = activity;
         Settings = settings;
+        _windowService = windowService;
 
         Connection.OnConnected += async (_, _) => await OnConnectedAsync();
         Connection.OnDisconnected += (_, _) => OnDisconnected();
@@ -68,6 +74,30 @@ public partial class MainViewModel : ObservableObject, IDisposable
         Dashboard.OnNavigateToUpdatesRequested += (_, _) => SelectedTabIndex = 1;
         Dashboard.OnNavigateToComputersRequested += (_, _) => SelectedTabIndex = 2;
         Dashboard.OnOpenReportsRequested += (_, _) => SelectedTabIndex = 3;
+    }
+
+    [RelayCommand]
+    private void OpenSettings()
+    {
+        _windowService.ShowSettings();
+    }
+
+    [RelayCommand]
+    private void OpenScheduler()
+    {
+        _windowService.ShowScheduler();
+    }
+
+    [RelayCommand]
+    private void OpenCleanup()
+    {
+        _windowService.ShowCleanup();
+    }
+
+    [RelayCommand]
+    private void OpenAbout()
+    {
+        _windowService.ShowAbout();
     }
 
     private async Task OnConnectedAsync()

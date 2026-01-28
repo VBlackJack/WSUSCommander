@@ -112,6 +112,27 @@
   <data name="MenuDecline" xml:space="preserve">
     <value>Refuser la mise à jour</value>
   </data>
+  <data name="MenuFile" xml:space="preserve">
+    <value>Fichier</value>
+  </data>
+  <data name="MenuTools" xml:space="preserve">
+    <value>Outils</value>
+  </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>Aide</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="MenuScheduler" xml:space="preserve">
+    <value>Planificateur</value>
+  </data>
+  <data name="MenuCleanup" xml:space="preserve">
+    <value>Nettoyage</value>
+  </data>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>À propos</value>
+  </data>
   <data name="StatusApproved" xml:space="preserve">
     <value>Mise à jour approuvée pour {0}.</value>
   </data>
@@ -486,6 +507,21 @@
   <data name="DialogInfo" xml:space="preserve">
     <value>Information</value>
   </data>
+  <data name="DialogMoveComputerTitle" xml:space="preserve">
+    <value>Déplacer l'ordinateur</value>
+  </data>
+  <data name="DialogMoveComputerPrompt" xml:space="preserve">
+    <value>Saisissez le nom du groupe cible. Groupes disponibles : {0}</value>
+  </data>
+  <data name="ErrorGroupNotFound" xml:space="preserve">
+    <value>Le groupe '{0}' est introuvable.</value>
+  </data>
+  <data name="ConfirmRemoveComputer" xml:space="preserve">
+    <value>Supprimer '{0}' de WSUS ? Cette action est irréversible.</value>
+  </data>
+  <data name="ConfirmRestoreSettings" xml:space="preserve">
+    <value>La restauration remplacera appsettings.json. Continuer ?</value>
+  </data>
   <data name="BtnYes" xml:space="preserve">
     <value>Oui</value>
   </data>
@@ -711,6 +747,24 @@
   <data name="ToastSyncComplete" xml:space="preserve">
     <value>Synchronisation WSUS terminee</value>
   </data>
+  <data name="ToastComputerMoved" xml:space="preserve">
+    <value>{0} déplace vers {1}</value>
+  </data>
+  <data name="ToastComputerScanQueued" xml:space="preserve">
+    <value>Analyse demandee pour {0}</value>
+  </data>
+  <data name="ToastComputerRemoved" xml:space="preserve">
+    <value>Ordinateur supprime de WSUS</value>
+  </data>
+  <data name="ToastRulesImported" xml:space="preserve">
+    <value>Regles d'approbation importees</value>
+  </data>
+  <data name="ToastSettingsExported" xml:space="preserve">
+    <value>Sauvegarde des parametres enregistree</value>
+  </data>
+  <data name="ToastSettingsImported" xml:space="preserve">
+    <value>Parametres restaurés. Redemarrez l'application pour appliquer les changements.</value>
+  </data>
 
   <!-- Accessibility Labels -->
   <data name="GridUpdates" xml:space="preserve">
@@ -802,6 +856,9 @@
   </data>
   <data name="BtnDeleteRule" xml:space="preserve">
     <value>Supprimer</value>
+  </data>
+  <data name="BtnImportRules" xml:space="preserve">
+    <value>Importer des règles</value>
   </data>
   <data name="BtnEditRule" xml:space="preserve">
     <value>Modifier</value>
@@ -904,6 +961,15 @@
   </data>
   <data name="DashboardComputerStats" xml:space="preserve">
     <value>Statistiques des ordinateurs</value>
+  </data>
+  <data name="DashboardComplianceTrend" xml:space="preserve">
+    <value>Tendance de conformité</value>
+  </data>
+  <data name="DashboardUpdatesByClassification" xml:space="preserve">
+    <value>Mises à jour par classification</value>
+  </data>
+  <data name="DashboardComputerStatus" xml:space="preserve">
+    <value>Statut des ordinateurs</value>
   </data>
   <data name="DashboardCriticalPending" xml:space="preserve">
     <value>Critiques en attente</value>
@@ -1034,6 +1100,9 @@
   <data name="DashboardUpToDate" xml:space="preserve">
     <value>À jour</value>
   </data>
+  <data name="DashboardUnknown" xml:space="preserve">
+    <value>Inconnu</value>
+  </data>
   <data name="DashboardUpdateDistribution" xml:space="preserve">
     <value>Répartition des mises à jour</value>
   </data>
@@ -1114,6 +1183,12 @@
   </data>
   <data name="MenuMoveToGroup" xml:space="preserve">
     <value>Déplacer vers le groupe</value>
+  </data>
+  <data name="MenuForceScan" xml:space="preserve">
+    <value>Forcer l'analyse</value>
+  </data>
+  <data name="MenuRemoveComputer" xml:space="preserve">
+    <value>Supprimer de WSUS</value>
   </data>
   <data name="MenuRefreshStatus" xml:space="preserve">
     <value>Actualiser l'état</value>
@@ -1247,6 +1322,9 @@
   <data name="SettingsHeaderExport" xml:space="preserve">
     <value>Export</value>
   </data>
+  <data name="SettingsHeaderBackup" xml:space="preserve">
+    <value>Sauvegarde et restauration</value>
+  </data>
   <data name="SettingsLabelServer" xml:space="preserve">
     <value>Serveur</value>
   </data>
@@ -1270,6 +1348,12 @@
   </data>
   <data name="SettingsLabelExportFormat" xml:space="preserve">
     <value>Format d'export par défaut</value>
+  </data>
+  <data name="BtnBackupSettings" xml:space="preserve">
+    <value>Sauvegarder les paramètres</value>
+  </data>
+  <data name="BtnRestoreSettings" xml:space="preserve">
+    <value>Restaurer les paramètres</value>
   </data>
   <data name="SettingsThemeLight" xml:space="preserve">
     <value>Clair</value>
@@ -1393,6 +1477,36 @@
   </data>
   <data name="SchedulerWindowTitle" xml:space="preserve">
     <value>Planificateur</value>
+  </data>
+  <data name="CleanupWindowTitle" xml:space="preserve">
+    <value>Nettoyage</value>
+  </data>
+  <data name="CleanupWindowDescription" xml:space="preserve">
+    <value>Sélectionnez les tâches de nettoyage à exécuter sur le serveur WSUS.</value>
+  </data>
+  <data name="CleanupOptionObsoleteUpdates" xml:space="preserve">
+    <value>Supprimer les mises à jour obsolètes</value>
+  </data>
+  <data name="CleanupOptionObsoleteComputers" xml:space="preserve">
+    <value>Supprimer les ordinateurs obsolètes</value>
+  </data>
+  <data name="CleanupOptionExpiredUpdates" xml:space="preserve">
+    <value>Supprimer les mises à jour expirées</value>
+  </data>
+  <data name="CleanupOptionCompressRevisions" xml:space="preserve">
+    <value>Compresser les révisions de mises à jour</value>
+  </data>
+  <data name="CleanupOptionUnneededContent" xml:space="preserve">
+    <value>Supprimer le contenu inutilisé</value>
+  </data>
+  <data name="CleanupRunButton" xml:space="preserve">
+    <value>Lancer le nettoyage</value>
+  </data>
+  <data name="CleanupCompletedMessage" xml:space="preserve">
+    <value>Nettoyage terminé avec succès.</value>
+  </data>
+  <data name="CleanupFailedMessage" xml:space="preserve">
+    <value>Échec du nettoyage : {0}</value>
   </data>
   <data name="SchedulerHeaderTasks" xml:space="preserve">
     <value>Tâches planifiées</value>

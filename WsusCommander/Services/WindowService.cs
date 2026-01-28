@@ -29,14 +29,16 @@ namespace WsusCommander.Services;
 public sealed class WindowService : IWindowService
 {
     private readonly SettingsViewModel _settingsViewModel;
+    private readonly ICleanupService _cleanupService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WindowService"/> class.
     /// </summary>
     /// <param name="loggingService">Logging service for diagnostics.</param>
-    public WindowService(SettingsViewModel settingsViewModel)
+    public WindowService(SettingsViewModel settingsViewModel, ICleanupService cleanupService)
     {
         _settingsViewModel = settingsViewModel;
+        _cleanupService = cleanupService;
     }
 
     /// <inheritdoc/>
@@ -97,6 +99,32 @@ public sealed class WindowService : IWindowService
         Application.Current.Dispatcher.Invoke(() =>
         {
             var window = new SettingsWindow(_settingsViewModel)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            window.ShowDialog();
+        });
+    }
+
+    /// <inheritdoc/>
+    public void ShowScheduler()
+    {
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            var window = new SchedulerWindow
+            {
+                Owner = Application.Current.MainWindow
+            };
+            window.ShowDialog();
+        });
+    }
+
+    /// <inheritdoc/>
+    public void ShowCleanup()
+    {
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            var window = new CleanupWindow(_cleanupService)
             {
                 Owner = Application.Current.MainWindow
             };

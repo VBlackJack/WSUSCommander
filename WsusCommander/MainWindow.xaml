@@ -8,6 +8,7 @@
         xmlns:converters="clr-namespace:WsusCommander.Converters"
         xmlns:behaviors="clr-namespace:WsusCommander.Behaviors"
         xmlns:models="clr-namespace:WsusCommander.Models"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel, IsDesignTimeCreatable=False}"
         Title="{x:Static p:Resources.AppTitle}"
@@ -178,12 +179,57 @@
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- ==================== MENU & TOOLBAR ==================== -->
+        <Border Grid.Row="0" Background="#ECF0F1" Padding="10,6">
+            <DockPanel>
+                <Menu Background="Transparent" DockPanel.Dock="Left">
+                    <MenuItem Header="{x:Static p:Resources.MenuFile}">
+                        <MenuItem Header="{x:Static p:Resources.MenuSettings}"
+                                  Command="{Binding OpenSettingsCommand}"
+                                  AutomationProperties.Name="{x:Static p:Resources.MenuSettings}"/>
+                    </MenuItem>
+                    <MenuItem Header="{x:Static p:Resources.MenuTools}">
+                        <MenuItem Header="{x:Static p:Resources.MenuScheduler}"
+                                  Command="{Binding OpenSchedulerCommand}"
+                                  AutomationProperties.Name="{x:Static p:Resources.MenuScheduler}"/>
+                        <MenuItem Header="{x:Static p:Resources.MenuCleanup}"
+                                  Command="{Binding OpenCleanupCommand}"
+                                  AutomationProperties.Name="{x:Static p:Resources.MenuCleanup}"/>
+                    </MenuItem>
+                    <MenuItem Header="{x:Static p:Resources.MenuHelp}">
+                        <MenuItem Header="{x:Static p:Resources.MenuAbout}"
+                                  Command="{Binding OpenAboutCommand}"
+                                  AutomationProperties.Name="{x:Static p:Resources.MenuAbout}"/>
+                    </MenuItem>
+                </Menu>
+
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                    <Button Command="{Binding OpenSettingsCommand}"
+                            ToolTip="{x:Static p:Resources.MenuSettings}"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="6"
+                            Margin="0,0,5,0">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="16"/>
+                    </Button>
+                    <Button Command="{Binding OpenAboutCommand}"
+                            ToolTip="{x:Static p:Resources.MenuAbout}"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="6">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE946;" FontSize="16"/>
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
         <!-- ==================== LOGIN VIEW ==================== -->
-        <Grid Grid.Row="0"
+        <Grid Grid.Row="1"
               DataContext="{Binding Connection}"
               Visibility="{Binding IsConnected, Converter={StaticResource InverseBoolToVisibility}}">
             <StackPanel VerticalAlignment="Center"
@@ -302,7 +348,7 @@
         </Grid>
 
         <!-- ==================== DASHBOARD VIEW ==================== -->
-        <Grid Grid.Row="0"
+        <Grid Grid.Row="1"
               Visibility="{Binding Connection.IsConnected, Converter={StaticResource BoolToVisibility}}"
               Margin="20,20,20,10">
             <Grid.RowDefinitions>
@@ -664,6 +710,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
                             <!-- Header -->
@@ -959,8 +1006,39 @@
                                 </GroupBox>
                             </Grid>
 
-                            <!-- Operational and Security Overview -->
+                            <!-- Charts -->
                             <Grid Grid.Row="4" Margin="0,0,0,15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <GroupBox Grid.Column="0" Header="{x:Static p:Resources.DashboardComplianceTrend}" Margin="0,0,10,0">
+                                    <lvc:CartesianChart Series="{Binding ComplianceTrendSeries}"
+                                                        XAxes="{Binding ComplianceTrendXAxis}"
+                                                        YAxes="{Binding ComplianceTrendYAxis}"
+                                                        Height="220"
+                                                        Background="Transparent"/>
+                                </GroupBox>
+
+                                <GroupBox Grid.Column="1" Header="{x:Static p:Resources.DashboardUpdatesByClassification}" Margin="0,0,10,0">
+                                    <lvc:PieChart Series="{Binding ClassificationSeries}"
+                                                  Height="220"
+                                                  Background="Transparent"/>
+                                </GroupBox>
+
+                                <GroupBox Grid.Column="2" Header="{x:Static p:Resources.DashboardComputerStatus}">
+                                    <lvc:CartesianChart Series="{Binding ComputerStatusSeries}"
+                                                        XAxes="{Binding ComputerStatusXAxis}"
+                                                        YAxes="{Binding ComputerStatusYAxis}"
+                                                        Height="220"
+                                                        Background="Transparent"/>
+                                </GroupBox>
+                            </Grid>
+
+                            <!-- Operational and Security Overview -->
+                            <Grid Grid.Row="5" Margin="0,0,0,15">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
@@ -1087,7 +1165,7 @@
                             </Grid>
 
                             <!-- Action Required -->
-                            <GroupBox Grid.Row="5" Header="{x:Static p:Resources.DashboardActionRequired}" Margin="0,0,0,15">
+                            <GroupBox Grid.Row="6" Header="{x:Static p:Resources.DashboardActionRequired}" Margin="0,0,0,15">
                                 <StackPanel Margin="10">
                                     <TextBlock Text="{x:Static p:Resources.DashboardNoActionRequired}"
                                                Foreground="#7B8D8E"
@@ -1200,7 +1278,7 @@
                             </GroupBox>
 
                             <!-- Quick Actions -->
-                            <GroupBox Grid.Row="6" Header="{x:Static p:Resources.DashboardQuickActions}">
+                            <GroupBox Grid.Row="7" Header="{x:Static p:Resources.DashboardQuickActions}">
                                 <StackPanel Margin="10" Orientation="Horizontal">
                                     <Button Content="{x:Static p:Resources.BtnDeclineSuperseded}"
                                             Command="{Binding DeclineAllSupersededCommand}"
@@ -1603,6 +1681,15 @@
                                     <MenuItem Header="{x:Static p:Resources.MenuViewUpdates}"
                                               Command="{Binding ViewComputerUpdatesCommand}"
                                               AutomationProperties.Name="{x:Static p:Resources.MenuViewUpdates}"/>
+                                    <MenuItem Header="{x:Static p:Resources.MenuMoveToGroup}"
+                                              Command="{Binding MoveComputerToGroupCommand}"
+                                              AutomationProperties.Name="{x:Static p:Resources.MenuMoveToGroup}"/>
+                                    <MenuItem Header="{x:Static p:Resources.MenuForceScan}"
+                                              Command="{Binding ForceComputerScanCommand}"
+                                              AutomationProperties.Name="{x:Static p:Resources.MenuForceScan}"/>
+                                    <MenuItem Header="{x:Static p:Resources.MenuRemoveComputer}"
+                                              Command="{Binding RemoveComputerCommand}"
+                                              AutomationProperties.Name="{x:Static p:Resources.MenuRemoveComputer}"/>
                                     <Separator/>
                                     <MenuItem Header="{x:Static p:Resources.MenuRefreshStatus}"
                                               Command="{Binding LoadComputerStatusesCommand}"
@@ -1999,6 +2086,12 @@
                                        FontWeight="Bold"
                                        Foreground="#2C3E50"
                                        VerticalAlignment="Center"/>
+                            <Button Content="{x:Static p:Resources.BtnImportRules}"
+                                    Command="{Binding ImportRulesCommand}"
+                                    Background="#3498DB"
+                                    Style="{StaticResource SmallButtonStyle}"
+                                    Margin="15,0,0,0"
+                                    AutomationProperties.Name="{x:Static p:Resources.BtnImportRules}"/>
                             <Button Content="{x:Static p:Resources.BtnDeleteRule}"
                                     Command="{Binding DeleteRuleCommand}"
                                     Background="#E74C3C"
@@ -2201,7 +2294,7 @@
         </Grid>
 
         <!-- ==================== STATUS BAR ==================== -->
-        <Border Grid.Row="1"
+        <Border Grid.Row="2"
                 Background="#ECF0F1"
                 Padding="15,10">
             <Grid>

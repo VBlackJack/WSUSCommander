@@ -14,42 +14,20 @@
  * limitations under the License.
  */
 
-using WsusCommander.Models;
-
 namespace WsusCommander.Services;
 
 /// <summary>
-/// Service interface for managing approval rules.
+/// Service for exporting and importing WSUS configuration settings.
 /// </summary>
-public interface IApprovalRulesService
+public interface ISettingsBackupService
 {
     /// <summary>
-    /// Gets all rules.
+    /// Exports the current settings to the specified file.
     /// </summary>
-    IReadOnlyList<ApprovalRule> GetRules();
+    Task ExportSettingsAsync(string filePath, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Saves a rule.
+    /// Imports settings from the specified file.
     /// </summary>
-    Task SaveRuleAsync(ApprovalRule rule);
-
-    /// <summary>
-    /// Deletes a rule.
-    /// </summary>
-    Task DeleteRuleAsync(Guid ruleId);
-
-    /// <summary>
-    /// Loads rules from storage.
-    /// </summary>
-    Task LoadAsync();
-
-    /// <summary>
-    /// Imports rules from a JSON file.
-    /// </summary>
-    Task ImportRulesAsync(string filePath);
-
-    /// <summary>
-    /// Evaluates rules against an update and returns the matching rule.
-    /// </summary>
-    ApprovalRule? EvaluateRules(WsusUpdate update);
+    Task ImportSettingsAsync(string filePath, CancellationToken cancellationToken = default);
 }

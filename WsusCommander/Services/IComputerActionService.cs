@@ -14,42 +14,20 @@
  * limitations under the License.
  */
 
-using WsusCommander.Models;
-
 namespace WsusCommander.Services;
 
 /// <summary>
-/// Service interface for managing approval rules.
+/// Service for computer-level actions.
 /// </summary>
-public interface IApprovalRulesService
+public interface IComputerActionService
 {
     /// <summary>
-    /// Gets all rules.
+    /// Triggers a WSUS scan on the specified computer.
     /// </summary>
-    IReadOnlyList<ApprovalRule> GetRules();
+    Task ForceComputerScanAsync(string computerId, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Saves a rule.
+    /// Removes a computer from WSUS.
     /// </summary>
-    Task SaveRuleAsync(ApprovalRule rule);
-
-    /// <summary>
-    /// Deletes a rule.
-    /// </summary>
-    Task DeleteRuleAsync(Guid ruleId);
-
-    /// <summary>
-    /// Loads rules from storage.
-    /// </summary>
-    Task LoadAsync();
-
-    /// <summary>
-    /// Imports rules from a JSON file.
-    /// </summary>
-    Task ImportRulesAsync(string filePath);
-
-    /// <summary>
-    /// Evaluates rules against an update and returns the matching rule.
-    /// </summary>
-    ApprovalRule? EvaluateRules(WsusUpdate update);
+    Task RemoveComputerAsync(string computerId, CancellationToken cancellationToken = default);
 }

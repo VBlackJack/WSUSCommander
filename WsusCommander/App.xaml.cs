@@ -66,14 +66,18 @@ public partial class App : Application
         IValidationService validationService = new ValidationService();
         IRetryService retryService = new RetryService(configService, loggingService);
         IPowerShellService psService = new PowerShellService(loggingService, configService);
+        IBulkOperationService bulkOperationService = new BulkOperationService(psService, loggingService, configService);
         IGroupService groupService = new GroupService(
             psService, loggingService, cacheService, validationService, configService, retryService);
         IReportService reportService = new ReportService(
             psService, loggingService, cacheService, configService);
         ICleanupService cleanupService = new CleanupService(
             psService, loggingService, configService);
-        IEmailService emailService = new EmailService(configService, loggingService);
+        IComputerActionService computerActionService = new ComputerActionService(psService, configService);
+        ISmtpClientFactory smtpClientFactory = new SmtpClientFactory();
+        IEmailService emailService = new EmailService(configService, loggingService, smtpClientFactory);
         ISchedulerService schedulerService = new SchedulerService(loggingService);
+        ISettingsBackupService settingsBackupService = new SettingsBackupService(configService, loggingService);
         _ = cleanupService;
         _ = emailService;
 
@@ -103,7 +107,11 @@ public partial class App : Application
             loggingService,
             notificationService,
             exportService,
-            fileDialogService);
+            fileDialogService,
+            bulkOperationService,
+            groupService,
+            dialogService,
+            computerActionService);
         var groupsViewModel = new GroupsViewModel(
             groupService,
             loggingService,
@@ -111,10 +119,15 @@ public partial class App : Application
         var reportsViewModel = new ReportsViewModel(
             reportService,
             fileDialogService);
-        var rulesViewModel = new RulesViewModel(approvalRulesService);
+        var rulesViewModel = new RulesViewModel(approvalRulesService, fileDialogService, notificationService);
         var activityViewModel = new ActivityViewModel(loggingService);
-        var settingsViewModel = new SettingsViewModel(configService, preferencesService);
-        IWindowService windowService = new WindowService(settingsViewModel);
+        var settingsViewModel = new SettingsViewModel(
+            configService,
+            preferencesService,
+            fileDialogService,
+            notificationService,
+            settingsBackupService);
+        IWindowService windowService = new WindowService(settingsViewModel, cleanupService);
         _ = windowService;
 
         _mainViewModel = new MainViewModel(
@@ -126,7 +139,8 @@ public partial class App : Application
             reportsViewModel,
             rulesViewModel,
             activityViewModel,
-            settingsViewModel);
+            settingsViewModel,
+            windowService);
 
         var mainWindow = new MainWindow
         {
