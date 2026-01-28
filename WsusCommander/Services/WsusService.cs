@@ -53,7 +53,7 @@ public sealed class WsusService : IWsusService
     /// <inheritdoc/>
     public Task<HealthReport> GetHealthReportAsync(CancellationToken cancellationToken)
     {
-        return Task.FromResult(new HealthReport { Status = "Unknown" });
+        return Task.FromResult(new HealthReport { Status = HealthStatus.Healthy });
     }
 
     /// <inheritdoc/>

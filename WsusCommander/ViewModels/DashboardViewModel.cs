@@ -137,7 +137,13 @@ public partial class DashboardViewModel : ObservableObject
 
             LastRefresh = DateTime.Now;
             DashboardLastSyncDisplay = DashboardStats?.LastSyncTime?.ToString("g") ?? Resources.StatusReady;
-            DashboardHealthStatusDisplay = HealthReport?.Status ?? Resources.HealthStatusUnknown;
+            DashboardHealthStatusDisplay = HealthReport?.Status switch
+            {
+                HealthStatus.Healthy => Resources.HealthStatusHealthy,
+                HealthStatus.Degraded => Resources.HealthStatusDegraded,
+                HealthStatus.Unhealthy => Resources.HealthStatusUnhealthy,
+                _ => Resources.HealthStatusUnknown
+            };
 
             await _complianceService.SaveSnapshotAsync(new ComplianceSnapshot
             {
@@ -171,7 +177,7 @@ public partial class DashboardViewModel : ObservableObject
         HasSecurityAction = DashboardStats.SecurityPending > 0;
         HasSupersededAction = DashboardStats.SupersededUpdates > 0;
         HasSyncAction = DashboardStats.LastSyncTime is null;
-        HasComplianceAction = (DashboardStats?.TotalComputers ?? 0) > 0;
+        HasComplianceAction = DashboardStats.TotalComputers > 0;
         HasDashboardActions = HasCriticalAction || HasSecurityAction || HasSupersededAction || HasSyncAction || HasComplianceAction;
 
         if (HasCriticalAction)
@@ -264,7 +270,9 @@ public partial class DashboardViewModel : ObservableObject
     public event EventHandler? OnApproveSecurityRequested;
     public event EventHandler? OnDeclineSupersededRequested;
     public event EventHandler? OnNavigateToUpdatesRequested;
+#pragma warning disable CS0067 // Event is never used - placeholder for future implementation
     public event EventHandler? OnNavigateToComputersRequested;
+#pragma warning restore CS0067
     public event EventHandler? OnStartSyncRequested;
     public event EventHandler? OnOpenReportsRequested;
 }

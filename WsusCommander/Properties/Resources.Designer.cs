@@ -230,6 +230,8 @@ public static class Resources
     public static string StatusCompliant => ResourceManager.GetString("StatusCompliant", resourceCulture) ?? string.Empty;
     public static string StatusComputersLoaded => ResourceManager.GetString("StatusComputersLoaded", resourceCulture) ?? string.Empty;
     public static string StatusConnected => ResourceManager.GetString("StatusConnected", resourceCulture) ?? string.Empty;
+    public static string StatusConnecting => ResourceManager.GetString("StatusConnecting", resourceCulture) ?? string.Empty;
+    public static string StatusCancelled => ResourceManager.GetString("StatusCancelled", resourceCulture) ?? string.Empty;
     public static string StatusDeclined => ResourceManager.GetString("StatusDeclined", resourceCulture) ?? string.Empty;
     public static string StatusDeclining => ResourceManager.GetString("StatusDeclining", resourceCulture) ?? string.Empty;
     public static string StatusError => ResourceManager.GetString("StatusError", resourceCulture) ?? string.Empty;

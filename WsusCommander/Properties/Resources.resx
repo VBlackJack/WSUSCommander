@@ -70,6 +70,12 @@
   <data name="StatusConnected" xml:space="preserve">
     <value>Connected successfully to {0}.</value>
   </data>
+  <data name="StatusConnecting" xml:space="preserve">
+    <value>Connecting to server...</value>
+  </data>
+  <data name="StatusCancelled" xml:space="preserve">
+    <value>Operation cancelled.</value>
+  </data>
   <data name="StatusError" xml:space="preserve">
     <value>Connection failed: {0}</value>
   </data>
