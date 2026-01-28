@@ -19,27 +19,14 @@ using WsusCommander.Models;
 namespace WsusCommander.Services;
 
 /// <summary>
-/// Interface for the application configuration service.
+/// Provides WSUS cleanup operations.
 /// </summary>
-public interface IConfigurationService
+public interface ICleanupService
 {
     /// <summary>
-    /// Gets the application configuration.
+    /// Runs a cleanup operation with the provided options.
     /// </summary>
-    AppConfig Config { get; }
-
-    /// <summary>
-    /// Gets the WSUS connection configuration.
-    /// </summary>
-    WsusConnectionConfig WsusConnection { get; }
-
-    /// <summary>
-    /// Gets the application settings configuration.
-    /// </summary>
-    AppSettingsConfig AppSettings { get; }
-
-    /// <summary>
-    /// Gets the email notification configuration.
-    /// </summary>
-    EmailConfig Email { get; }
+    /// <param name="options">Cleanup options.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    Task RunCleanupAsync(CleanupOptions options, CancellationToken cancellationToken = default);
 }

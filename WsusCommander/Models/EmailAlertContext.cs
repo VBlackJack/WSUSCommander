@@ -14,32 +14,30 @@
  * limitations under the License.
  */
 
-using WsusCommander.Models;
-
-namespace WsusCommander.Services;
+namespace WsusCommander.Models;
 
 /// <summary>
-/// Interface for the application configuration service.
+/// Email alert evaluation context.
 /// </summary>
-public interface IConfigurationService
+public sealed class EmailAlertContext
 {
     /// <summary>
-    /// Gets the application configuration.
+    /// Gets or sets the age in days for pending critical updates.
     /// </summary>
-    AppConfig Config { get; }
+    public int CriticalUpdatesPendingDays { get; set; }
 
     /// <summary>
-    /// Gets the WSUS connection configuration.
+    /// Gets or sets a value indicating whether a sync failure occurred.
     /// </summary>
-    WsusConnectionConfig WsusConnection { get; }
+    public bool HasSyncFailure { get; set; }
 
     /// <summary>
-    /// Gets the application settings configuration.
+    /// Gets or sets the current compliance percentage.
     /// </summary>
-    AppSettingsConfig AppSettings { get; }
+    public double CompliancePercent { get; set; }
 
     /// <summary>
-    /// Gets the email notification configuration.
+    /// Gets or sets optional additional context for notifications.
     /// </summary>
-    EmailConfig Email { get; }
+    public string? Details { get; set; }
 }

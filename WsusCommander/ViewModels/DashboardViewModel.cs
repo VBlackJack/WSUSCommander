@@ -212,6 +212,17 @@ public partial class DashboardViewModel : ObservableObject
                 ActionCommand = ReviewSupersededUpdatesCommand
             });
         }
+
+        if (HasComplianceAction)
+        {
+            ActionItems.Add(new ActionItem
+            {
+                Priority = ActionPriority.Medium,
+                Title = Resources.DashboardComplianceReview,
+                Description = Resources.DashboardComplianceAction,
+                ActionCommand = NavigateToComputersCommand
+            });
+        }
     }
 
     [RelayCommand]
@@ -233,6 +244,12 @@ public partial class DashboardViewModel : ObservableObject
     {
         OnDeclineSupersededRequested?.Invoke(this, EventArgs.Empty);
         OnNavigateToUpdatesRequested?.Invoke(this, EventArgs.Empty);
+    }
+
+    [RelayCommand]
+    private void NavigateToComputers()
+    {
+        OnNavigateToComputersRequested?.Invoke(this, EventArgs.Empty);
     }
 
     [RelayCommand]
@@ -270,9 +287,7 @@ public partial class DashboardViewModel : ObservableObject
     public event EventHandler? OnApproveSecurityRequested;
     public event EventHandler? OnDeclineSupersededRequested;
     public event EventHandler? OnNavigateToUpdatesRequested;
-#pragma warning disable CS0067 // Event is never used - placeholder for future implementation
     public event EventHandler? OnNavigateToComputersRequested;
-#pragma warning restore CS0067
     public event EventHandler? OnStartSyncRequested;
     public event EventHandler? OnOpenReportsRequested;
 }

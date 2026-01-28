@@ -18,6 +18,7 @@ using System.Linq;
 using System.Windows;
 using WsusCommander.Interfaces;
 using WsusCommander.Models;
+using WsusCommander.ViewModels;
 using WsusCommander.Views;
 
 namespace WsusCommander.Services;
@@ -27,15 +28,15 @@ namespace WsusCommander.Services;
 /// </summary>
 public sealed class WindowService : IWindowService
 {
-    private readonly ILoggingService _loggingService;
+    private readonly SettingsViewModel _settingsViewModel;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WindowService"/> class.
     /// </summary>
     /// <param name="loggingService">Logging service for diagnostics.</param>
-    public WindowService(ILoggingService loggingService)
+    public WindowService(SettingsViewModel settingsViewModel)
     {
-        _loggingService = loggingService;
+        _settingsViewModel = settingsViewModel;
     }
 
     /// <inheritdoc/>
@@ -54,30 +55,65 @@ public sealed class WindowService : IWindowService
     /// <inheritdoc/>
     public void ShowUpdateDetails(WsusUpdate update)
     {
-        _ = _loggingService.LogWarningAsync("Update details window not implemented.");
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            var window = new UpdateDetailsWindow(update)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            window.ShowDialog();
+        });
     }
 
     /// <inheritdoc/>
     public void ShowGroupEditor(ComputerGroup? group = null)
     {
-        _ = _loggingService.LogWarningAsync("Group editor window not implemented.");
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            var window = new GroupEditorWindow(group)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            window.ShowDialog();
+        });
     }
 
     /// <inheritdoc/>
     public void ShowRuleEditor(ApprovalRule? rule = null)
     {
-        _ = _loggingService.LogWarningAsync("Rule editor window not implemented.");
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            var window = new RuleEditorWindow(rule)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            window.ShowDialog();
+        });
     }
 
     /// <inheritdoc/>
     public void ShowSettings()
     {
-        _ = _loggingService.LogWarningAsync("Settings window not implemented.");
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            var window = new SettingsWindow(_settingsViewModel)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            window.ShowDialog();
+        });
     }
 
     /// <inheritdoc/>
     public void ShowAbout()
     {
-        _ = _loggingService.LogWarningAsync("About window not implemented.");
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            var window = new AboutWindow
+            {
+                Owner = Application.Current.MainWindow
+            };
+            window.ShowDialog();
+        });
     }
 }

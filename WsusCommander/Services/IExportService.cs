@@ -30,7 +30,13 @@ public enum ExportFormat
     Tsv,
 
     /// <summary>JSON format.</summary>
-    Json
+    Json,
+
+    /// <summary>Portable Document Format.</summary>
+    Pdf,
+
+    /// <summary>HyperText Markup Language.</summary>
+    Html
 }
 
 /// <summary>

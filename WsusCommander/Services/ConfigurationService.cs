@@ -48,4 +48,7 @@ public sealed class ConfigurationService : IConfigurationService
 
     /// <inheritdoc/>
     public AppSettingsConfig AppSettings => _config.AppSettings;
+
+    /// <inheritdoc/>
+    public EmailConfig Email => _config.Email;
 }
