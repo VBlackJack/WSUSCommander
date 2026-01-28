@@ -19,27 +19,27 @@ using WsusCommander.Models;
 namespace WsusCommander.Services;
 
 /// <summary>
-/// Interface for the application configuration service.
+/// Scheduler service for recurring WSUS operations.
 /// </summary>
-public interface IConfigurationService
+public interface ISchedulerService
 {
     /// <summary>
-    /// Gets the application configuration.
+    /// Gets the scheduled tasks.
     /// </summary>
-    AppConfig Config { get; }
+    IReadOnlyList<ScheduledTask> Tasks { get; }
 
     /// <summary>
-    /// Gets the WSUS connection configuration.
+    /// Schedules a task with the specified operation.
     /// </summary>
-    WsusConnectionConfig WsusConnection { get; }
+    /// <param name="task">Task definition.</param>
+    /// <param name="operation">Operation to execute.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    Task ScheduleAsync(ScheduledTask task, Func<CancellationToken, Task> operation, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Gets the application settings configuration.
+    /// Removes a scheduled task.
     /// </summary>
-    AppSettingsConfig AppSettings { get; }
-
-    /// <summary>
-    /// Gets the email notification configuration.
-    /// </summary>
-    EmailConfig Email { get; }
+    /// <param name="taskId">Task identifier.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    Task RemoveAsync(Guid taskId, CancellationToken cancellationToken = default);
 }

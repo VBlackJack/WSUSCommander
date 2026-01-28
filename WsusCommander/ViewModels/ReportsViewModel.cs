@@ -56,7 +56,7 @@ public partial class ReportsViewModel : ObservableObject
             return;
 
         var filePath = _fileDialogService.ShowSaveFileDialog(
-            Resources.ExportFilterCsv,
+            Resources.ExportFilterReport,
             ".csv",
             "compliance_report");
 
@@ -64,7 +64,10 @@ public partial class ReportsViewModel : ObservableObject
             return;
 
         var format = filePath.EndsWith(".json") ? ExportFormat.Json :
-                    filePath.EndsWith(".tsv") ? ExportFormat.Tsv : ExportFormat.Csv;
+                    filePath.EndsWith(".tsv") ? ExportFormat.Tsv :
+                    filePath.EndsWith(".pdf") ? ExportFormat.Pdf :
+                    filePath.EndsWith(".html") || filePath.EndsWith(".htm") ? ExportFormat.Html :
+                    ExportFormat.Csv;
 
         await _reportService.ExportReportAsync(ComplianceReport, filePath, format, cancellationToken);
     }

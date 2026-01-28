@@ -70,11 +70,18 @@ public partial class App : Application
             psService, loggingService, cacheService, validationService, configService, retryService);
         IReportService reportService = new ReportService(
             psService, loggingService, cacheService, configService);
+        ICleanupService cleanupService = new CleanupService(
+            psService, loggingService, configService);
+        IEmailService emailService = new EmailService(configService, loggingService);
+        ISchedulerService schedulerService = new SchedulerService(loggingService);
+        _ = cleanupService;
+        _ = emailService;
 
         await preferencesService.LoadAsync();
 
         // Track disposables
         _disposables.Add((IDisposable)cacheService);
+        _disposables.Add((IDisposable)schedulerService);
 
         var connectionViewModel = new ConnectionViewModel(
             wsusService,
@@ -107,6 +114,8 @@ public partial class App : Application
         var rulesViewModel = new RulesViewModel(approvalRulesService);
         var activityViewModel = new ActivityViewModel(loggingService);
         var settingsViewModel = new SettingsViewModel(configService, preferencesService);
+        IWindowService windowService = new WindowService(settingsViewModel);
+        _ = windowService;
 
         _mainViewModel = new MainViewModel(
             connectionViewModel,

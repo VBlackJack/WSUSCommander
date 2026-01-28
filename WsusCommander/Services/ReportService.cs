@@ -18,7 +18,10 @@ using System.IO;
 using System.Management.Automation;
 using System.Text;
 using System.Text.Json;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 using WsusCommander.Models;
+using WsusCommander.Properties;
 
 namespace WsusCommander.Services;
 
@@ -143,11 +146,20 @@ public sealed class ReportService : IReportService
     {
         await _loggingService.LogInfoAsync($"Exporting compliance report to {filePath}");
 
+        if (format == ExportFormat.Pdf)
+        {
+            var pdfBytes = GeneratePdfReport(report);
+            await File.WriteAllBytesAsync(filePath, pdfBytes, cancellationToken);
+            await _loggingService.LogInfoAsync($"Report exported: {filePath}");
+            return;
+        }
+
         var content = format switch
         {
             ExportFormat.Json => GenerateJsonReport(report),
             ExportFormat.Csv => GenerateCsvReport(report),
             ExportFormat.Tsv => GenerateTsvReport(report),
+            ExportFormat.Html => GenerateHtmlReport(report),
             _ => throw new ArgumentOutOfRangeException(nameof(format))
         };
 
@@ -159,7 +171,7 @@ public sealed class ReportService : IReportService
     {
         var report = new ComplianceReport
         {
-            Title = "WSUS Compliance Report"
+            Title = Resources.ReportCompliance
         };
 
         if (data == null || !data.Any())
@@ -185,6 +197,159 @@ public sealed class ReportService : IReportService
         };
 
         return report;
+    }
+
+    private static string GenerateHtmlReport(ComplianceReport report)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("<!DOCTYPE html>");
+        sb.AppendLine("<html lang=\"en\">");
+        sb.AppendLine("<head>");
+        sb.AppendLine("<meta charset=\"utf-8\"/>");
+        sb.AppendLine($"<title>{report.Title}</title>");
+        sb.AppendLine("<style>");
+        sb.AppendLine("body{font-family:Segoe UI,Arial,sans-serif;margin:24px;color:#2c3e50;}");
+        sb.AppendLine("h1{margin-bottom:4px;}");
+        sb.AppendLine(".summary{display:flex;gap:16px;margin:16px 0;}");
+        sb.AppendLine(".card{border:1px solid #e0e0e0;border-radius:8px;padding:12px;min-width:180px;}");
+        sb.AppendLine(".chart{margin-top:16px;}");
+        sb.AppendLine(".bar{height:16px;border-radius:4px;background:#3498db;}");
+        sb.AppendLine("table{border-collapse:collapse;width:100%;margin-top:12px;}");
+        sb.AppendLine("th,td{border:1px solid #e0e0e0;padding:8px;text-align:left;}");
+        sb.AppendLine("th{background:#f5f5f5;}");
+        sb.AppendLine("</style>");
+        sb.AppendLine("</head>");
+        sb.AppendLine("<body>");
+        sb.AppendLine($"<h1>{report.Title}</h1>");
+        sb.AppendLine($"<div>{string.Format(Resources.ReportGeneratedOn, report.GeneratedAt.ToLocalTime())}</div>");
+        sb.AppendLine("<div class=\"summary\">");
+        sb.AppendLine($"<div class=\"card\"><strong>{Resources.ReportTotalComputers}</strong><div>{report.TotalComputers}</div></div>");
+        sb.AppendLine($"<div class=\"card\"><strong>{Resources.ReportCompliantComputers}</strong><div>{report.CompliantComputers}</div></div>");
+        sb.AppendLine($"<div class=\"card\"><strong>{Resources.ReportNonCompliantComputers}</strong><div>{report.NonCompliantComputers}</div></div>");
+        sb.AppendLine($"<div class=\"card\"><strong>{Resources.ReportCompliancePercent}</strong><div>{report.CompliancePercent:F1}%</div></div>");
+        sb.AppendLine("</div>");
+
+        sb.AppendLine($"<h2>{Resources.ReportComplianceByGroup}</h2>");
+        sb.AppendLine(BuildGroupComplianceChart(report.GroupCompliance));
+        sb.AppendLine(BuildGroupComplianceTable(report.GroupCompliance));
+
+        sb.AppendLine("</body>");
+        sb.AppendLine("</html>");
+        return sb.ToString();
+    }
+
+    private static string BuildGroupComplianceChart(IReadOnlyList<GroupComplianceInfo> groups)
+    {
+        if (groups.Count == 0)
+        {
+            return $"<div>{Resources.ReportNoGroupData}</div>";
+        }
+
+        var sb = new StringBuilder();
+        sb.AppendLine("<div class=\"chart\">");
+        foreach (var group in groups.OrderByDescending(g => g.CompliancePercent))
+        {
+            sb.AppendLine($"<div><strong>{group.GroupName}</strong> ({group.CompliancePercent:F1}%)</div>");
+            sb.AppendLine($"<div class=\"bar\" style=\"width:{Math.Min(100, group.CompliancePercent):F1}%\"></div>");
+        }
+        sb.AppendLine("</div>");
+        return sb.ToString();
+    }
+
+    private static string BuildGroupComplianceTable(IReadOnlyList<GroupComplianceInfo> groups)
+    {
+        if (groups.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        var sb = new StringBuilder();
+        sb.AppendLine("<table>");
+        sb.AppendLine("<thead><tr>");
+        sb.AppendLine($"<th>{Resources.ReportGroupName}</th>");
+        sb.AppendLine($"<th>{Resources.ReportTotalComputers}</th>");
+        sb.AppendLine($"<th>{Resources.ReportCompliantComputers}</th>");
+        sb.AppendLine($"<th>{Resources.ReportCompliancePercent}</th>");
+        sb.AppendLine($"<th>{Resources.ReportNeededUpdates}</th>");
+        sb.AppendLine($"<th>{Resources.ReportFailedUpdates}</th>");
+        sb.AppendLine("</tr></thead>");
+        sb.AppendLine("<tbody>");
+        foreach (var group in groups)
+        {
+            sb.AppendLine("<tr>");
+            sb.AppendLine($"<td>{group.GroupName}</td>");
+            sb.AppendLine($"<td>{group.TotalComputers}</td>");
+            sb.AppendLine($"<td>{group.CompliantComputers}</td>");
+            sb.AppendLine($"<td>{group.CompliancePercent:F1}%</td>");
+            sb.AppendLine($"<td>{group.TotalNeededUpdates}</td>");
+            sb.AppendLine($"<td>{group.TotalFailedUpdates}</td>");
+            sb.AppendLine("</tr>");
+        }
+        sb.AppendLine("</tbody></table>");
+        return sb.ToString();
+    }
+
+    private static byte[] GeneratePdfReport(ComplianceReport report)
+    {
+        QuestPDF.Settings.License = LicenseType.Community;
+
+        var document = Document.Create(container =>
+        {
+            container.Page(page =>
+            {
+                page.Margin(30);
+                page.Header()
+                    .Text(report.Title)
+                    .FontSize(20)
+                    .SemiBold();
+
+                page.Content().Column(column =>
+                {
+                    column.Item().Text(string.Format(Resources.ReportGeneratedOn, report.GeneratedAt.ToLocalTime()));
+                    column.Item().Text(string.Format(Resources.ReportCompliancePercentDisplay, report.CompliancePercent));
+                    column.Item().Text(string.Format(Resources.ReportTotalComputersDisplay, report.TotalComputers));
+                    column.Item().Text(string.Format(Resources.ReportCompliantComputersDisplay, report.CompliantComputers));
+                    column.Item().Text(string.Format(Resources.ReportNonCompliantComputersDisplay, report.NonCompliantComputers));
+
+                    column.Item().Text(Resources.ReportComplianceByGroup).FontSize(14).SemiBold().PaddingTop(10);
+                    if (report.GroupCompliance.Count == 0)
+                    {
+                        column.Item().Text(Resources.ReportNoGroupData);
+                    }
+                    else
+                    {
+                        column.Item().Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn(3);
+                                columns.RelativeColumn(2);
+                                columns.RelativeColumn(2);
+                                columns.RelativeColumn(2);
+                            });
+
+                            table.Header(header =>
+                            {
+                                header.Cell().Text(Resources.ReportGroupName).SemiBold();
+                                header.Cell().Text(Resources.ReportTotalComputers).SemiBold();
+                                header.Cell().Text(Resources.ReportCompliantComputers).SemiBold();
+                                header.Cell().Text(Resources.ReportCompliancePercent).SemiBold();
+                            });
+
+                            foreach (var group in report.GroupCompliance)
+                            {
+                                table.Cell().Text(group.GroupName);
+                                table.Cell().Text(group.TotalComputers.ToString());
+                                table.Cell().Text(group.CompliantComputers.ToString());
+                                table.Cell().Text($"{group.CompliancePercent:F1}%");
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+        return document.GeneratePdf();
     }
 
     private static IReadOnlyList<StaleComputerInfo> ParseStaleComputers(PSDataCollection<PSObject>? data)

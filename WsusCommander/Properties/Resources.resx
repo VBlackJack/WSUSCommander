@@ -1244,4 +1244,328 @@
   <data name="BtnDismiss" xml:space="preserve">
     <value>Dismiss</value>
   </data>
+  <data name="DashboardComplianceReview" xml:space="preserve">
+    <value>Review computer compliance</value>
+  </data>
+  <data name="DashboardComplianceAction" xml:space="preserve">
+    <value>Check non-compliant devices</value>
+  </data>
+  <data name="SettingsWindowTitle" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="SettingsHeaderConnection" xml:space="preserve">
+    <value>WSUS Connection</value>
+  </data>
+  <data name="SettingsHeaderRefresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="SettingsHeaderTheme" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="SettingsHeaderExport" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="SettingsLabelServer" xml:space="preserve">
+    <value>Server</value>
+  </data>
+  <data name="SettingsLabelPort" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="SettingsLabelSsl" xml:space="preserve">
+    <value>Use SSL</value>
+  </data>
+  <data name="SettingsLabelAutoRefresh" xml:space="preserve">
+    <value>Enable auto refresh</value>
+  </data>
+  <data name="SettingsLabelRefreshInterval" xml:space="preserve">
+    <value>Refresh interval</value>
+  </data>
+  <data name="SettingsSeconds" xml:space="preserve">
+    <value>seconds</value>
+  </data>
+  <data name="SettingsLabelTheme" xml:space="preserve">
+    <value>Theme selection</value>
+  </data>
+  <data name="SettingsLabelExportFormat" xml:space="preserve">
+    <value>Default export format</value>
+  </data>
+  <data name="SettingsThemeLight" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="SettingsThemeDark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="SettingsThemeSystem" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="AboutWindowTitle" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="AboutAuthorLabel" xml:space="preserve">
+    <value>Author</value>
+  </data>
+  <data name="AboutAuthorValue" xml:space="preserve">
+    <value>Julien Bombled</value>
+  </data>
+  <data name="AboutLicenseLabel" xml:space="preserve">
+    <value>License</value>
+  </data>
+  <data name="AboutLicenseValue" xml:space="preserve">
+    <value>Apache 2.0</value>
+  </data>
+  <data name="AboutGitHubLabel" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="AboutGitHubUrl" xml:space="preserve">
+    <value>https://github.com/VBlackJack/WSUSCommander</value>
+  </data>
+  <data name="AboutVersionLabel" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+  <data name="UpdateDetailsWindowTitle" xml:space="preserve">
+    <value>Update Details - {0}</value>
+  </data>
+  <data name="UpdateDetailsSectionInfo" xml:space="preserve">
+    <value>Update Information</value>
+  </data>
+  <data name="UpdateDetailsSectionApprovals" xml:space="preserve">
+    <value>Approval Status by Group</value>
+  </data>
+  <data name="UpdateDetailsSectionComputers" xml:space="preserve">
+    <value>Computers Needing This Update</value>
+  </data>
+  <data name="UpdateDetailsSectionSupersedence" xml:space="preserve">
+    <value>Supersedence Chain</value>
+  </data>
+  <data name="UpdateDetailsLabelId" xml:space="preserve">
+    <value>Update ID</value>
+  </data>
+  <data name="UpdateDetailsLabelTitle" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="UpdateDetailsLabelKb" xml:space="preserve">
+    <value>KB Article</value>
+  </data>
+  <data name="UpdateDetailsLabelClassification" xml:space="preserve">
+    <value>Classification</value>
+  </data>
+  <data name="UpdateDetailsLabelCreated" xml:space="preserve">
+    <value>Created</value>
+  </data>
+  <data name="UpdateDetailsLabelApproved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="UpdateDetailsLabelDeclined" xml:space="preserve">
+    <value>Declined</value>
+  </data>
+  <data name="UpdateDetailsLabelSuperseded" xml:space="preserve">
+    <value>Superseded</value>
+  </data>
+  <data name="UpdateDetailsNoApprovals" xml:space="preserve">
+    <value>No approval data available.</value>
+  </data>
+  <data name="UpdateDetailsNoComputers" xml:space="preserve">
+    <value>No computer data available.</value>
+  </data>
+  <data name="UpdateDetailsNoSupersedence" xml:space="preserve">
+    <value>No supersedence data available.</value>
+  </data>
+  <data name="GroupEditorWindowTitle" xml:space="preserve">
+    <value>Group Editor</value>
+  </data>
+  <data name="GroupEditorSectionGroups" xml:space="preserve">
+    <value>Groups</value>
+  </data>
+  <data name="GroupEditorSectionDetails" xml:space="preserve">
+    <value>Group Details</value>
+  </data>
+  <data name="GroupEditorLabelMembers" xml:space="preserve">
+    <value>Computer Membership</value>
+  </data>
+  <data name="GroupEditorNoMembers" xml:space="preserve">
+    <value>No member data available.</value>
+  </data>
+  <data name="RuleEditorWindowTitle" xml:space="preserve">
+    <value>Approval Rule Editor</value>
+  </data>
+  <data name="RuleEditorSectionConditions" xml:space="preserve">
+    <value>Rule Conditions</value>
+  </data>
+  <data name="RuleEditorSectionTargets" xml:space="preserve">
+    <value>Targets</value>
+  </data>
+  <data name="RuleEditorLabelEnabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="RuleEditorLabelDeadlineOffset" xml:space="preserve">
+    <value>Deadline offset</value>
+  </data>
+  <data name="RuleEditorDays" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="ConditionProduct" xml:space="preserve">
+    <value>Product</value>
+  </data>
+  <data name="BtnSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SchedulerWindowTitle" xml:space="preserve">
+    <value>Scheduler</value>
+  </data>
+  <data name="SchedulerHeaderTasks" xml:space="preserve">
+    <value>Scheduled Tasks</value>
+  </data>
+  <data name="SchedulerHeaderDetails" xml:space="preserve">
+    <value>Task Details</value>
+  </data>
+  <data name="SchedulerLabelName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="SchedulerLabelType" xml:space="preserve">
+    <value>Task type</value>
+  </data>
+  <data name="SchedulerLabelRecurrence" xml:space="preserve">
+    <value>Recurrence</value>
+  </data>
+  <data name="SchedulerLabelNextRun" xml:space="preserve">
+    <value>Next run</value>
+  </data>
+  <data name="SchedulerLabelEnabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="SchedulerLabelInterval" xml:space="preserve">
+    <value>Interval</value>
+  </data>
+  <data name="SchedulerMinutes" xml:space="preserve">
+    <value>minutes</value>
+  </data>
+  <data name="SchedulerTaskApproval" xml:space="preserve">
+    <value>Approval</value>
+  </data>
+  <data name="SchedulerTaskCleanup" xml:space="preserve">
+    <value>Cleanup</value>
+  </data>
+  <data name="SchedulerRecurrenceOnce" xml:space="preserve">
+    <value>Once</value>
+  </data>
+  <data name="SchedulerRecurrenceDaily" xml:space="preserve">
+    <value>Daily</value>
+  </data>
+  <data name="SchedulerRecurrenceWeekly" xml:space="preserve">
+    <value>Weekly</value>
+  </data>
+  <data name="SchedulerRecurrenceMonthly" xml:space="preserve">
+    <value>Monthly</value>
+  </data>
+  <data name="SchedulerRecurrenceInterval" xml:space="preserve">
+    <value>Interval</value>
+  </data>
+  <data name="BtnAddTask" xml:space="preserve">
+    <value>Add Task</value>
+  </data>
+  <data name="BtnEditTask" xml:space="preserve">
+    <value>Edit Task</value>
+  </data>
+  <data name="BtnDeleteTask" xml:space="preserve">
+    <value>Delete Task</value>
+  </data>
+  <data name="EmailSubjectCriticalUpdates" xml:space="preserve">
+    <value>Critical updates pending for {0} days</value>
+  </data>
+  <data name="EmailBodyCriticalUpdates" xml:space="preserve">
+    <value>Critical updates have been pending for {0} days. Please review the approval queue.</value>
+  </data>
+  <data name="EmailSubjectSyncFailure" xml:space="preserve">
+    <value>WSUS synchronization failed</value>
+  </data>
+  <data name="EmailBodySyncFailure" xml:space="preserve">
+    <value>WSUS synchronization reported a failure: {0}</value>
+  </data>
+  <data name="EmailSubjectComplianceLow" xml:space="preserve">
+    <value>Compliance below threshold ({0:F1}%)</value>
+  </data>
+  <data name="EmailBodyComplianceLow" xml:space="preserve">
+    <value>Compliance is currently at {0:F1}%, which is below the configured threshold.</value>
+  </data>
+  <data name="EmailMissingConfiguration" xml:space="preserve">
+    <value>Email configuration is incomplete.</value>
+  </data>
+  <data name="EmailMissingRecipients" xml:space="preserve">
+    <value>Email recipients are not configured.</value>
+  </data>
+  <data name="LogEmailSent" xml:space="preserve">
+    <value>Email alert sent: {0}</value>
+  </data>
+  <data name="LogCleanupStarted" xml:space="preserve">
+    <value>Starting WSUS cleanup.</value>
+  </data>
+  <data name="LogCleanupCompleted" xml:space="preserve">
+    <value>WSUS cleanup completed.</value>
+  </data>
+  <data name="LogScheduledTaskAdded" xml:space="preserve">
+    <value>Scheduled task added: {0}</value>
+  </data>
+  <data name="LogScheduledTaskRemoved" xml:space="preserve">
+    <value>Scheduled task removed: {0}</value>
+  </data>
+  <data name="LogScheduledTaskRun" xml:space="preserve">
+    <value>Scheduled task executed: {0}</value>
+  </data>
+  <data name="ExportFormatPdf" xml:space="preserve">
+    <value>PDF</value>
+  </data>
+  <data name="ExportFormatHtml" xml:space="preserve">
+    <value>HTML</value>
+  </data>
+  <data name="ExportFilterPdf" xml:space="preserve">
+    <value>PDF Files (*.pdf)|*.pdf</value>
+  </data>
+  <data name="ExportFilterHtml" xml:space="preserve">
+    <value>HTML Files (*.html)|*.html</value>
+  </data>
+  <data name="ExportFilterReport" xml:space="preserve">
+    <value>Report Files (*.csv;*.tsv;*.json;*.pdf;*.html)|*.csv;*.tsv;*.json;*.pdf;*.html</value>
+  </data>
+  <data name="ReportGeneratedOn" xml:space="preserve">
+    <value>Generated on {0:G}</value>
+  </data>
+  <data name="ReportTotalComputers" xml:space="preserve">
+    <value>Total computers</value>
+  </data>
+  <data name="ReportCompliantComputers" xml:space="preserve">
+    <value>Compliant computers</value>
+  </data>
+  <data name="ReportNonCompliantComputers" xml:space="preserve">
+    <value>Non-compliant computers</value>
+  </data>
+  <data name="ReportCompliancePercent" xml:space="preserve">
+    <value>Compliance %</value>
+  </data>
+  <data name="ReportComplianceByGroup" xml:space="preserve">
+    <value>Compliance by group</value>
+  </data>
+  <data name="ReportNoGroupData" xml:space="preserve">
+    <value>No group compliance data available.</value>
+  </data>
+  <data name="ReportGroupName" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="ReportNeededUpdates" xml:space="preserve">
+    <value>Needed updates</value>
+  </data>
+  <data name="ReportFailedUpdates" xml:space="preserve">
+    <value>Failed updates</value>
+  </data>
+  <data name="ReportCompliancePercentDisplay" xml:space="preserve">
+    <value>Compliance: {0:F1}%</value>
+  </data>
+  <data name="ReportTotalComputersDisplay" xml:space="preserve">
+    <value>Total computers: {0}</value>
+  </data>
+  <data name="ReportCompliantComputersDisplay" xml:space="preserve">
+    <value>Compliant computers: {0}</value>
+  </data>
+  <data name="ReportNonCompliantComputersDisplay" xml:space="preserve">
+    <value>Non-compliant computers: {0}</value>
+  </data>
 </root>

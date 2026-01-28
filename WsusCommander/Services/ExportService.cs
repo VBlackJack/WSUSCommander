@@ -102,6 +102,8 @@ public sealed class ExportService : IExportService
             ExportFormat.Csv => Resources.ExportFilterCsv,
             ExportFormat.Tsv => Resources.ExportFilterTsv,
             ExportFormat.Json => Resources.ExportFilterJson,
+            ExportFormat.Pdf => Resources.ExportFilterPdf,
+            ExportFormat.Html => Resources.ExportFilterHtml,
             _ => Resources.ExportFilterAll
         };
     }
@@ -114,6 +116,8 @@ public sealed class ExportService : IExportService
             ExportFormat.Csv => ".csv",
             ExportFormat.Tsv => ".tsv",
             ExportFormat.Json => ".json",
+            ExportFormat.Pdf => ".pdf",
+            ExportFormat.Html => ".html",
             _ => ".txt"
         };
     }

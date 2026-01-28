@@ -1,0 +1,97 @@
+<Window x:Class="WsusCommander.Views.UpdateDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:p="clr-namespace:WsusCommander.Properties"
+        xmlns:converters="clr-namespace:WsusCommander.Converters"
+        Title="{Binding WindowTitle}"
+        Height="620"
+        Width="800"
+        WindowStartupLocation="CenterOwner"
+        Background="#F5F5F5">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisibility"/>
+    </Window.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24">
+            <TextBlock Text="{x:Static p:Resources.UpdateDetailsSectionInfo}" FontSize="16" FontWeight="SemiBold" />
+            <Grid Margin="0,12,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static p:Resources.UpdateDetailsLabelId}" Margin="0,0,12,8"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Update.Id}"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static p:Resources.UpdateDetailsLabelTitle}" Margin="0,0,12,8"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Update.Title}" TextWrapping="Wrap"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static p:Resources.UpdateDetailsLabelKb}" Margin="0,0,12,8"/>
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Update.KbArticle}"/>
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="{x:Static p:Resources.UpdateDetailsLabelClassification}" Margin="0,0,12,8"/>
+                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Update.Classification}"/>
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="{x:Static p:Resources.UpdateDetailsLabelCreated}" Margin="0,0,12,8"/>
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Update.CreationDate, StringFormat=d}"/>
+
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="{x:Static p:Resources.UpdateDetailsLabelApproved}" Margin="0,0,12,8"/>
+                <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Update.IsApproved}"/>
+
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="{x:Static p:Resources.UpdateDetailsLabelDeclined}" Margin="0,0,12,8"/>
+                <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Update.IsDeclined}"/>
+
+                <TextBlock Grid.Row="7" Grid.Column="0" Text="{x:Static p:Resources.UpdateDetailsLabelSuperseded}" Margin="0,0,12,0"/>
+                <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Update.IsSuperseded}"/>
+            </Grid>
+
+            <TextBlock Text="{x:Static p:Resources.UpdateDetailsSectionApprovals}" FontSize="16" FontWeight="SemiBold" />
+            <ItemsControl ItemsSource="{Binding ApprovalSummaries}" Margin="0,8,0,16"
+                          Visibility="{Binding HasApprovals, Converter={StaticResource BoolToVisibility}}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Text="{x:Static p:Resources.UpdateDetailsNoApprovals}"
+                       Visibility="{Binding HasApprovals, Converter={StaticResource InverseBoolToVisibility}}"/>
+
+            <TextBlock Text="{x:Static p:Resources.UpdateDetailsSectionComputers}" FontSize="16" FontWeight="SemiBold" />
+            <ItemsControl ItemsSource="{Binding ComputersNeedingUpdate}" Margin="0,8,0,16"
+                          Visibility="{Binding HasComputers, Converter={StaticResource BoolToVisibility}}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Text="{x:Static p:Resources.UpdateDetailsNoComputers}"
+                       Visibility="{Binding HasComputers, Converter={StaticResource InverseBoolToVisibility}}"/>
+
+            <TextBlock Text="{x:Static p:Resources.UpdateDetailsSectionSupersedence}" FontSize="16" FontWeight="SemiBold" />
+            <ItemsControl ItemsSource="{Binding SupersedenceChain}" Margin="0,8,0,16"
+                          Visibility="{Binding HasSupersedence, Converter={StaticResource BoolToVisibility}}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Text="{x:Static p:Resources.UpdateDetailsNoSupersedence}"
+                       Visibility="{Binding HasSupersedence, Converter={StaticResource InverseBoolToVisibility}}"/>
+
+            <Button Content="{x:Static p:Resources.BtnClose}" Width="120" HorizontalAlignment="Right" Click="CloseButton_Click" />
+        </StackPanel>
+    </ScrollViewer>
+</Window>

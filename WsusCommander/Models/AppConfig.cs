@@ -57,6 +57,11 @@ public sealed class AppConfig
     /// Gets or sets the UI configuration.
     /// </summary>
     public UiConfig UI { get; set; } = new();
+
+    /// <summary>
+    /// Gets or sets the email notification configuration.
+    /// </summary>
+    public EmailConfig Email { get; set; } = new();
 }
 
 /// <summary>
@@ -306,4 +311,54 @@ public sealed class UiConfig
     /// </summary>
     [Range(10, 500, ErrorMessage = "Page size must be between 10 and 500.")]
     public int DefaultPageSize { get; set; } = 50;
+}
+
+/// <summary>
+/// Configuration model for email notifications.
+/// </summary>
+public sealed class EmailConfig
+{
+    /// <summary>
+    /// Gets or sets the SMTP server address.
+    /// </summary>
+    public string SmtpServer { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the SMTP server port.
+    /// </summary>
+    [Range(1, 65535, ErrorMessage = "SMTP port must be between 1 and 65535.")]
+    public int SmtpPort { get; set; } = 587;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to use SSL.
+    /// </summary>
+    public bool UseSsl { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the sender email address.
+    /// </summary>
+    [StringLength(256)]
+    public string FromAddress { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the recipient email addresses.
+    /// </summary>
+    public List<string> ToAddresses { get; set; } = [];
+
+    /// <summary>
+    /// Gets or sets a value indicating whether email alerts are enabled.
+    /// </summary>
+    public bool Enabled { get; set; }
+
+    /// <summary>
+    /// Gets or sets the critical update age threshold in days.
+    /// </summary>
+    [Range(1, 365, ErrorMessage = "Critical update threshold must be between 1 and 365 days.")]
+    public int CriticalUpdateThresholdDays { get; set; } = 7;
+
+    /// <summary>
+    /// Gets or sets the compliance threshold percentage.
+    /// </summary>
+    [Range(0, 100, ErrorMessage = "Compliance threshold must be between 0 and 100.")]
+    public double ComplianceThresholdPercent { get; set; } = 90;
 }

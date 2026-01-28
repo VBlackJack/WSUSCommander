@@ -1,0 +1,98 @@
+<Window x:Class="WsusCommander.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:p="clr-namespace:WsusCommander.Properties"
+        Title="{x:Static p:Resources.SettingsWindowTitle}"
+        Height="540"
+        Width="520"
+        WindowStartupLocation="CenterOwner"
+        Background="#F5F5F5">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24" Orientation="Vertical" >
+            <TextBlock Text="{x:Static p:Resources.SettingsHeaderConnection}"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,12" />
+            <Grid Margin="0,0,0,16">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="160"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelServer}" Margin="0,0,12,8"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DefaultServerName, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelPort}" Margin="0,0,12,8"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding DefaultServerPort, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelSsl}" Margin="0,0,12,0"/>
+                <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding DefaultUseSsl}"/>
+            </Grid>
+
+            <TextBlock Text="{x:Static p:Resources.SettingsHeaderRefresh}"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,12" />
+            <Grid Margin="0,0,0,16">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelAutoRefresh}" Margin="0,0,12,8"/>
+                <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding IsAutoRefreshEnabled}"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelRefreshInterval}" Margin="0,0,12,0"/>
+                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                    <TextBox Width="80" Text="{Binding AutoRefreshIntervalSeconds, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Margin="8,3,0,0" Text="{x:Static p:Resources.SettingsSeconds}"/>
+                </StackPanel>
+            </Grid>
+
+            <TextBlock Text="{x:Static p:Resources.SettingsHeaderTheme}"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,12" />
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="160"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelTheme}" Margin="0,0,12,0"/>
+                <ComboBox Grid.Column="1" SelectedValue="{Binding SelectedTheme}" SelectedValuePath="Content">
+                    <ComboBoxItem Content="{x:Static p:Resources.SettingsThemeLight}"/>
+                    <ComboBoxItem Content="{x:Static p:Resources.SettingsThemeDark}"/>
+                    <ComboBoxItem Content="{x:Static p:Resources.SettingsThemeSystem}"/>
+                </ComboBox>
+            </Grid>
+
+            <TextBlock Text="{x:Static p:Resources.SettingsHeaderExport}"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,12" />
+            <Grid Margin="0,0,0,24">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{x:Static p:Resources.SettingsLabelExportFormat}" Margin="0,0,12,0"/>
+                <ComboBox Grid.Column="1" SelectedValue="{Binding DefaultExportFormat}" SelectedValuePath="Content">
+                    <ComboBoxItem Content="{x:Static p:Resources.ExportFormatCsv}"/>
+                    <ComboBoxItem Content="{x:Static p:Resources.ExportFormatTsv}"/>
+                    <ComboBoxItem Content="{x:Static p:Resources.ExportFormatJson}"/>
+                    <ComboBoxItem Content="{x:Static p:Resources.ExportFormatPdf}"/>
+                    <ComboBoxItem Content="{x:Static p:Resources.ExportFormatHtml}"/>
+                </ComboBox>
+            </Grid>
+
+            <Button Content="{x:Static p:Resources.BtnClose}"
+                    Width="120"
+                    HorizontalAlignment="Right"
+                    Click="CloseButton_Click" />
+        </StackPanel>
+    </ScrollViewer>
+</Window>

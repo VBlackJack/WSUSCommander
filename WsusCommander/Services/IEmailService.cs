@@ -19,27 +19,22 @@ using WsusCommander.Models;
 namespace WsusCommander.Services;
 
 /// <summary>
-/// Interface for the application configuration service.
+/// Provides email notification services.
 /// </summary>
-public interface IConfigurationService
+public interface IEmailService
 {
     /// <summary>
-    /// Gets the application configuration.
+    /// Evaluates alert triggers and sends email notifications when required.
     /// </summary>
-    AppConfig Config { get; }
+    /// <param name="context">Alert evaluation context.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    Task EvaluateAndSendAlertsAsync(EmailAlertContext context, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Gets the WSUS connection configuration.
+    /// Sends a custom email alert.
     /// </summary>
-    WsusConnectionConfig WsusConnection { get; }
-
-    /// <summary>
-    /// Gets the application settings configuration.
-    /// </summary>
-    AppSettingsConfig AppSettings { get; }
-
-    /// <summary>
-    /// Gets the email notification configuration.
-    /// </summary>
-    EmailConfig Email { get; }
+    /// <param name="subject">Email subject.</param>
+    /// <param name="body">Email body.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    Task SendAlertAsync(string subject, string body, CancellationToken cancellationToken = default);
 }

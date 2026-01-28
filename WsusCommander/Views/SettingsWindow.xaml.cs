@@ -14,32 +14,28 @@
  * limitations under the License.
  */
 
-using WsusCommander.Models;
+using System.Windows;
+using WsusCommander.ViewModels;
 
-namespace WsusCommander.Services;
+namespace WsusCommander.Views;
 
 /// <summary>
-/// Interface for the application configuration service.
+/// Settings window for configuring application preferences.
 /// </summary>
-public interface IConfigurationService
+public sealed partial class SettingsWindow : Window
 {
     /// <summary>
-    /// Gets the application configuration.
+    /// Initializes a new instance of the <see cref="SettingsWindow"/> class.
     /// </summary>
-    AppConfig Config { get; }
+    /// <param name="viewModel">Settings view model.</param>
+    public SettingsWindow(SettingsViewModel viewModel)
+    {
+        InitializeComponent();
+        DataContext = viewModel;
+    }
 
-    /// <summary>
-    /// Gets the WSUS connection configuration.
-    /// </summary>
-    WsusConnectionConfig WsusConnection { get; }
-
-    /// <summary>
-    /// Gets the application settings configuration.
-    /// </summary>
-    AppSettingsConfig AppSettings { get; }
-
-    /// <summary>
-    /// Gets the email notification configuration.
-    /// </summary>
-    EmailConfig Email { get; }
+    private void CloseButton_Click(object sender, RoutedEventArgs e)
+    {
+        Close();
+    }
 }
