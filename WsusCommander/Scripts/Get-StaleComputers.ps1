@@ -40,6 +40,10 @@ try {
     foreach ($computer in $computers) {
         $lastReport = $computer.LastReportedStatusTime
 
+        if ($lastReport -eq [datetime]::MinValue) {
+            $lastReport = $null
+        }
+
         if ($null -eq $lastReport -or $lastReport -lt $staleDate) {
             # Get group memberships
             $groups = $computer.GetComputerTargetGroups()
