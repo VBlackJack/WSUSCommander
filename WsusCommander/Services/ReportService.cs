@@ -365,7 +365,7 @@ public sealed class ReportService : IReportService
         {
             DateTime? lastReport = null;
             var lrtValue = item.Properties["LastReportTime"]?.Value;
-            if (lrtValue is DateTime dt)
+            if (lrtValue is DateTime dt && dt != DateTime.MinValue)
             {
                 lastReport = dt;
             }
