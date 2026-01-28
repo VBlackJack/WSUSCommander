@@ -51,7 +51,7 @@ public sealed partial class RuleEditorWindow : Window
         {
             Rule = rule;
             TargetGroups = new ObservableCollection<ComputerGroup>();
-            SelectedConditionType = Resources.ConditionClassification;
+            SelectedConditionType = Properties.Resources.ConditionClassification;
         }
 
         /// <summary>

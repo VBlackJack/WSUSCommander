@@ -32,7 +32,7 @@ public sealed partial class UpdateDetailsWindow : Window
     public UpdateDetailsWindow(WsusUpdate update)
     {
         Update = update;
-        WindowTitle = string.Format(Resources.UpdateDetailsWindowTitle, update.Title);
+        WindowTitle = string.Format(Properties.Resources.UpdateDetailsWindowTitle, update.Title);
         ApprovalSummaries = [];
         ComputersNeedingUpdate = [];
         SupersedenceChain = [];

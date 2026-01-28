@@ -49,8 +49,8 @@ public sealed partial class SchedulerWindow : Window
         {
             Tasks = new ObservableCollection<ScheduledTask>();
             SelectedTask = new ScheduledTask();
-            SelectedTaskType = Resources.SchedulerTaskApproval;
-            SelectedRecurrence = Resources.SchedulerRecurrenceOnce;
+            SelectedTaskType = Properties.Resources.SchedulerTaskApproval;
+            SelectedRecurrence = Properties.Resources.SchedulerRecurrenceOnce;
         }
 
         /// <summary>

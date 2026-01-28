@@ -311,7 +311,7 @@ public sealed class ReportService : IReportService
                     column.Item().Text(string.Format(Resources.ReportCompliantComputersDisplay, report.CompliantComputers));
                     column.Item().Text(string.Format(Resources.ReportNonCompliantComputersDisplay, report.NonCompliantComputers));
 
-                    column.Item().Text(Resources.ReportComplianceByGroup).FontSize(14).SemiBold().PaddingTop(10);
+                    column.Item().PaddingTop(10).Text(Resources.ReportComplianceByGroup).FontSize(14).SemiBold();
                     if (report.GroupCompliance.Count == 0)
                     {
                         column.Item().Text(Resources.ReportNoGroupData);

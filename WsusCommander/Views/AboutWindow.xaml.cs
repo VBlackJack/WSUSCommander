@@ -52,7 +52,7 @@ public sealed partial class AboutWindow : Window
         /// <summary>
         /// Gets the application name.
         /// </summary>
-        public string AppName => Resources.AppTitle;
+        public string AppName => Properties.Resources.AppTitle;
 
         /// <summary>
         /// Gets the application version display string.
@@ -62,13 +62,13 @@ public sealed partial class AboutWindow : Window
             get
             {
                 var version = Assembly.GetExecutingAssembly().GetName().Version;
-                return version is null ? string.Empty : string.Format(Resources.AboutVersionLabel, version);
+                return version is null ? string.Empty : string.Format(Properties.Resources.AboutVersionLabel, version);
             }
         }
 
         /// <summary>
         /// Gets the author name.
         /// </summary>
-        public string Author => Resources.AboutAuthorValue;
+        public string Author => Properties.Resources.AboutAuthorValue;
     }
 }
