@@ -167,13 +167,13 @@
 
     <!-- Keyboard Shortcuts -->
     <Window.InputBindings>
-        <KeyBinding Key="F5" Command="{Binding RefreshUpdatesCommand}"/>
-        <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding RefreshUpdatesCommand}"/>
-        <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding StartSyncCommand}"/>
-        <KeyBinding Key="E" Modifiers="Ctrl" Command="{Binding ExportUpdatesCommand}"/>
-        <KeyBinding Key="A" Modifiers="Ctrl" Command="{Binding ApproveUpdateCommand}"/>
-        <KeyBinding Key="D" Modifiers="Ctrl" Command="{Binding DeclineUpdateCommand}"/>
-        <KeyBinding Key="Escape" Command="{Binding DisconnectCommand}"/>
+        <KeyBinding Key="F5" Command="{Binding Updates.LoadUpdatesCommand}"/>
+        <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding Updates.LoadUpdatesCommand}"/>
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding Dashboard.StartSyncCommand}"/>
+        <KeyBinding Key="E" Modifiers="Ctrl" Command="{Binding Updates.ExportCommand}"/>
+        <KeyBinding Key="A" Modifiers="Ctrl" Command="{Binding Updates.ApproveUpdateCommand}"/>
+        <KeyBinding Key="D" Modifiers="Ctrl" Command="{Binding Updates.DeclineUpdateCommand}"/>
+        <KeyBinding Key="Escape" Command="{Binding Connection.DisconnectCommand}"/>
     </Window.InputBindings>
 
     <Grid>
@@ -184,6 +184,7 @@
 
         <!-- ==================== LOGIN VIEW ==================== -->
         <Grid Grid.Row="0"
+              DataContext="{Binding Connection}"
               Visibility="{Binding IsConnected, Converter={StaticResource InverseBoolToVisibility}}">
             <StackPanel VerticalAlignment="Center"
                         HorizontalAlignment="Center"
@@ -242,7 +243,7 @@
                                    Margin="0,0,12,12"
                                    FontSize="13"/>
                         <TextBox Grid.Row="0" Grid.Column="1"
-                                 Text="{Binding InputServerName, UpdateSourceTrigger=PropertyChanged}"
+                                 Text="{Binding ServerName, UpdateSourceTrigger=PropertyChanged}"
                                  Padding="10,8"
                                  FontSize="13"
                                  Margin="0,0,0,12"
@@ -257,7 +258,7 @@
                                    Margin="0,0,12,12"
                                    FontSize="13"/>
                         <TextBox Grid.Row="1" Grid.Column="1"
-                                 Text="{Binding InputServerPort, UpdateSourceTrigger=PropertyChanged}"
+                                 Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}"
                                  Padding="10,8"
                                  FontSize="13"
                                  Margin="0,0,0,12"
@@ -269,7 +270,7 @@
                         <!-- Use SSL -->
                         <CheckBox Grid.Row="2" Grid.Column="1"
                                   Content="{x:Static p:Resources.LblUseSsl}"
-                                  IsChecked="{Binding InputUseSsl}"
+                                  IsChecked="{Binding UseSsl}"
                                   FontSize="13"
                                   VerticalContentAlignment="Center"
                                   TabIndex="2"
@@ -279,7 +280,7 @@
 
                 <!-- Connect Button -->
                 <Button Content="{x:Static p:Resources.BtnConnect}"
-                        Command="{Binding ConnectWsusCommand}"
+                        Command="{Binding ConnectCommand}"
                         HorizontalAlignment="Center"
                         MinWidth="220"
                         Padding="24,14"
@@ -302,7 +303,7 @@
 
         <!-- ==================== DASHBOARD VIEW ==================== -->
         <Grid Grid.Row="0"
-              Visibility="{Binding IsConnected, Converter={StaticResource BoolToVisibility}}"
+              Visibility="{Binding Connection.IsConnected, Converter={StaticResource BoolToVisibility}}"
               Margin="20,20,20,10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -331,7 +332,7 @@
                                Foreground="#5D6D7E"
                                VerticalAlignment="Center"
                                Margin="20,0,5,0"/>
-                    <TextBlock Text="{Binding ServerVersion}"
+                    <TextBlock Text="{Binding Connection.ServerVersion}"
                                FontSize="12"
                                Foreground="#27AE60"
                                FontWeight="SemiBold"
@@ -348,28 +349,28 @@
                                   Padding="12,8"
                                   FontSize="12">
                             <MenuItem Header="{x:Static p:Resources.ExportFormatCsv}"
-                                      Command="{Binding ExportUpdatesCommand}"
+                                      Command="{Binding Updates.ExportCommand}"
                                       AutomationProperties.Name="{x:Static p:Resources.ExportFormatCsv}"/>
                             <MenuItem Header="{x:Static p:Resources.ExportFormatJson}"
-                                      Command="{Binding ExportUpdatesCommand}"
+                                      Command="{Binding Updates.ExportCommand}"
                                       AutomationProperties.Name="{x:Static p:Resources.ExportFormatJson}"/>
                             <Separator/>
                             <MenuItem Header="{x:Static p:Resources.TabComputers}"
-                                      Command="{Binding ExportComputersCommand}"/>
+                                      Command="{Binding Computers.ExportComputersCommand}"/>
                         </MenuItem>
                     </Menu>
 
                     <!-- Auto-Refresh Toggle -->
                     <ToggleButton Content="{x:Static p:Resources.BtnAutoRefresh}"
-                                  IsChecked="{Binding IsAutoRefreshEnabled}"
-                                  Command="{Binding ToggleAutoRefreshCommand}"
+                                  IsChecked="{Binding Settings.IsAutoRefreshEnabled}"
+                                  Command="{Binding Settings.ToggleAutoRefreshCommand}"
                                   Style="{StaticResource ToggleButtonStyle}"
                                   Margin="0,0,10,0"
                                   AutomationProperties.Name="{x:Static p:Resources.BtnAutoRefresh}"/>
 
                     <!-- Refresh Button -->
                     <Button Content="{x:Static p:Resources.BtnRefresh}"
-                            Command="{Binding RefreshUpdatesCommand}"
+                            Command="{Binding Updates.LoadUpdatesCommand}"
                             Background="#27AE60"
                             Style="{StaticResource ActionButtonStyle}"
                             ToolTip="{x:Static p:Resources.TooltipRefreshShortcut}"
@@ -398,10 +399,10 @@
                                Margin="0,0,15,0">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
-                                <Setter Property="Text" Value="{Binding SyncStatus.Status}"/>
+                                <Setter Property="Text" Value="{Binding Dashboard.SyncStatus.Status}"/>
                                 <Setter Property="Foreground" Value="#27AE60"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding SyncStatus.IsSyncing}" Value="True">
+                                    <DataTrigger Binding="{Binding Dashboard.SyncStatus.IsSyncing}" Value="True">
                                         <Setter Property="Foreground" Value="#3498DB"/>
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -414,7 +415,7 @@
                                Foreground="#5D6D7E"
                                VerticalAlignment="Center"
                                Margin="0,0,5,0"/>
-                    <TextBlock Text="{Binding SyncStatus.LastSyncTime, StringFormat=g}"
+                    <TextBlock Text="{Binding Dashboard.SyncStatus.LastSyncTime, StringFormat=g}"
                                FontSize="12"
                                Foreground="#2C3E50"
                                VerticalAlignment="Center"
@@ -422,7 +423,7 @@
 
                     <!-- Sync Now Button -->
                     <Button Content="{x:Static p:Resources.BtnStartSync}"
-                            Command="{Binding StartSyncCommand}"
+                            Command="{Binding Dashboard.StartSyncCommand}"
                             Background="#9B59B6"
                             Style="{StaticResource SmallButtonStyle}"
                             ToolTip="{x:Static p:Resources.TooltipSyncShortcut}"
@@ -436,8 +437,8 @@
                                Foreground="#5D6D7E"
                                VerticalAlignment="Center"
                                Margin="0,0,10,0"/>
-                    <ComboBox ItemsSource="{Binding ComputerGroups}"
-                              SelectedItem="{Binding SelectedComputerGroup}"
+                    <ComboBox ItemsSource="{Binding Updates.ComputerGroups}"
+                              SelectedItem="{Binding Updates.SelectedComputerGroup}"
                               DisplayMemberPath="Name"
                               MinWidth="200"
                               Padding="8,6"
@@ -447,7 +448,8 @@
             </Grid>
 
             <!-- Search and Filter Bar -->
-            <Border Grid.Row="2" Background="White" CornerRadius="4" Padding="15,10" Margin="0,0,0,10">
+            <Border Grid.Row="2" Background="White" CornerRadius="4" Padding="15,10" Margin="0,0,0,10"
+                    DataContext="{Binding Updates}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -605,7 +607,9 @@
             </Border>
 
             <!-- Bulk Operation Progress -->
-            <Grid Grid.Row="3" Margin="0,0,0,10" Visibility="{Binding IsBulkOperationRunning, Converter={StaticResource BoolToVisibility}}">
+            <Grid Grid.Row="3" Margin="0,0,0,10"
+                  DataContext="{Binding Updates}"
+                  Visibility="{Binding IsBulkOperationRunning, Converter={StaticResource BoolToVisibility}}">
                 <ProgressBar Value="{Binding BulkProgress}"
                              Maximum="100"
                              Height="20"
@@ -622,7 +626,7 @@
                          IsIndeterminate="True"
                          Height="3"
                          Margin="0,0,0,10"
-                         Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"
+                         Visibility="{Binding Dashboard.IsLoading, Converter={StaticResource BoolToVisibility}}"
                          Foreground="#3498DB"
                          Background="#ECF0F1"/>
 
@@ -647,7 +651,9 @@
                 </TabControl.Resources>
 
                 <!-- Dashboard Tab -->
-                <TabItem Header="{x:Static p:Resources.TabDashboard}" AutomationProperties.Name="{x:Static p:Resources.TabDashboard}">
+                <TabItem Header="{x:Static p:Resources.TabDashboard}"
+                         AutomationProperties.Name="{x:Static p:Resources.TabDashboard}"
+                         DataContext="{Binding Dashboard}">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="15">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -1229,7 +1235,9 @@
                 </TabItem>
 
                 <!-- Updates Tab -->
-                <TabItem Header="{x:Static p:Resources.TabUpdates}" AutomationProperties.Name="{x:Static p:Resources.TabUpdates}">
+                <TabItem Header="{x:Static p:Resources.TabUpdates}"
+                         AutomationProperties.Name="{x:Static p:Resources.TabUpdates}"
+                         DataContext="{Binding Updates}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -1522,7 +1530,9 @@
                 </TabItem>
 
                 <!-- Computers Tab -->
-                <TabItem Header="{x:Static p:Resources.TabComputers}" AutomationProperties.Name="{x:Static p:Resources.TabComputers}">
+                <TabItem Header="{x:Static p:Resources.TabComputers}"
+                         AutomationProperties.Name="{x:Static p:Resources.TabComputers}"
+                         DataContext="{Binding Computers}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -1726,7 +1736,9 @@
                 </TabItem>
 
                 <!-- Reports Tab -->
-                <TabItem Header="{x:Static p:Resources.TabReports}" AutomationProperties.Name="{x:Static p:Resources.TabReports}">
+                <TabItem Header="{x:Static p:Resources.TabReports}"
+                         AutomationProperties.Name="{x:Static p:Resources.TabReports}"
+                         DataContext="{Binding Reports}">
                     <Grid Margin="15">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -1839,7 +1851,9 @@
                 </TabItem>
 
                 <!-- Activity Tab -->
-                <TabItem Header="{x:Static p:Resources.TabActivity}" AutomationProperties.Name="{x:Static p:Resources.TabActivity}">
+                <TabItem Header="{x:Static p:Resources.TabActivity}"
+                         AutomationProperties.Name="{x:Static p:Resources.TabActivity}"
+                         DataContext="{Binding Activity}">
                     <Grid Margin="15">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -1968,7 +1982,9 @@
                 </TabItem>
 
                 <!-- Rules Tab -->
-                <TabItem Header="{x:Static p:Resources.TabRules}" AutomationProperties.Name="{x:Static p:Resources.TabRules}">
+                <TabItem Header="{x:Static p:Resources.TabRules}"
+                         AutomationProperties.Name="{x:Static p:Resources.TabRules}"
+                         DataContext="{Binding Rules}">
                     <Grid Margin="15">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -2104,7 +2120,9 @@
                 </TabItem>
 
                 <!-- Groups Tab -->
-                <TabItem Header="{x:Static p:Resources.TabGroups}" AutomationProperties.Name="{x:Static p:Resources.TabGroups}">
+                <TabItem Header="{x:Static p:Resources.TabGroups}"
+                         AutomationProperties.Name="{x:Static p:Resources.TabGroups}"
+                         DataContext="{Binding Groups}">
                     <Grid Margin="15">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -2195,7 +2213,7 @@
 
                 <!-- Status Text -->
                 <TextBlock Grid.Column="0"
-                           Text="{Binding StatusText}"
+                           Text="{Binding StatusMessage}"
                            FontSize="12"
                            TextWrapping="NoWrap"
                            TextTrimming="CharacterEllipsis"
@@ -2204,10 +2222,10 @@
                         <Style TargetType="TextBlock">
                             <Setter Property="Foreground" Value="#5D6D7E"/>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                                <DataTrigger Binding="{Binding Connection.IsConnected}" Value="True">
                                     <Setter Property="Foreground" Value="#27AE60"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                                <DataTrigger Binding="{Binding IsBusy}" Value="True">
                                     <Setter Property="Foreground" Value="#3498DB"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -2224,25 +2242,25 @@
                                VerticalAlignment="Center"
                                Margin="0,0,5,0"/>
                     <Ellipse Width="10" Height="10" VerticalAlignment="Center"
-                             AutomationProperties.Name="{Binding HealthReport.Status, Converter={StaticResource HealthStatusToString}}">
+                             AutomationProperties.Name="{Binding Dashboard.HealthReport.Status, Converter={StaticResource HealthStatusToString}}">
                         <Ellipse.Style>
                             <Style TargetType="Ellipse">
                                 <Setter Property="Fill" Value="#7B8D8E"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding HealthReport.Status}" Value="Healthy">
+                                    <DataTrigger Binding="{Binding Dashboard.HealthReport.Status}" Value="Healthy">
                                         <Setter Property="Fill" Value="#27AE60"/>
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding HealthReport.Status}" Value="Degraded">
+                                    <DataTrigger Binding="{Binding Dashboard.HealthReport.Status}" Value="Degraded">
                                         <Setter Property="Fill" Value="#F39C12"/>
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding HealthReport.Status}" Value="Unhealthy">
+                                    <DataTrigger Binding="{Binding Dashboard.HealthReport.Status}" Value="Unhealthy">
                                         <Setter Property="Fill" Value="#E74C3C"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </Ellipse.Style>
                     </Ellipse>
-                    <TextBlock Text="{Binding HealthReport.Status, Converter={StaticResource HealthStatusToString}}"
+                    <TextBlock Text="{Binding Dashboard.HealthReport.Status, Converter={StaticResource HealthStatusToString}}"
                                FontSize="11"
                                VerticalAlignment="Center"
                                Margin="5,0,0,0">
@@ -2250,13 +2268,13 @@
                             <Style TargetType="TextBlock">
                                 <Setter Property="Foreground" Value="#7B8D8E"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding HealthReport.Status}" Value="Healthy">
+                                    <DataTrigger Binding="{Binding Dashboard.HealthReport.Status}" Value="Healthy">
                                         <Setter Property="Foreground" Value="#27AE60"/>
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding HealthReport.Status}" Value="Degraded">
+                                    <DataTrigger Binding="{Binding Dashboard.HealthReport.Status}" Value="Degraded">
                                         <Setter Property="Foreground" Value="#F39C12"/>
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding HealthReport.Status}" Value="Unhealthy">
+                                    <DataTrigger Binding="{Binding Dashboard.HealthReport.Status}" Value="Unhealthy">
                                         <Setter Property="Foreground" Value="#E74C3C"/>
                                     </DataTrigger>
                                 </Style.Triggers>

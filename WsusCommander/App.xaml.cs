@@ -15,6 +15,7 @@
  */
 
 using System.Windows;
+using WsusCommander.Interfaces;
 using WsusCommander.Services;
 using WsusCommander.ViewModels;
 using Res = WsusCommander.Properties.Resources;
@@ -48,41 +49,23 @@ public partial class App : Application
         base.OnStartup(e);
 
         // Composition Root - Manual DI
-        // Core Services
         IConfigurationService configService = new ConfigurationService();
         ConfigService = configService;
         ILoggingService loggingService = new LoggingService(configService);
-        IPowerShellService psService = new PowerShellService(loggingService, configService);
-        ITimerService timerService = new TimerService();
-
-        // Security Services
-        IAuthenticationService authService = new AuthenticationService(configService, loggingService);
-        IAuthorizationService authzService = new AuthorizationService(authService, configService, loggingService);
-
-        // Infrastructure Services
-        IValidationService validationService = new ValidationService();
-        IRetryService retryService = new RetryService(configService, loggingService);
-        ICacheService cacheService = new CacheService(configService);
         IDialogService dialogService = new DialogService();
-        IClipboardService clipboardService = new ClipboardService();
-        INavigationService navigationService = new NavigationService();
-
-        // Data Services
+        INotificationService notificationService = new NotificationService(dialogService);
+        IFileDialogService fileDialogService = new FileDialogService();
         IExportService exportService = new ExportService(loggingService);
         IPreferencesService preferencesService = new PreferencesService(configService, loggingService);
         PreferencesService = preferencesService;
-        IFilterService filterService = new FilterService();
-        IFilterPresetsService filterPresetsService = new FilterPresetsService(configService, loggingService);
         IApprovalRulesService approvalRulesService = new ApprovalRulesService(configService, loggingService);
+        IComplianceHistoryService complianceHistoryService = new ComplianceHistoryService();
+        IWsusService wsusService = new WsusService();
 
-        // Monitoring Services
-        IHealthService healthService = new HealthService(configService, psService, loggingService);
-        IAccessibilityService accessibilityService = new AccessibilityService(loggingService);
-        IThemeService themeService = new ThemeService(loggingService);
-
-        // Business Services
-        IBulkOperationService bulkOperationService = new BulkOperationService(
-            psService, loggingService, configService);
+        ICacheService cacheService = new CacheService(configService);
+        IValidationService validationService = new ValidationService();
+        IRetryService retryService = new RetryService(configService, loggingService);
+        IPowerShellService psService = new PowerShellService(loggingService, configService);
         IGroupService groupService = new GroupService(
             psService, loggingService, cacheService, validationService, configService, retryService);
         IReportService reportService = new ReportService(
@@ -91,41 +74,50 @@ public partial class App : Application
         await preferencesService.LoadAsync();
 
         // Track disposables
-        _disposables.Add((IDisposable)timerService);
         _disposables.Add((IDisposable)cacheService);
-        _disposables.Add((IDisposable)healthService);
 
-        // Initialize theme from configuration
-        themeService.Initialize(configService.Config.UI.Theme);
-
-        // Create ViewModel with all services
-        _mainViewModel = new MainViewModel(
-            configService,
-            psService,
+        var connectionViewModel = new ConnectionViewModel(
+            wsusService,
             loggingService,
-            timerService,
-            authService,
-            authzService,
-            validationService,
-            retryService,
-            cacheService,
-            dialogService,
+            configService,
+            notificationService);
+        var dashboardViewModel = new DashboardViewModel(
+            wsusService,
+            loggingService,
+            complianceHistoryService);
+        var updatesViewModel = new UpdatesViewModel(
+            wsusService,
+            loggingService,
+            notificationService,
             exportService,
-            preferencesService,
-            filterService,
-            filterPresetsService,
-            approvalRulesService,
-            healthService,
-            accessibilityService,
-            bulkOperationService,
+            fileDialogService);
+        var computersViewModel = new ComputersViewModel(
+            wsusService,
+            loggingService,
+            notificationService,
+            exportService,
+            fileDialogService);
+        var groupsViewModel = new GroupsViewModel(
             groupService,
+            loggingService,
+            notificationService);
+        var reportsViewModel = new ReportsViewModel(
             reportService,
-            themeService,
-            clipboardService,
-            navigationService);
+            fileDialogService);
+        var rulesViewModel = new RulesViewModel(approvalRulesService);
+        var activityViewModel = new ActivityViewModel(loggingService);
+        var settingsViewModel = new SettingsViewModel(configService, preferencesService);
 
-        // Initialize ViewModel (authentication, preferences, health check)
-        await _mainViewModel.InitializeAsync();
+        _mainViewModel = new MainViewModel(
+            connectionViewModel,
+            dashboardViewModel,
+            updatesViewModel,
+            computersViewModel,
+            groupsViewModel,
+            reportsViewModel,
+            rulesViewModel,
+            activityViewModel,
+            settingsViewModel);
 
         var mainWindow = new MainWindow
         {
