@@ -271,10 +271,11 @@ public sealed class WsusService : IWsusService
     {
         if (!_isConnected) return Array.Empty<ComputerStatus>();
 
-        // Get all computers and filter to only those in "Unassigned Computers" group
+        // Get all computers and filter to only those in the unassigned computers group
+        var unassignedGroupName = _configService.AppSettings.UnassignedComputersGroupName;
         var allComputers = await GetComputersAsync(false, cancellationToken);
         return allComputers.Where(c =>
-            string.Equals(c.GroupName, "Unassigned Computers", StringComparison.OrdinalIgnoreCase))
+            string.Equals(c.GroupName, unassignedGroupName, StringComparison.OrdinalIgnoreCase))
             .ToList();
     }
 

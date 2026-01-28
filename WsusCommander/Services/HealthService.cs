@@ -47,7 +47,8 @@ public sealed class HealthService : IHealthService, IDisposable
 
         if (enableAutoMonitoring)
         {
-            _monitorTimer = new System.Timers.Timer(60000); // Check every minute
+            var healthCheckInterval = configService.Config.Performance.HealthCheckIntervalMs;
+            _monitorTimer = new System.Timers.Timer(healthCheckInterval);
             _monitorTimer.Elapsed += async (_, _) => await CheckHealthAsync();
             _monitorTimer.AutoReset = true;
         }

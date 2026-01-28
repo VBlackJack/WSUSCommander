@@ -30,8 +30,7 @@ public sealed class GroupService : IGroupService
     private readonly IValidationService _validationService;
     private readonly IConfigurationService _configService;
     private readonly IRetryService _retryService;
-
-    private static readonly string[] SystemGroupNames = ["All Computers", "Unassigned Computers"];
+    private readonly string[] _systemGroupNames;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GroupService"/> class.
@@ -50,6 +49,11 @@ public sealed class GroupService : IGroupService
         _validationService = validationService;
         _configService = configService;
         _retryService = retryService;
+        _systemGroupNames =
+        [
+            configService.AppSettings.AllComputersGroupName,
+            configService.AppSettings.UnassignedComputersGroupName
+        ];
     }
 
     private Dictionary<string, object> GetConnectionParameters()
@@ -85,7 +89,7 @@ public sealed class GroupService : IGroupService
 
                 if (!includeSystemGroups)
                 {
-                    groups = groups.Where(g => !SystemGroupNames.Contains(g.Name)).ToList();
+                    groups = groups.Where(g => !_systemGroupNames.Contains(g.Name)).ToList();
                 }
 
                 return groups;

@@ -83,8 +83,6 @@ public partial class App : Application
         IEmailService emailService = new EmailService(configService, loggingService, smtpClientFactory);
         ISchedulerService schedulerService = new SchedulerService(loggingService);
         ISettingsBackupService settingsBackupService = new SettingsBackupService(configService, loggingService);
-        _ = cleanupService;
-        _ = emailService;
 
         await preferencesService.LoadAsync();
 
@@ -148,7 +146,6 @@ public partial class App : Application
             notificationService,
             settingsBackupService);
         IWindowService windowService = new WindowService(settingsViewModel, cleanupService);
-        _ = windowService;
 
         _mainViewModel = new MainViewModel(
             connectionViewModel,

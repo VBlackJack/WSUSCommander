@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Configuration;
 using WsusCommander.Models;
 
@@ -38,6 +39,8 @@ public sealed class ConfigurationService : IConfigurationService
 
         _config = new AppConfig();
         configuration.Bind(_config);
+
+        ValidateConfiguration();
     }
 
     /// <inheritdoc/>
@@ -51,4 +54,66 @@ public sealed class ConfigurationService : IConfigurationService
 
     /// <inheritdoc/>
     public EmailConfig Email => _config.Email;
+
+    private void ValidateConfiguration()
+    {
+        var validationResults = new List<ValidationResult>();
+        var configSections = new object[]
+        {
+            _config.WsusConnection,
+            _config.AppSettings,
+            _config.Security,
+            _config.Logging,
+            _config.Performance,
+            _config.PowerShell,
+            _config.UI,
+            _config.Email
+        };
+
+        foreach (var section in configSections)
+        {
+            var context = new ValidationContext(section);
+            Validator.TryValidateObject(section, context, validationResults, validateAllProperties: true);
+        }
+
+        // Validate email config consistency
+        if (_config.Email.Enabled)
+        {
+            if (string.IsNullOrWhiteSpace(_config.Email.SmtpServer))
+            {
+                validationResults.Add(new ValidationResult(
+                    "SMTP server is required when email is enabled.",
+                    new[] { nameof(EmailConfig.SmtpServer) }));
+            }
+
+            if (string.IsNullOrWhiteSpace(_config.Email.FromAddress))
+            {
+                validationResults.Add(new ValidationResult(
+                    "From address is required when email is enabled.",
+                    new[] { nameof(EmailConfig.FromAddress) }));
+            }
+
+            if (_config.Email.ToAddresses.Count == 0)
+            {
+                validationResults.Add(new ValidationResult(
+                    "At least one recipient address is required when email is enabled.",
+                    new[] { nameof(EmailConfig.ToAddresses) }));
+            }
+        }
+
+        // Validate PowerShell executable path
+        if (!string.IsNullOrWhiteSpace(_config.PowerShell.ExecutablePath) &&
+            !System.IO.File.Exists(_config.PowerShell.ExecutablePath))
+        {
+            validationResults.Add(new ValidationResult(
+                $"PowerShell executable not found: {_config.PowerShell.ExecutablePath}",
+                new[] { nameof(PowerShellConfig.ExecutablePath) }));
+        }
+
+        if (validationResults.Count > 0)
+        {
+            var errors = string.Join(Environment.NewLine, validationResults.Select(r => r.ErrorMessage));
+            throw new InvalidOperationException($"Configuration validation failed:{Environment.NewLine}{errors}");
+        }
+    }
 }

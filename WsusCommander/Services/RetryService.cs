@@ -28,8 +28,8 @@ public sealed class RetryService : IRetryService
     private readonly ILoggingService _loggingService;
     private readonly ConcurrentDictionary<string, CircuitBreakerState> _circuits = new();
 
-    private const int CircuitBreakerThreshold = 5;
-    private static readonly TimeSpan CircuitBreakerTimeout = TimeSpan.FromMinutes(1);
+    private readonly int _circuitBreakerThreshold;
+    private readonly TimeSpan _circuitBreakerTimeout;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RetryService"/> class.
@@ -38,6 +38,8 @@ public sealed class RetryService : IRetryService
     {
         _configService = configService;
         _loggingService = loggingService;
+        _circuitBreakerThreshold = configService.Config.Performance.CircuitBreakerThreshold;
+        _circuitBreakerTimeout = TimeSpan.FromSeconds(configService.Config.Performance.CircuitBreakerTimeoutSeconds);
     }
 
     /// <inheritdoc/>
@@ -50,11 +52,11 @@ public sealed class RetryService : IRetryService
 
         if (circuit.State == CircuitState.Open)
         {
-            if (DateTime.UtcNow - circuit.LastFailure < CircuitBreakerTimeout)
+            if (DateTime.UtcNow - circuit.LastFailure < _circuitBreakerTimeout)
             {
                 throw new WsusException(
                     WsusErrorCode.ServerUnavailable,
-                    $"Circuit breaker is open for operation '{operationName}'. Retry after {CircuitBreakerTimeout.TotalSeconds}s.");
+                    $"Circuit breaker is open for operation '{operationName}'. Retry after {_circuitBreakerTimeout.TotalSeconds}s.");
             }
 
             circuit.State = CircuitState.HalfOpen;
@@ -160,7 +162,7 @@ public sealed class RetryService : IRetryService
         circuit.FailureCount++;
         circuit.LastFailure = DateTime.UtcNow;
 
-        if (circuit.FailureCount >= CircuitBreakerThreshold)
+        if (circuit.FailureCount >= _circuitBreakerThreshold)
         {
             circuit.State = CircuitState.Open;
             _loggingService.LogWarningAsync($"Circuit opened for '{operationName}' after {circuit.FailureCount} failures.");

@@ -29,21 +29,23 @@ namespace WsusCommander.Services;
 public sealed class PowerShellService : IPowerShellService
 {
     private readonly string _scriptsPath;
+    private readonly string _powerShellExe;
     private readonly ILoggingService _loggingService;
     private readonly IConfigurationService _configurationService;
-    private const string PowerShellExe = @"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PowerShellService"/> class.
     /// </summary>
     /// <param name="loggingService">The logging service for detailed diagnostics.</param>
+    /// <param name="configurationService">The configuration service.</param>
     public PowerShellService(ILoggingService loggingService, IConfigurationService configurationService)
     {
         _loggingService = loggingService;
         _configurationService = configurationService;
         _scriptsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scripts");
+        _powerShellExe = configurationService.Config.PowerShell.ExecutablePath;
         _loggingService.LogDebugAsync($"PowerShellService initialized. Scripts path: {_scriptsPath}");
-        _loggingService.LogDebugAsync($"Using Windows PowerShell: {PowerShellExe}");
+        _loggingService.LogDebugAsync($"Using Windows PowerShell: {_powerShellExe}");
     }
 
     /// <inheritdoc/>
@@ -107,7 +109,7 @@ public sealed class PowerShellService : IPowerShellService
             var executionPolicy = _configurationService.Config.PowerShell.ExecutionPolicy ?? "RemoteSigned";
             var psi = new ProcessStartInfo
             {
-                FileName = PowerShellExe,
+                FileName = _powerShellExe,
                 Arguments = $"-NoProfile -NonInteractive -ExecutionPolicy {executionPolicy} -Command \"{fullCommand}\"",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,

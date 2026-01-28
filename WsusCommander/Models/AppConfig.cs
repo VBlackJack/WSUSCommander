@@ -129,6 +129,18 @@ public sealed class AppSettingsConfig
     /// </summary>
     [Range(10, 1000, ErrorMessage = "Max results must be between 10 and 1000.")]
     public int MaxResultsPerQuery { get; set; } = 100;
+
+    /// <summary>
+    /// Gets or sets the name of the WSUS "All Computers" system group.
+    /// </summary>
+    [StringLength(128)]
+    public string AllComputersGroupName { get; set; } = "All Computers";
+
+    /// <summary>
+    /// Gets or sets the name of the WSUS "Unassigned Computers" system group.
+    /// </summary>
+    [StringLength(128)]
+    public string UnassignedComputersGroupName { get; set; } = "Unassigned Computers";
 }
 
 /// <summary>
@@ -256,6 +268,24 @@ public sealed class PerformanceConfig
     /// </summary>
     [Range(100, 5000, ErrorMessage = "Initial retry delay must be between 100 and 5000 ms.")]
     public int InitialRetryDelayMs { get; set; } = 500;
+
+    /// <summary>
+    /// Gets or sets the circuit breaker failure threshold.
+    /// </summary>
+    [Range(1, 20, ErrorMessage = "Circuit breaker threshold must be between 1 and 20.")]
+    public int CircuitBreakerThreshold { get; set; } = 5;
+
+    /// <summary>
+    /// Gets or sets the circuit breaker timeout in seconds.
+    /// </summary>
+    [Range(10, 300, ErrorMessage = "Circuit breaker timeout must be between 10 and 300 seconds.")]
+    public int CircuitBreakerTimeoutSeconds { get; set; } = 60;
+
+    /// <summary>
+    /// Gets or sets the health check interval in milliseconds.
+    /// </summary>
+    [Range(10000, 300000, ErrorMessage = "Health check interval must be between 10000 and 300000 ms.")]
+    public int HealthCheckIntervalMs { get; set; } = 60000;
 }
 
 /// <summary>
@@ -263,6 +293,11 @@ public sealed class PerformanceConfig
 /// </summary>
 public sealed class PowerShellConfig
 {
+    /// <summary>
+    /// Gets or sets the path to the PowerShell executable.
+    /// </summary>
+    public string ExecutablePath { get; set; } = @"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe";
+
     /// <summary>
     /// Gets or sets the PowerShell execution policy.
     /// </summary>
