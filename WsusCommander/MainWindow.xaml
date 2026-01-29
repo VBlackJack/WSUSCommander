@@ -236,6 +236,10 @@
                                   AutomationProperties.Name="{x:Static p:Resources.MenuSettings}"/>
                     </MenuItem>
                     <MenuItem Header="{x:Static p:Resources.MenuTools}">
+                        <MenuItem Header="Scheduled Tasks"
+                                  Command="{Binding OpenScheduledTasksCommand}"
+                                  AutomationProperties.Name="Scheduled Tasks"/>
+                        <Separator/>
                         <MenuItem Header="{x:Static p:Resources.MenuScheduler}"
                                   Command="{Binding OpenSchedulerCommand}"
                                   AutomationProperties.Name="{x:Static p:Resources.MenuScheduler}"/>

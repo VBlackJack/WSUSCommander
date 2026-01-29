@@ -90,6 +90,12 @@ public partial class MainViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
+    private void OpenScheduledTasks()
+    {
+        _windowService.ShowScheduledTasks();
+    }
+
+    [RelayCommand]
     private void OpenScheduler()
     {
         _windowService.ShowScheduler();

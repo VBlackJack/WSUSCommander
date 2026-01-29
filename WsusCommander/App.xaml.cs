@@ -84,7 +84,11 @@ public partial class App : Application
         ISchedulerService schedulerService = new SchedulerService(loggingService);
         ISettingsBackupService settingsBackupService = new SettingsBackupService(configService, loggingService);
 
+        ITaskSchedulerService taskSchedulerService = new TaskSchedulerService(psService, loggingService, configService);
+        IScheduledTasksService scheduledTasksService = new ScheduledTasksService(configService, loggingService, taskSchedulerService);
+
         await preferencesService.LoadAsync();
+        await scheduledTasksService.LoadAsync();
 
         // Track disposables
         _disposables.Add((IDisposable)cacheService);
@@ -127,7 +131,8 @@ public partial class App : Application
             bulkOperationService,
             groupService,
             dialogService,
-            computerActionService);
+            computerActionService,
+            configService);
         var groupsViewModel = new GroupsViewModel(
             groupService,
             loggingService,
@@ -145,7 +150,15 @@ public partial class App : Application
             fileDialogService,
             notificationService,
             settingsBackupService);
-        IWindowService windowService = new WindowService(settingsViewModel, cleanupService);
+        IWindowService windowService = new WindowService(
+            settingsViewModel,
+            cleanupService,
+            scheduledTasksService,
+            taskSchedulerService,
+            groupService,
+            dialogService,
+            notificationService,
+            loggingService);
 
         _mainViewModel = new MainViewModel(
             connectionViewModel,

@@ -1,0 +1,343 @@
+<Window x:Class="WsusCommander.Views.ScheduledTaskWizardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:WsusCommander.ViewModels"
+        xmlns:models="clr-namespace:WsusCommander.Models"
+        Title="Scheduled Task Wizard"
+        Height="600"
+        Width="700"
+        MinHeight="500"
+        MinWidth="600"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResizeWithGrip"
+        Background="#F5F5F5">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+
+        <!-- Step indicator style -->
+        <Style x:Key="StepIndicator" TargetType="Border">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="Background" Value="#BDC3C7"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Step Indicator Header -->
+        <Border Grid.Row="0" Background="#ECF0F1" Padding="24,16">
+            <StackPanel>
+                <TextBlock Text="{Binding StepTitle}"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Foreground="#2C3E50"/>
+                <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                    <!-- Step circles -->
+                    <Border Style="{StaticResource StepIndicator}"
+                            Background="{Binding CurrentStep, Converter={StaticResource StepColorConverter}, ConverterParameter=0}">
+                        <TextBlock Text="1" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <Rectangle Width="40" Height="2" Fill="#BDC3C7" VerticalAlignment="Center"/>
+                    <Border Style="{StaticResource StepIndicator}"
+                            Background="{Binding CurrentStep, Converter={StaticResource StepColorConverter}, ConverterParameter=1}">
+                        <TextBlock Text="2" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <Rectangle Width="40" Height="2" Fill="#BDC3C7" VerticalAlignment="Center"/>
+                    <Border Style="{StaticResource StepIndicator}"
+                            Background="{Binding CurrentStep, Converter={StaticResource StepColorConverter}, ConverterParameter=2}">
+                        <TextBlock Text="3" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <Rectangle Width="40" Height="2" Fill="#BDC3C7" VerticalAlignment="Center"/>
+                    <Border Style="{StaticResource StepIndicator}"
+                            Background="{Binding CurrentStep, Converter={StaticResource StepColorConverter}, ConverterParameter=3}">
+                        <TextBlock Text="4" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Content Area -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="24">
+            <Grid>
+                <!-- Step 1: Select Type -->
+                <StackPanel Visibility="{Binding CurrentStep, Converter={StaticResource StepVisibilityConverter}, ConverterParameter=SelectType}">
+                    <TextBlock Text="Choose the type of task and optionally select a template."
+                               Margin="0,0,0,16"/>
+
+                    <!-- Task Type Selection -->
+                    <GroupBox Header="Task Type" Margin="0,0,0,16">
+                        <StackPanel Margin="12">
+                            <RadioButton Content="Staged Approval"
+                                         IsChecked="{Binding Task.OperationType, Converter={StaticResource EnumBoolConverter}, ConverterParameter=StagedApproval}"
+                                         Margin="0,4"/>
+                            <RadioButton Content="Cleanup"
+                                         IsChecked="{Binding Task.OperationType, Converter={StaticResource EnumBoolConverter}, ConverterParameter=Cleanup}"
+                                         Margin="0,4"/>
+                            <RadioButton Content="Synchronization"
+                                         IsChecked="{Binding Task.OperationType, Converter={StaticResource EnumBoolConverter}, ConverterParameter=Synchronization}"
+                                         Margin="0,4"/>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <!-- Templates -->
+                    <GroupBox Header="Templates (Optional)">
+                        <StackPanel Margin="12">
+                            <ListBox ItemsSource="{Binding Templates}"
+                                     SelectedItem="{Binding SelectedTemplate}"
+                                     BorderThickness="0"
+                                     Background="Transparent">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="4">
+                                            <TextBlock FontWeight="SemiBold">
+                                                <TextBlock.Text>
+                                                    <Binding Path="NameKey" Converter="{StaticResource TemplateNameConverter}"/>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                            <TextBlock Foreground="#7F8C8D" TextWrapping="Wrap" Margin="0,4,0,0">
+                                                <TextBlock.Text>
+                                                    <Binding Path="DescriptionKey" Converter="{StaticResource TemplateDescConverter}"/>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <Button Content="Apply Template"
+                                    Command="{Binding ApplyTemplateCommand}"
+                                    HorizontalAlignment="Left"
+                                    Margin="0,8,0,0"
+                                    Padding="16,8"/>
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+
+                <!-- Step 2: Configure Groups (for Staged Approval) -->
+                <StackPanel Visibility="{Binding CurrentStep, Converter={StaticResource StepVisibilityConverter}, ConverterParameter=ConfigureGroups}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <GroupBox Grid.Column="0" Header="Test Groups" Margin="0,0,8,0">
+                            <ListBox ItemsSource="{Binding AvailableGroups}"
+                                     SelectionMode="Multiple"
+                                     Height="200"
+                                     Margin="8"
+                                     x:Name="TestGroupsList">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Content="{Binding Name}"
+                                                  IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </GroupBox>
+
+                        <GroupBox Grid.Column="1" Header="Production Groups" Margin="8,0,0,0">
+                            <ListBox ItemsSource="{Binding AvailableGroups}"
+                                     SelectionMode="Multiple"
+                                     Height="200"
+                                     Margin="8"
+                                     x:Name="ProdGroupsList">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Content="{Binding Name}"
+                                                  IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </GroupBox>
+                    </Grid>
+
+                    <GroupBox Header="Settings" Margin="0,16,0,0">
+                        <StackPanel Margin="12">
+                            <StackPanel Orientation="Horizontal" Margin="0,4">
+                                <TextBlock Text="Promotion delay (days):" Width="200"/>
+                                <TextBox Text="{Binding Task.StagedApprovalSettings.PromotionDelayDays, UpdateSourceTrigger=PropertyChanged}"
+                                         Width="80"/>
+                            </StackPanel>
+                            <CheckBox Content="Require successful installations before promoting"
+                                      IsChecked="{Binding Task.StagedApprovalSettings.RequireSuccessfulInstallations}"
+                                      Margin="0,8"/>
+                            <StackPanel Orientation="Horizontal" Margin="20,4,0,0">
+                                <TextBlock Text="Minimum successful:" Width="180"/>
+                                <TextBox Text="{Binding Task.StagedApprovalSettings.MinimumSuccessfulInstallations, UpdateSourceTrigger=PropertyChanged}"
+                                         Width="80"/>
+                            </StackPanel>
+                            <CheckBox Content="Abort on installation failures"
+                                      IsChecked="{Binding Task.StagedApprovalSettings.AbortOnFailures}"
+                                      Margin="0,8"/>
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+
+                <!-- Step 3: Configure Schedule -->
+                <StackPanel Visibility="{Binding CurrentStep, Converter={StaticResource StepVisibilityConverter}, ConverterParameter=ConfigureSchedule}">
+                    <GroupBox Header="Schedule">
+                        <StackPanel Margin="12">
+                            <StackPanel Orientation="Horizontal" Margin="0,8">
+                                <TextBlock Text="Frequency:" Width="150"/>
+                                <ComboBox ItemsSource="{Binding AvailableFrequencies}"
+                                          SelectedItem="{Binding Task.Schedule.Frequency}"
+                                          Width="150">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={StaticResource FrequencyConverter}}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,8">
+                                <TextBlock Text="Time of day:" Width="150"/>
+                                <TextBox Text="{Binding ScheduleHour, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                <TextBlock Text=":" Margin="4,0"/>
+                                <TextBox Text="{Binding ScheduleMinute, UpdateSourceTrigger=PropertyChanged, StringFormat=D2}" Width="50"/>
+                            </StackPanel>
+
+                            <StackPanel Margin="0,8"
+                                        Visibility="{Binding Task.Schedule.Frequency, Converter={StaticResource FrequencyToVisibilityConverter}, ConverterParameter=Weekly}">
+                                <TextBlock Text="Days of week:" Margin="0,0,0,8"/>
+                                <WrapPanel>
+                                    <CheckBox Content="Mon" Margin="0,0,12,4" Tag="Monday"/>
+                                    <CheckBox Content="Tue" Margin="0,0,12,4" Tag="Tuesday" IsChecked="True"/>
+                                    <CheckBox Content="Wed" Margin="0,0,12,4" Tag="Wednesday"/>
+                                    <CheckBox Content="Thu" Margin="0,0,12,4" Tag="Thursday"/>
+                                    <CheckBox Content="Fri" Margin="0,0,12,4" Tag="Friday"/>
+                                    <CheckBox Content="Sat" Margin="0,0,12,4" Tag="Saturday"/>
+                                    <CheckBox Content="Sun" Margin="0,0,12,4" Tag="Sunday"/>
+                                </WrapPanel>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,8"
+                                        Visibility="{Binding Task.Schedule.Frequency, Converter={StaticResource FrequencyToVisibilityConverter}, ConverterParameter=Monthly}">
+                                <TextBlock Text="Day of month:" Width="150"/>
+                                <TextBox Text="{Binding Task.Schedule.DayOfMonth, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,8">
+                                <TextBlock Text="Start date:" Width="150"/>
+                                <DatePicker SelectedDate="{Binding Task.Schedule.StartDate}" Width="150"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <!-- Task Name -->
+                    <GroupBox Header="Task Details" Margin="0,16,0,0">
+                        <StackPanel Margin="12">
+                            <StackPanel Orientation="Horizontal" Margin="0,4">
+                                <TextBlock Text="Task name:" Width="150"/>
+                                <TextBox Text="{Binding Task.Name, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,8">
+                                <TextBlock Text="Description:" Width="150" VerticalAlignment="Top"/>
+                                <TextBox Text="{Binding Task.Description, UpdateSourceTrigger=PropertyChanged}"
+                                         Width="300" Height="60"
+                                         TextWrapping="Wrap"
+                                         AcceptsReturn="True"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+
+                <!-- Step 4: Review -->
+                <StackPanel Visibility="{Binding CurrentStep, Converter={StaticResource StepVisibilityConverter}, ConverterParameter=Review}">
+                    <TextBlock Text="Review your task configuration:"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,16"/>
+
+                    <Border Background="White" BorderBrush="#E0E0E0" BorderThickness="1" Padding="16" CornerRadius="4">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,4">
+                                <TextBlock Text="Task name:" Width="150" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding Task.Name}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,4">
+                                <TextBlock Text="Type:" Width="150" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding Task.OperationType, Converter={StaticResource OperationTypeConverter}}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,4">
+                                <TextBlock Text="Schedule:" Width="150" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding Task.Schedule.DisplayText}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Step 5: Complete -->
+                <StackPanel Visibility="{Binding CurrentStep, Converter={StaticResource StepVisibilityConverter}, ConverterParameter=Complete}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <TextBlock Text="✓"
+                               FontSize="64"
+                               Foreground="#27AE60"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="Task Created Successfully"
+                               FontSize="24"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Center"
+                               Margin="0,16,0,8"/>
+                    <TextBlock Text="Your scheduled task has been created and registered with Windows Task Scheduler."
+                               TextWrapping="Wrap"
+                               TextAlignment="Center"
+                               Foreground="#7F8C8D"
+                               MaxWidth="400"/>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+
+        <!-- Footer Buttons -->
+        <Border Grid.Row="2" Background="#ECF0F1" Padding="24,16">
+            <Grid>
+                <Button Content="Cancel"
+                        Command="{Binding CancelCommand}"
+                        HorizontalAlignment="Left"
+                        Padding="16,8"
+                        MinWidth="100"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Back"
+                            Command="{Binding PreviousStepCommand}"
+                            Visibility="{Binding IsFirstStep, Converter={StaticResource InverseBoolToVisibility}}"
+                            Padding="16,8"
+                            MinWidth="100"
+                            Margin="0,0,8,0"/>
+                    <Button Content="Next"
+                            Command="{Binding NextStepCommand}"
+                            Visibility="{Binding IsLastStep, Converter={StaticResource InverseBoolToVisibility}}"
+                            Background="#3498DB"
+                            Foreground="White"
+                            Padding="16,8"
+                            MinWidth="100"/>
+                    <Button Content="Finish"
+                            Command="{Binding FinishCommand}"
+                            Visibility="{Binding IsLastStep, Converter={StaticResource BoolToVisibility}}"
+                            Background="#27AE60"
+                            Foreground="White"
+                            Padding="16,8"
+                            MinWidth="100"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Saving Overlay -->
+        <Border Grid.RowSpan="3"
+                Background="#80FFFFFF"
+                Visibility="{Binding IsSaving, Converter={StaticResource BoolToVisibility}}">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ProgressBar IsIndeterminate="True" Width="200" Height="4"/>
+                <TextBlock Text="Saving..."
+                           Margin="0,8,0,0"
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

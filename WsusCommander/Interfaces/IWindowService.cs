@@ -59,6 +59,11 @@ public interface IWindowService
     void ShowScheduler();
 
     /// <summary>
+    /// Shows the scheduled tasks management window.
+    /// </summary>
+    void ShowScheduledTasks();
+
+    /// <summary>
     /// Shows the cleanup window.
     /// </summary>
     void ShowCleanup();

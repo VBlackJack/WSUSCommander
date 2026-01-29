@@ -30,15 +30,34 @@ public sealed class WindowService : IWindowService
 {
     private readonly SettingsViewModel _settingsViewModel;
     private readonly ICleanupService _cleanupService;
+    private readonly IScheduledTasksService _scheduledTasksService;
+    private readonly ITaskSchedulerService _taskSchedulerService;
+    private readonly IGroupService _groupService;
+    private readonly IDialogService _dialogService;
+    private readonly INotificationService _notificationService;
+    private readonly ILoggingService _loggingService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WindowService"/> class.
     /// </summary>
-    /// <param name="loggingService">Logging service for diagnostics.</param>
-    public WindowService(SettingsViewModel settingsViewModel, ICleanupService cleanupService)
+    public WindowService(
+        SettingsViewModel settingsViewModel,
+        ICleanupService cleanupService,
+        IScheduledTasksService scheduledTasksService,
+        ITaskSchedulerService taskSchedulerService,
+        IGroupService groupService,
+        IDialogService dialogService,
+        INotificationService notificationService,
+        ILoggingService loggingService)
     {
         _settingsViewModel = settingsViewModel;
         _cleanupService = cleanupService;
+        _scheduledTasksService = scheduledTasksService;
+        _taskSchedulerService = taskSchedulerService;
+        _groupService = groupService;
+        _dialogService = dialogService;
+        _notificationService = notificationService;
+        _loggingService = loggingService;
     }
 
     /// <inheritdoc/>
@@ -112,6 +131,25 @@ public sealed class WindowService : IWindowService
         Application.Current.Dispatcher.Invoke(() =>
         {
             var window = new SchedulerWindow
+            {
+                Owner = Application.Current.MainWindow
+            };
+            window.ShowDialog();
+        });
+    }
+
+    /// <inheritdoc/>
+    public void ShowScheduledTasks()
+    {
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            var window = new ScheduledTasksWindow(
+                _scheduledTasksService,
+                _taskSchedulerService,
+                _groupService,
+                _dialogService,
+                _notificationService,
+                _loggingService)
             {
                 Owner = Application.Current.MainWindow
             };
