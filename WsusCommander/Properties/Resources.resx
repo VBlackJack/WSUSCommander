@@ -1841,12 +1841,6 @@
   <data name="BtnNewTask" xml:space="preserve">
     <value>New Task</value>
   </data>
-  <data name="BtnEditTask" xml:space="preserve">
-    <value>Edit</value>
-  </data>
-  <data name="BtnDeleteTask" xml:space="preserve">
-    <value>Delete</value>
-  </data>
   <data name="BtnRunNow" xml:space="preserve">
     <value>Run Now</value>
   </data>
@@ -1929,9 +1923,6 @@
   </data>
   <data name="BtnFinish" xml:space="preserve">
     <value>Finish</value>
-  </data>
-  <data name="BtnCancel" xml:space="preserve">
-    <value>Cancel</value>
   </data>
   <data name="LblTaskName" xml:space="preserve">
     <value>Task Name:</value>

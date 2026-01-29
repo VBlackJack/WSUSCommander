@@ -1823,12 +1823,6 @@
   <data name="BtnNewTask" xml:space="preserve">
     <value>Nouvelle tâche</value>
   </data>
-  <data name="BtnEditTask" xml:space="preserve">
-    <value>Modifier</value>
-  </data>
-  <data name="BtnDeleteTask" xml:space="preserve">
-    <value>Supprimer</value>
-  </data>
   <data name="BtnRunNow" xml:space="preserve">
     <value>Exécuter maintenant</value>
   </data>
@@ -1911,9 +1905,6 @@
   </data>
   <data name="BtnFinish" xml:space="preserve">
     <value>Terminer</value>
-  </data>
-  <data name="BtnCancel" xml:space="preserve">
-    <value>Annuler</value>
   </data>
   <data name="LblTaskName" xml:space="preserve">
     <value>Nom de la tâche :</value>
