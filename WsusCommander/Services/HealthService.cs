@@ -16,6 +16,7 @@
 
 using System.Diagnostics;
 using System.IO;
+using WsusCommander.Constants;
 
 namespace WsusCommander.Services;
 
@@ -166,7 +167,7 @@ public sealed class HealthService : IHealthService, IDisposable
             // Test TCP connectivity
             using var client = new System.Net.Sockets.TcpClient();
             var connectTask = client.ConnectAsync(serverName, port);
-            var completed = await Task.WhenAny(connectTask, Task.Delay(5000, cancellationToken));
+            var completed = await Task.WhenAny(connectTask, Task.Delay(AppConstants.Timeouts.TcpConnectionCheck, cancellationToken));
 
             sw.Stop();
 
@@ -189,8 +190,8 @@ public sealed class HealthService : IHealthService, IDisposable
             return new HealthCheckResult
             {
                 Name = "WSUS Connectivity",
-                Status = sw.ElapsedMilliseconds > 2000 ? HealthStatus.Degraded : HealthStatus.Healthy,
-                Description = sw.ElapsedMilliseconds > 2000
+                Status = sw.ElapsedMilliseconds > AppConstants.HealthThresholds.SlowResponseMs ? HealthStatus.Degraded : HealthStatus.Healthy,
+                Description = sw.ElapsedMilliseconds > AppConstants.HealthThresholds.SlowResponseMs
                     ? $"WSUS server responding slowly ({sw.ElapsedMilliseconds}ms)"
                     : "WSUS server is reachable",
                 ResponseTimeMs = sw.ElapsedMilliseconds,
@@ -294,7 +295,7 @@ public sealed class HealthService : IHealthService, IDisposable
                 status = HealthStatus.Unhealthy;
                 description = $"Critical: Only {freeSpaceGb:F1} GB free on {driveLetter}";
             }
-            else if (freeSpaceGb < 5 || usedPercent > 90)
+            else if (freeSpaceGb < AppConstants.HealthThresholds.LowDiskSpaceGb || usedPercent > AppConstants.HealthThresholds.DiskUsageWarningPercent)
             {
                 status = HealthStatus.Degraded;
                 description = $"Low disk space: {freeSpaceGb:F1} GB free on {driveLetter}";
@@ -350,7 +351,7 @@ public sealed class HealthService : IHealthService, IDisposable
             HealthStatus status;
             string description;
 
-            if (workingSetMb > 1024)
+            if (workingSetMb > AppConstants.HealthThresholds.HighMemoryUsageMb)
             {
                 status = HealthStatus.Degraded;
                 description = $"High memory usage: {workingSetMb:F0} MB";

@@ -18,6 +18,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using WsusCommander.Constants;
 
 namespace WsusCommander.Services;
 
@@ -135,7 +136,7 @@ public sealed class LoggingService : ILoggingService, IDisposable
             {
                 if (_logQueue.IsEmpty)
                 {
-                    await Task.Delay(100, cancellationToken);
+                    await Task.Delay(AppConstants.Timeouts.LogQueueDelay, cancellationToken);
                     continue;
                 }
 
@@ -217,7 +218,7 @@ public sealed class LoggingService : ILoggingService, IDisposable
 
         try
         {
-            _writeTask.Wait(TimeSpan.FromSeconds(5));
+            _writeTask.Wait(TimeSpan.FromSeconds(AppConstants.RetryDelays.DisposeWaitSeconds));
         }
         catch (AggregateException)
         {

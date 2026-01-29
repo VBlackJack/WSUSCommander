@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using WsusCommander.Constants;
+
 namespace WsusCommander.Models;
 
 /// <summary>
@@ -34,7 +36,7 @@ public sealed class ServerPreset
     /// <summary>
     /// Gets or sets the server port.
     /// </summary>
-    public int Port { get; set; } = 8530;
+    public int Port { get; set; } = AppConstants.Ports.WsusDefault;
 
     /// <summary>
     /// Gets or sets a value indicating whether SSL is used.

@@ -16,6 +16,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using WsusCommander.Constants;
 using WsusCommander.Interfaces;
 using WsusCommander.Models;
 using WsusCommander.Properties;
@@ -47,7 +48,7 @@ public partial class SettingsViewModel : ObservableObject
     private string _defaultServerName = string.Empty;
 
     [ObservableProperty]
-    private int _defaultServerPort = 8530;
+    private int _defaultServerPort = AppConstants.Ports.WsusDefault;
 
     [ObservableProperty]
     private bool _defaultUseSsl;

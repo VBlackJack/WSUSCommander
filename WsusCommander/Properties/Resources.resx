@@ -1821,4 +1821,231 @@
   <data name="ProgressDeclining" xml:space="preserve">
     <value>Declining updates: {0} of {1}</value>
   </data>
+
+  <!-- Scheduled Tasks -->
+  <data name="ErrorTemplateNotFound" xml:space="preserve">
+    <value>Task template not found.</value>
+  </data>
+  <data name="ErrorTaskNameRequired" xml:space="preserve">
+    <value>Task name is required.</value>
+  </data>
+  <data name="MenuScheduledTasks" xml:space="preserve">
+    <value>Scheduled Tasks</value>
+  </data>
+  <data name="ScheduledTasksWindowTitle" xml:space="preserve">
+    <value>Scheduled Tasks</value>
+  </data>
+  <data name="ScheduledTasksDescription" xml:space="preserve">
+    <value>Configure automated WSUS operations that run independently of this application.</value>
+  </data>
+  <data name="BtnNewTask" xml:space="preserve">
+    <value>New Task</value>
+  </data>
+  <data name="BtnEditTask" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="BtnDeleteTask" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="BtnRunNow" xml:space="preserve">
+    <value>Run Now</value>
+  </data>
+  <data name="ColTaskName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ColTaskType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ColTaskSchedule" xml:space="preserve">
+    <value>Schedule</value>
+  </data>
+  <data name="ColTaskLastRun" xml:space="preserve">
+    <value>Last Run</value>
+  </data>
+  <data name="ColTaskNextRun" xml:space="preserve">
+    <value>Next Run</value>
+  </data>
+  <data name="ColTaskStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="TaskTypeStagedApproval" xml:space="preserve">
+    <value>Staged Approval</value>
+  </data>
+  <data name="TaskTypeCleanup" xml:space="preserve">
+    <value>Cleanup</value>
+  </data>
+  <data name="TaskTypeSynchronization" xml:space="preserve">
+    <value>Synchronization</value>
+  </data>
+  <data name="TaskStatusNeverRun" xml:space="preserve">
+    <value>Never Run</value>
+  </data>
+  <data name="TaskStatusSuccess" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="TaskStatusWarning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="TaskStatusFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="ConfirmDeleteTask" xml:space="preserve">
+    <value>Delete scheduled task '{0}'? This will also remove it from Windows Task Scheduler.</value>
+  </data>
+  <data name="ConfirmRunTask" xml:space="preserve">
+    <value>Run task '{0}' now?</value>
+  </data>
+
+  <!-- Task Wizard -->
+  <data name="WizardTitle" xml:space="preserve">
+    <value>Scheduled Task Wizard</value>
+  </data>
+  <data name="WizardStepType" xml:space="preserve">
+    <value>Task Type</value>
+  </data>
+  <data name="WizardStepGroups" xml:space="preserve">
+    <value>Target Groups</value>
+  </data>
+  <data name="WizardStepSchedule" xml:space="preserve">
+    <value>Schedule</value>
+  </data>
+  <data name="WizardStepReview" xml:space="preserve">
+    <value>Review</value>
+  </data>
+  <data name="WizardStepComplete" xml:space="preserve">
+    <value>Complete</value>
+  </data>
+  <data name="WizardSelectType" xml:space="preserve">
+    <value>Select the type of task to create:</value>
+  </data>
+  <data name="WizardSelectTemplate" xml:space="preserve">
+    <value>Or choose a template:</value>
+  </data>
+  <data name="BtnBack" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="BtnNext" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="BtnFinish" xml:space="preserve">
+    <value>Finish</value>
+  </data>
+  <data name="BtnCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="LblTaskName" xml:space="preserve">
+    <value>Task Name:</value>
+  </data>
+  <data name="LblTaskDescription" xml:space="preserve">
+    <value>Description:</value>
+  </data>
+  <data name="LblTestGroups" xml:space="preserve">
+    <value>Test Groups:</value>
+  </data>
+  <data name="LblProductionGroups" xml:space="preserve">
+    <value>Production Groups:</value>
+  </data>
+  <data name="LblPromotionDelay" xml:space="preserve">
+    <value>Promotion Delay (days):</value>
+  </data>
+  <data name="LblUpdateClassifications" xml:space="preserve">
+    <value>Update Classifications:</value>
+  </data>
+  <data name="LblRequireSuccessfulInstalls" xml:space="preserve">
+    <value>Require successful installations before promotion</value>
+  </data>
+  <data name="LblMinSuccessfulInstalls" xml:space="preserve">
+    <value>Minimum successful installations:</value>
+  </data>
+  <data name="LblAbortOnFailures" xml:space="preserve">
+    <value>Abort promotion if failures detected</value>
+  </data>
+  <data name="LblMaxAllowedFailures" xml:space="preserve">
+    <value>Maximum allowed failures:</value>
+  </data>
+  <data name="LblScheduleFrequency" xml:space="preserve">
+    <value>Frequency:</value>
+  </data>
+  <data name="LblScheduleTime" xml:space="preserve">
+    <value>Time:</value>
+  </data>
+  <data name="LblScheduleDaysOfWeek" xml:space="preserve">
+    <value>Days of Week:</value>
+  </data>
+  <data name="LblScheduleDayOfMonth" xml:space="preserve">
+    <value>Day of Month:</value>
+  </data>
+  <data name="LblScheduleStartDate" xml:space="preserve">
+    <value>Start Date:</value>
+  </data>
+  <data name="FrequencyOnce" xml:space="preserve">
+    <value>Once</value>
+  </data>
+  <data name="FrequencyDaily" xml:space="preserve">
+    <value>Daily</value>
+  </data>
+  <data name="FrequencyWeekly" xml:space="preserve">
+    <value>Weekly</value>
+  </data>
+  <data name="FrequencyMonthly" xml:space="preserve">
+    <value>Monthly</value>
+  </data>
+  <data name="WizardSummary" xml:space="preserve">
+    <value>Review your task configuration:</value>
+  </data>
+  <data name="WizardTaskCreated" xml:space="preserve">
+    <value>Task created successfully!</value>
+  </data>
+  <data name="WizardTaskCreatedDescription" xml:space="preserve">
+    <value>The task has been registered with Windows Task Scheduler and will run according to the schedule even when this application is closed.</value>
+  </data>
+
+  <!-- Task Templates -->
+  <data name="TemplateNameStagedSecurity" xml:space="preserve">
+    <value>Staged Security Approval (Recommended)</value>
+  </data>
+  <data name="TemplateDescStagedSecurity" xml:space="preserve">
+    <value>Automatically approve security and critical updates for test groups, then promote to production after a delay. Runs weekly on Tuesday after Patch Tuesday.</value>
+  </data>
+  <data name="TemplateNameMonthlyCleanup" xml:space="preserve">
+    <value>Monthly WSUS Cleanup</value>
+  </data>
+  <data name="TemplateDescMonthlyCleanup" xml:space="preserve">
+    <value>Remove obsolete updates, expired updates, and stale computers on the first of each month.</value>
+  </data>
+  <data name="TemplateNameDailySync" xml:space="preserve">
+    <value>Daily Synchronization</value>
+  </data>
+  <data name="TemplateDescDailySync" xml:space="preserve">
+    <value>Synchronize with Microsoft Update every day at 2:00 AM.</value>
+  </data>
+
+  <!-- Staged Approval Tracking -->
+  <data name="StagedApprovalStatusInTesting" xml:space="preserve">
+    <value>In Testing</value>
+  </data>
+  <data name="StagedApprovalStatusReadyForPromotion" xml:space="preserve">
+    <value>Ready for Promotion</value>
+  </data>
+  <data name="StagedApprovalStatusPromoted" xml:space="preserve">
+    <value>Promoted</value>
+  </data>
+  <data name="StagedApprovalStatusBlocked" xml:space="preserve">
+    <value>Blocked</value>
+  </data>
+  <data name="StagedApprovalStatusSkipped" xml:space="preserve">
+    <value>Skipped</value>
+  </data>
+  <data name="LblSuccessfulInstalls" xml:space="preserve">
+    <value>Successful: {0}</value>
+  </data>
+  <data name="LblFailedInstalls" xml:space="preserve">
+    <value>Failed: {0}</value>
+  </data>
+  <data name="LblPendingInstalls" xml:space="preserve">
+    <value>Pending: {0}</value>
+  </data>
+  <data name="LblEligibleForPromotion" xml:space="preserve">
+    <value>Eligible for promotion: {0}</value>
+  </data>
 </root>

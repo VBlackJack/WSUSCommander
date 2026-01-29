@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using WsusCommander.Constants;
+
 namespace WsusCommander.Services;
 
 /// <summary>
@@ -59,7 +61,7 @@ public sealed class AccessibilitySettings
     /// <summary>
     /// Gets or sets the minimum touch target size in pixels.
     /// </summary>
-    public int MinTouchTargetSize { get; set; } = 44;
+    public int MinTouchTargetSize { get; set; } = AppConstants.Accessibility.MinTouchTargetSize;
 
     /// <summary>
     /// Gets or sets whether focus indicators are enhanced.

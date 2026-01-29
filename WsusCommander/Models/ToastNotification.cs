@@ -15,6 +15,7 @@
  */
 
 using System.ComponentModel.DataAnnotations;
+using WsusCommander.Constants;
 
 namespace WsusCommander.Models;
 
@@ -57,7 +58,7 @@ public sealed class ToastNotification
     /// Gets or sets the duration in milliseconds.
     /// </summary>
     [Range(100, 60000)]
-    public int Duration { get; init; } = 3000;
+    public int Duration { get; init; } = AppConstants.ToastDurations.Info;
 
     /// <summary>
     /// Gets or sets the unique identifier.

@@ -17,6 +17,7 @@
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
+using WsusCommander.Constants;
 using WsusCommander.Models;
 
 namespace WsusCommander.Converters;
@@ -32,15 +33,15 @@ public sealed class ToastTypeToColorConverter : IValueConverter
     {
         if (value is not ToastType type)
         {
-            return new SolidColorBrush(Color.FromRgb(0x34, 0x98, 0xDB)); // Default blue
+            return new SolidColorBrush(ColorConstants.Toast.Info);
         }
 
         return type switch
         {
-            ToastType.Success => new SolidColorBrush(Color.FromRgb(0x27, 0xAE, 0x60)),
-            ToastType.Warning => new SolidColorBrush(Color.FromRgb(0xF3, 0x9C, 0x12)),
-            ToastType.Error => new SolidColorBrush(Color.FromRgb(0xE7, 0x4C, 0x3C)),
-            _ => new SolidColorBrush(Color.FromRgb(0x34, 0x98, 0xDB))
+            ToastType.Success => new SolidColorBrush(ColorConstants.Toast.Success),
+            ToastType.Warning => new SolidColorBrush(ColorConstants.Toast.Warning),
+            ToastType.Error => new SolidColorBrush(ColorConstants.Toast.Error),
+            _ => new SolidColorBrush(ColorConstants.Toast.Info)
         };
     }
 

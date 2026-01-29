@@ -36,6 +36,7 @@ public sealed partial class StagingViewModel : ObservableObject
     private readonly IGroupService _groupService;
     private readonly IDialogService _dialogService;
     private readonly IComputerActionService _computerActionService;
+    private readonly IConfigurationService _configService;
 
     [ObservableProperty]
     private ObservableCollection<ComputerStatus> _stagingComputers = [];
@@ -56,7 +57,8 @@ public sealed partial class StagingViewModel : ObservableObject
         IBulkOperationService bulkOperationService,
         IGroupService groupService,
         IDialogService dialogService,
-        IComputerActionService computerActionService)
+        IComputerActionService computerActionService,
+        IConfigurationService configService)
     {
         _wsusService = wsusService;
         _loggingService = loggingService;
@@ -65,6 +67,7 @@ public sealed partial class StagingViewModel : ObservableObject
         _groupService = groupService;
         _dialogService = dialogService;
         _computerActionService = computerActionService;
+        _configService = configService;
     }
 
     /// <summary>
@@ -100,8 +103,9 @@ public sealed partial class StagingViewModel : ObservableObject
             return;
 
         var groups = await _groupService.GetAllGroupsAsync(true, cancellationToken);
+        var unassignedGroupName = _configService.Config.AppSettings.UnassignedComputersGroupName;
         var groupNames = string.Join(", ", groups
-            .Where(g => !string.Equals(g.Name, "Unassigned Computers", StringComparison.OrdinalIgnoreCase))
+            .Where(g => !string.Equals(g.Name, unassignedGroupName, StringComparison.OrdinalIgnoreCase))
             .Select(g => g.Name)
             .OrderBy(name => name));
 

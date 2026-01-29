@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using WsusCommander.Constants;
 using WsusCommander.Interfaces;
 using WsusCommander.Models;
 
@@ -36,7 +37,7 @@ public sealed class NotificationService : INotificationService
     }
 
     /// <inheritdoc/>
-    public void ShowToast(string message, ToastType type = ToastType.Info, int durationMs = 3000)
+    public void ShowToast(string message, ToastType type = ToastType.Info, int durationMs = AppConstants.ToastDurations.Info)
     {
         switch (type)
         {

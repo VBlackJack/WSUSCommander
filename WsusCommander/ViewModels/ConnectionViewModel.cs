@@ -17,6 +17,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using WsusCommander.Constants;
 using WsusCommander.Interfaces;
 using WsusCommander.Models;
 using WsusCommander.Properties;
@@ -37,7 +38,7 @@ public partial class ConnectionViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ConnectCommand))]
-    private int _port = 8530;
+    private int _port = AppConstants.Ports.WsusDefault;
 
     [ObservableProperty]
     private bool _useSsl;

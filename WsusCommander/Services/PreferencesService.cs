@@ -97,7 +97,7 @@ public sealed class PreferencesService : IPreferencesService
     {
         _preferences = new UserPreferences();
         _hasSavedPreferences = false;
-        _loggingService.LogInfoAsync("User preferences reset to defaults.");
+        _ = _loggingService.LogInfoAsync("User preferences reset to defaults.");
     }
 
     /// <inheritdoc/>

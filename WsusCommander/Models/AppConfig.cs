@@ -15,6 +15,7 @@
  */
 
 using System.ComponentModel.DataAnnotations;
+using WsusCommander.Constants;
 
 namespace WsusCommander.Models;
 
@@ -79,7 +80,7 @@ public sealed class WsusConnectionConfig
     /// Gets or sets the WSUS server port.
     /// </summary>
     [Range(1, 65535, ErrorMessage = "Port must be between 1 and 65535.")]
-    public int Port { get; set; } = 8530;
+    public int Port { get; set; } = AppConstants.Ports.WsusDefault;
 
     /// <summary>
     /// Gets or sets a value indicating whether to use SSL for the connection.
@@ -362,7 +363,7 @@ public sealed class EmailConfig
     /// Gets or sets the SMTP server port.
     /// </summary>
     [Range(1, 65535, ErrorMessage = "SMTP port must be between 1 and 65535.")]
-    public int SmtpPort { get; set; } = 587;
+    public int SmtpPort { get; set; } = AppConstants.Ports.SmtpTls;
 
     /// <summary>
     /// Gets or sets a value indicating whether to use SSL.

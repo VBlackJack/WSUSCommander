@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using WsusCommander.Constants;
 using WsusCommander.Models;
 
 namespace WsusCommander.Interfaces;
@@ -29,7 +30,7 @@ public interface INotificationService
     /// <param name="message">Notification message.</param>
     /// <param name="type">Notification type.</param>
     /// <param name="durationMs">Duration in milliseconds.</param>
-    void ShowToast(string message, ToastType type = ToastType.Info, int durationMs = 3000);
+    void ShowToast(string message, ToastType type = ToastType.Info, int durationMs = AppConstants.ToastDurations.Info);
 
     /// <summary>
     /// Shows a balloon notification.

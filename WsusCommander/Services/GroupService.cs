@@ -15,6 +15,7 @@
  */
 
 using System.Management.Automation;
+using WsusCommander.Constants;
 using WsusCommander.Models;
 
 namespace WsusCommander.Services;
@@ -94,7 +95,7 @@ public sealed class GroupService : IGroupService
 
                 return groups;
             },
-            TimeSpan.FromMinutes(2));
+            TimeSpan.FromMinutes(AppConstants.Cache.GroupsCacheTtlMinutes));
     }
 
     /// <inheritdoc/>

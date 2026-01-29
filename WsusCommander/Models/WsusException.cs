@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using WsusCommander.Constants;
+
 namespace WsusCommander.Models;
 
 /// <summary>
@@ -182,11 +184,11 @@ public class WsusException : Exception
     {
         return errorCode switch
         {
-            WsusErrorCode.ConnectionTimeout => TimeSpan.FromSeconds(5),
-            WsusErrorCode.ServerUnavailable => TimeSpan.FromSeconds(30),
-            WsusErrorCode.SyncInProgress => TimeSpan.FromMinutes(1),
-            WsusErrorCode.ScriptTimeout => TimeSpan.FromSeconds(10),
-            WsusErrorCode.OperationTimeout => TimeSpan.FromSeconds(5),
+            WsusErrorCode.ConnectionTimeout => TimeSpan.FromSeconds(AppConstants.RetryDelays.ConnectionTimeoutSeconds),
+            WsusErrorCode.ServerUnavailable => TimeSpan.FromSeconds(AppConstants.RetryDelays.ServerUnavailableSeconds),
+            WsusErrorCode.SyncInProgress => TimeSpan.FromMinutes(AppConstants.RetryDelays.SyncInProgressMinutes),
+            WsusErrorCode.ScriptTimeout => TimeSpan.FromSeconds(AppConstants.RetryDelays.ScriptTimeoutSeconds),
+            WsusErrorCode.OperationTimeout => TimeSpan.FromSeconds(AppConstants.RetryDelays.OperationTimeoutSeconds),
             _ => null
         };
     }

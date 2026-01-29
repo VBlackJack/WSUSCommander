@@ -16,6 +16,7 @@
 
 using System.Windows;
 using Microsoft.Win32;
+using WsusCommander.Constants;
 using WsusCommander.Models;
 using WsusCommander.Views;
 
@@ -96,7 +97,7 @@ public sealed class DialogService : IDialogService
     public event EventHandler<ToastNotification>? ToastRequested;
 
     /// <inheritdoc/>
-    public void ShowToast(string message, int duration = 3000)
+    public void ShowToast(string message, int duration = AppConstants.ToastDurations.Info)
     {
         RaiseToast(new ToastNotification
         {
@@ -107,7 +108,7 @@ public sealed class DialogService : IDialogService
     }
 
     /// <inheritdoc/>
-    public void ShowSuccessToast(string message, int duration = 3000)
+    public void ShowSuccessToast(string message, int duration = AppConstants.ToastDurations.Success)
     {
         RaiseToast(new ToastNotification
         {
@@ -118,7 +119,7 @@ public sealed class DialogService : IDialogService
     }
 
     /// <inheritdoc/>
-    public void ShowWarningToast(string message, int duration = 3000)
+    public void ShowWarningToast(string message, int duration = AppConstants.ToastDurations.Warning)
     {
         RaiseToast(new ToastNotification
         {
@@ -129,7 +130,7 @@ public sealed class DialogService : IDialogService
     }
 
     /// <inheritdoc/>
-    public void ShowErrorToast(string message, int duration = 5000)
+    public void ShowErrorToast(string message, int duration = AppConstants.ToastDurations.Error)
     {
         RaiseToast(new ToastNotification
         {

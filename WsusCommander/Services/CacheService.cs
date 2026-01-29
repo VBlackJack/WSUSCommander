@@ -15,6 +15,7 @@
  */
 
 using System.Collections.Concurrent;
+using WsusCommander.Constants;
 
 namespace WsusCommander.Services;
 
@@ -37,8 +38,9 @@ public sealed class CacheService : ICacheService, IDisposable
     {
         _configService = configService;
 
-        // Cleanup expired entries every minute
-        _cleanupTimer = new Timer(CleanupExpired, null, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
+        // Cleanup expired entries periodically
+        var cleanupInterval = TimeSpan.FromMinutes(AppConstants.Cache.CleanupIntervalMinutes);
+        _cleanupTimer = new Timer(CleanupExpired, null, cleanupInterval, cleanupInterval);
     }
 
     /// <inheritdoc/>

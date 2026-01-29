@@ -15,6 +15,7 @@
  */
 
 using System.Reflection;
+using WsusCommander.Constants;
 using WsusCommander.Models;
 
 namespace WsusCommander.Services;
@@ -208,40 +209,40 @@ public sealed class FilterService : IFilterService
             // KB article exact match (highest priority)
             if (update.KbArticle?.Equals(term, StringComparison.OrdinalIgnoreCase) ?? false)
             {
-                score += 100;
+                score += AppConstants.SearchScoring.KbExactMatch;
             }
             else if (update.KbArticle?.Contains(term, StringComparison.OrdinalIgnoreCase) ?? false)
             {
-                score += 50;
+                score += AppConstants.SearchScoring.KbPartialMatch;
             }
 
             // Title match
             if (update.Title?.Contains(term, StringComparison.OrdinalIgnoreCase) ?? false)
             {
-                score += 30;
+                score += AppConstants.SearchScoring.TitleMatch;
                 // Boost for title starting with term
                 if (update.Title.StartsWith(term, StringComparison.OrdinalIgnoreCase))
                 {
-                    score += 20;
+                    score += AppConstants.SearchScoring.TitleStartsWithBonus;
                 }
             }
 
             // Description match
             if (update.Description?.Contains(term, StringComparison.OrdinalIgnoreCase) ?? false)
             {
-                score += 10;
+                score += AppConstants.SearchScoring.DescriptionMatch;
             }
 
             // Product match
             if (update.ProductTitles?.Any(p => p.Contains(term, StringComparison.OrdinalIgnoreCase)) ?? false)
             {
-                score += 15;
+                score += AppConstants.SearchScoring.ProductMatch;
             }
 
             // Classification match
             if (update.Classification?.Contains(term, StringComparison.OrdinalIgnoreCase) ?? false)
             {
-                score += 20;
+                score += AppConstants.SearchScoring.ClassificationMatch;
             }
         }
 

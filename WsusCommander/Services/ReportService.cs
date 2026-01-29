@@ -20,6 +20,7 @@ using System.Text;
 using System.Text.Json;
 using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
+using WsusCommander.Constants;
 using WsusCommander.Models;
 using WsusCommander.Properties;
 
@@ -109,7 +110,7 @@ public sealed class ReportService : IReportService
 
                 return ParseStaleComputers(result);
             },
-            TimeSpan.FromMinutes(5));
+            TimeSpan.FromMinutes(AppConstants.Cache.ReportsCacheTtlMinutes));
     }
 
     /// <inheritdoc/>
@@ -134,7 +135,7 @@ public sealed class ReportService : IReportService
 
                 return ParseCriticalUpdatesSummary(result);
             },
-            TimeSpan.FromMinutes(5));
+            TimeSpan.FromMinutes(AppConstants.Cache.ReportsCacheTtlMinutes));
     }
 
     /// <inheritdoc/>
@@ -241,8 +242,8 @@ public sealed class ReportService : IReportService
         // Determine overall status
         report.OverallStatus = report.CompliancePercent switch
         {
-            >= 95 => ComplianceStatus.Compliant,
-            >= 70 => ComplianceStatus.PartiallyCompliant,
+            >= AppConstants.ComplianceThresholds.Compliant => ComplianceStatus.Compliant,
+            >= AppConstants.ComplianceThresholds.PartiallyCompliant => ComplianceStatus.PartiallyCompliant,
             > 0 => ComplianceStatus.NonCompliant,
             _ => ComplianceStatus.Unknown
         };

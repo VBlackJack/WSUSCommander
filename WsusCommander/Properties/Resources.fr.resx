@@ -1803,4 +1803,231 @@
   <data name="ProgressDeclining" xml:space="preserve">
     <value>Refus des mises à jour : {0} sur {1}</value>
   </data>
+
+  <!-- Scheduled Tasks -->
+  <data name="ErrorTemplateNotFound" xml:space="preserve">
+    <value>Modèle de tâche introuvable.</value>
+  </data>
+  <data name="ErrorTaskNameRequired" xml:space="preserve">
+    <value>Le nom de la tâche est requis.</value>
+  </data>
+  <data name="MenuScheduledTasks" xml:space="preserve">
+    <value>Tâches planifiées</value>
+  </data>
+  <data name="ScheduledTasksWindowTitle" xml:space="preserve">
+    <value>Tâches planifiées</value>
+  </data>
+  <data name="ScheduledTasksDescription" xml:space="preserve">
+    <value>Configurez les opérations WSUS automatisées qui s'exécutent indépendamment de cette application.</value>
+  </data>
+  <data name="BtnNewTask" xml:space="preserve">
+    <value>Nouvelle tâche</value>
+  </data>
+  <data name="BtnEditTask" xml:space="preserve">
+    <value>Modifier</value>
+  </data>
+  <data name="BtnDeleteTask" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="BtnRunNow" xml:space="preserve">
+    <value>Exécuter maintenant</value>
+  </data>
+  <data name="ColTaskName" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="ColTaskType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ColTaskSchedule" xml:space="preserve">
+    <value>Planification</value>
+  </data>
+  <data name="ColTaskLastRun" xml:space="preserve">
+    <value>Dernière exécution</value>
+  </data>
+  <data name="ColTaskNextRun" xml:space="preserve">
+    <value>Prochaine exécution</value>
+  </data>
+  <data name="ColTaskStatus" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="TaskTypeStagedApproval" xml:space="preserve">
+    <value>Approbation par étapes</value>
+  </data>
+  <data name="TaskTypeCleanup" xml:space="preserve">
+    <value>Nettoyage</value>
+  </data>
+  <data name="TaskTypeSynchronization" xml:space="preserve">
+    <value>Synchronisation</value>
+  </data>
+  <data name="TaskStatusNeverRun" xml:space="preserve">
+    <value>Jamais exécutée</value>
+  </data>
+  <data name="TaskStatusSuccess" xml:space="preserve">
+    <value>Succès</value>
+  </data>
+  <data name="TaskStatusWarning" xml:space="preserve">
+    <value>Avertissement</value>
+  </data>
+  <data name="TaskStatusFailed" xml:space="preserve">
+    <value>Échec</value>
+  </data>
+  <data name="ConfirmDeleteTask" xml:space="preserve">
+    <value>Supprimer la tâche planifiée « {0} » ? Cela la supprimera également du Planificateur de tâches Windows.</value>
+  </data>
+  <data name="ConfirmRunTask" xml:space="preserve">
+    <value>Exécuter la tâche « {0} » maintenant ?</value>
+  </data>
+
+  <!-- Task Wizard -->
+  <data name="WizardTitle" xml:space="preserve">
+    <value>Assistant de tâche planifiée</value>
+  </data>
+  <data name="WizardStepType" xml:space="preserve">
+    <value>Type de tâche</value>
+  </data>
+  <data name="WizardStepGroups" xml:space="preserve">
+    <value>Groupes cibles</value>
+  </data>
+  <data name="WizardStepSchedule" xml:space="preserve">
+    <value>Planification</value>
+  </data>
+  <data name="WizardStepReview" xml:space="preserve">
+    <value>Révision</value>
+  </data>
+  <data name="WizardStepComplete" xml:space="preserve">
+    <value>Terminé</value>
+  </data>
+  <data name="WizardSelectType" xml:space="preserve">
+    <value>Sélectionnez le type de tâche à créer :</value>
+  </data>
+  <data name="WizardSelectTemplate" xml:space="preserve">
+    <value>Ou choisissez un modèle :</value>
+  </data>
+  <data name="BtnBack" xml:space="preserve">
+    <value>Précédent</value>
+  </data>
+  <data name="BtnNext" xml:space="preserve">
+    <value>Suivant</value>
+  </data>
+  <data name="BtnFinish" xml:space="preserve">
+    <value>Terminer</value>
+  </data>
+  <data name="BtnCancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="LblTaskName" xml:space="preserve">
+    <value>Nom de la tâche :</value>
+  </data>
+  <data name="LblTaskDescription" xml:space="preserve">
+    <value>Description :</value>
+  </data>
+  <data name="LblTestGroups" xml:space="preserve">
+    <value>Groupes de test :</value>
+  </data>
+  <data name="LblProductionGroups" xml:space="preserve">
+    <value>Groupes de production :</value>
+  </data>
+  <data name="LblPromotionDelay" xml:space="preserve">
+    <value>Délai de promotion (jours) :</value>
+  </data>
+  <data name="LblUpdateClassifications" xml:space="preserve">
+    <value>Classifications de mises à jour :</value>
+  </data>
+  <data name="LblRequireSuccessfulInstalls" xml:space="preserve">
+    <value>Exiger des installations réussies avant la promotion</value>
+  </data>
+  <data name="LblMinSuccessfulInstalls" xml:space="preserve">
+    <value>Minimum d'installations réussies :</value>
+  </data>
+  <data name="LblAbortOnFailures" xml:space="preserve">
+    <value>Annuler la promotion en cas d'échecs détectés</value>
+  </data>
+  <data name="LblMaxAllowedFailures" xml:space="preserve">
+    <value>Échecs maximum autorisés :</value>
+  </data>
+  <data name="LblScheduleFrequency" xml:space="preserve">
+    <value>Fréquence :</value>
+  </data>
+  <data name="LblScheduleTime" xml:space="preserve">
+    <value>Heure :</value>
+  </data>
+  <data name="LblScheduleDaysOfWeek" xml:space="preserve">
+    <value>Jours de la semaine :</value>
+  </data>
+  <data name="LblScheduleDayOfMonth" xml:space="preserve">
+    <value>Jour du mois :</value>
+  </data>
+  <data name="LblScheduleStartDate" xml:space="preserve">
+    <value>Date de début :</value>
+  </data>
+  <data name="FrequencyOnce" xml:space="preserve">
+    <value>Une fois</value>
+  </data>
+  <data name="FrequencyDaily" xml:space="preserve">
+    <value>Quotidien</value>
+  </data>
+  <data name="FrequencyWeekly" xml:space="preserve">
+    <value>Hebdomadaire</value>
+  </data>
+  <data name="FrequencyMonthly" xml:space="preserve">
+    <value>Mensuel</value>
+  </data>
+  <data name="WizardSummary" xml:space="preserve">
+    <value>Vérifiez la configuration de votre tâche :</value>
+  </data>
+  <data name="WizardTaskCreated" xml:space="preserve">
+    <value>Tâche créée avec succès !</value>
+  </data>
+  <data name="WizardTaskCreatedDescription" xml:space="preserve">
+    <value>La tâche a été enregistrée dans le Planificateur de tâches Windows et s'exécutera selon la planification même lorsque cette application est fermée.</value>
+  </data>
+
+  <!-- Task Templates -->
+  <data name="TemplateNameStagedSecurity" xml:space="preserve">
+    <value>Approbation sécurité par étapes (Recommandé)</value>
+  </data>
+  <data name="TemplateDescStagedSecurity" xml:space="preserve">
+    <value>Approuve automatiquement les mises à jour de sécurité et critiques pour les groupes de test, puis les promeut en production après un délai. S'exécute chaque mardi après le Patch Tuesday.</value>
+  </data>
+  <data name="TemplateNameMonthlyCleanup" xml:space="preserve">
+    <value>Nettoyage WSUS mensuel</value>
+  </data>
+  <data name="TemplateDescMonthlyCleanup" xml:space="preserve">
+    <value>Supprime les mises à jour obsolètes, expirées et les ordinateurs inactifs le premier de chaque mois.</value>
+  </data>
+  <data name="TemplateNameDailySync" xml:space="preserve">
+    <value>Synchronisation quotidienne</value>
+  </data>
+  <data name="TemplateDescDailySync" xml:space="preserve">
+    <value>Synchronise avec Microsoft Update tous les jours à 2h00.</value>
+  </data>
+
+  <!-- Staged Approval Tracking -->
+  <data name="StagedApprovalStatusInTesting" xml:space="preserve">
+    <value>En test</value>
+  </data>
+  <data name="StagedApprovalStatusReadyForPromotion" xml:space="preserve">
+    <value>Prêt pour promotion</value>
+  </data>
+  <data name="StagedApprovalStatusPromoted" xml:space="preserve">
+    <value>Promu</value>
+  </data>
+  <data name="StagedApprovalStatusBlocked" xml:space="preserve">
+    <value>Bloqué</value>
+  </data>
+  <data name="StagedApprovalStatusSkipped" xml:space="preserve">
+    <value>Ignoré</value>
+  </data>
+  <data name="LblSuccessfulInstalls" xml:space="preserve">
+    <value>Réussies : {0}</value>
+  </data>
+  <data name="LblFailedInstalls" xml:space="preserve">
+    <value>Échouées : {0}</value>
+  </data>
+  <data name="LblPendingInstalls" xml:space="preserve">
+    <value>En attente : {0}</value>
+  </data>
+  <data name="LblEligibleForPromotion" xml:space="preserve">
+    <value>Éligible pour promotion : {0}</value>
+  </data>
 </root>

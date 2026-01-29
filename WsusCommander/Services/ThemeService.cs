@@ -22,7 +22,7 @@ namespace WsusCommander.Services;
 /// <summary>
 /// Service for managing application theming.
 /// </summary>
-public class ThemeService : IThemeService
+public sealed class ThemeService : IThemeService
 {
     private readonly ILoggingService _loggingService;
     private AppTheme _currentTheme = AppTheme.Light;

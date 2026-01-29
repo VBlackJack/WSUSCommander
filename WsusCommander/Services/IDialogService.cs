@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using WsusCommander.Constants;
+
 namespace WsusCommander.Services;
 
 /// <summary>
@@ -78,28 +80,28 @@ public interface IDialogService
     /// </summary>
     /// <param name="message">Notification message.</param>
     /// <param name="duration">Duration in milliseconds.</param>
-    void ShowToast(string message, int duration = 3000);
+    void ShowToast(string message, int duration = AppConstants.ToastDurations.Info);
 
     /// <summary>
     /// Shows a success toast notification.
     /// </summary>
     /// <param name="message">Notification message.</param>
     /// <param name="duration">Duration in milliseconds.</param>
-    void ShowSuccessToast(string message, int duration = 3000);
+    void ShowSuccessToast(string message, int duration = AppConstants.ToastDurations.Success);
 
     /// <summary>
     /// Shows a warning toast notification.
     /// </summary>
     /// <param name="message">Notification message.</param>
     /// <param name="duration">Duration in milliseconds.</param>
-    void ShowWarningToast(string message, int duration = 3000);
+    void ShowWarningToast(string message, int duration = AppConstants.ToastDurations.Warning);
 
     /// <summary>
     /// Shows an error toast notification.
     /// </summary>
     /// <param name="message">Notification message.</param>
     /// <param name="duration">Duration in milliseconds.</param>
-    void ShowErrorToast(string message, int duration = 5000);
+    void ShowErrorToast(string message, int duration = AppConstants.ToastDurations.Error);
 
     /// <summary>
     /// Event raised when a toast notification should be shown.

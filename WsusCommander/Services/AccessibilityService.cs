@@ -17,6 +17,7 @@
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
+using WsusCommander.Constants;
 
 namespace WsusCommander.Services;
 
@@ -80,7 +81,7 @@ public sealed class AccessibilityService : IAccessibilityService
                 if (mainWindow != null)
                 {
                     var dpiScale = VisualTreeHelper.GetDpi(mainWindow);
-                    return dpiScale.PixelsPerInchY / 96.0;
+                    return dpiScale.PixelsPerInchY / AppConstants.HealthThresholds.StandardDpi;
                 }
             }
             catch
@@ -162,26 +163,26 @@ public sealed class AccessibilityService : IAccessibilityService
     {
         resources["BackgroundBrush"] = new SolidColorBrush(Colors.White);
         resources["ForegroundBrush"] = new SolidColorBrush(Colors.Black);
-        resources["AccentBrush"] = new SolidColorBrush(Color.FromRgb(0, 0, 139));
+        resources["AccentBrush"] = new SolidColorBrush(ColorConstants.HighContrastLight.Accent);
         resources["BorderBrush"] = new SolidColorBrush(Colors.Black);
-        resources["ErrorBrush"] = new SolidColorBrush(Color.FromRgb(139, 0, 0));
-        resources["SuccessBrush"] = new SolidColorBrush(Color.FromRgb(0, 100, 0));
-        resources["WarningBrush"] = new SolidColorBrush(Color.FromRgb(139, 101, 0));
-        resources["DisabledBrush"] = new SolidColorBrush(Color.FromRgb(105, 105, 105));
-        resources["FocusBrush"] = new SolidColorBrush(Color.FromRgb(0, 0, 255));
+        resources["ErrorBrush"] = new SolidColorBrush(ColorConstants.HighContrastLight.Error);
+        resources["SuccessBrush"] = new SolidColorBrush(ColorConstants.HighContrastLight.Success);
+        resources["WarningBrush"] = new SolidColorBrush(ColorConstants.HighContrastLight.Warning);
+        resources["DisabledBrush"] = new SolidColorBrush(ColorConstants.HighContrastLight.Disabled);
+        resources["FocusBrush"] = new SolidColorBrush(ColorConstants.HighContrastLight.Focus);
     }
 
     private static void ApplyHighContrastDark(ResourceDictionary resources)
     {
         resources["BackgroundBrush"] = new SolidColorBrush(Colors.Black);
         resources["ForegroundBrush"] = new SolidColorBrush(Colors.White);
-        resources["AccentBrush"] = new SolidColorBrush(Color.FromRgb(135, 206, 250));
+        resources["AccentBrush"] = new SolidColorBrush(ColorConstants.HighContrastDark.Accent);
         resources["BorderBrush"] = new SolidColorBrush(Colors.White);
-        resources["ErrorBrush"] = new SolidColorBrush(Color.FromRgb(255, 99, 71));
-        resources["SuccessBrush"] = new SolidColorBrush(Color.FromRgb(144, 238, 144));
-        resources["WarningBrush"] = new SolidColorBrush(Color.FromRgb(255, 215, 0));
-        resources["DisabledBrush"] = new SolidColorBrush(Color.FromRgb(169, 169, 169));
-        resources["FocusBrush"] = new SolidColorBrush(Color.FromRgb(255, 255, 0));
+        resources["ErrorBrush"] = new SolidColorBrush(ColorConstants.HighContrastDark.Error);
+        resources["SuccessBrush"] = new SolidColorBrush(ColorConstants.HighContrastDark.Success);
+        resources["WarningBrush"] = new SolidColorBrush(ColorConstants.HighContrastDark.Warning);
+        resources["DisabledBrush"] = new SolidColorBrush(ColorConstants.HighContrastDark.Disabled);
+        resources["FocusBrush"] = new SolidColorBrush(ColorConstants.HighContrastDark.Focus);
     }
 
     private static void ApplyNormalContrast(ResourceDictionary resources)
