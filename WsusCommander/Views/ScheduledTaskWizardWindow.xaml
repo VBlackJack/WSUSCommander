@@ -4,10 +4,10 @@
         xmlns:vm="clr-namespace:WsusCommander.ViewModels"
         xmlns:models="clr-namespace:WsusCommander.Models"
         Title="Scheduled Task Wizard"
-        Height="600"
-        Width="700"
-        MinHeight="500"
-        MinWidth="600"
+        Height="650"
+        Width="750"
+        MinHeight="550"
+        MinWidth="650"
         WindowStartupLocation="CenterOwner"
         ResizeMode="CanResizeWithGrip"
         Background="#F5F5F5">
@@ -20,6 +20,13 @@
             <Setter Property="Height" Value="32"/>
             <Setter Property="CornerRadius" Value="16"/>
             <Setter Property="Background" Value="#BDC3C7"/>
+        </Style>
+
+        <!-- Validation message style -->
+        <Style x:Key="ValidationMessage" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#E74C3C"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="0,8,0,0"/>
         </Style>
     </Window.Resources>
 
@@ -73,13 +80,13 @@
                     <!-- Task Type Selection -->
                     <GroupBox Header="Task Type" Margin="0,0,0,16">
                         <StackPanel Margin="12">
-                            <RadioButton Content="Staged Approval"
+                            <RadioButton Content="Staged Approval - Approve updates in test groups first, then promote to production"
                                          IsChecked="{Binding Task.OperationType, Converter={StaticResource EnumBoolConverter}, ConverterParameter=StagedApproval}"
                                          Margin="0,4"/>
-                            <RadioButton Content="Cleanup"
+                            <RadioButton Content="Cleanup - Remove obsolete updates, computers, and compress revisions"
                                          IsChecked="{Binding Task.OperationType, Converter={StaticResource EnumBoolConverter}, ConverterParameter=Cleanup}"
                                          Margin="0,4"/>
-                            <RadioButton Content="Synchronization"
+                            <RadioButton Content="Synchronization - Sync with Microsoft Update on schedule"
                                          IsChecked="{Binding Task.OperationType, Converter={StaticResource EnumBoolConverter}, ConverterParameter=Synchronization}"
                                          Margin="0,4"/>
                         </StackPanel>
@@ -120,61 +127,75 @@
 
                 <!-- Step 2: Configure Groups (for Staged Approval) -->
                 <StackPanel Visibility="{Binding CurrentStep, Converter={StaticResource StepVisibilityConverter}, ConverterParameter=ConfigureGroups}">
+                    <TextBlock Text="Select the computer groups for staged approval. Updates will be approved for test groups first, then promoted to production after the delay period."
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,16"
+                               Foreground="#7F8C8D"/>
+
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <GroupBox Grid.Column="0" Header="Test Groups" Margin="0,0,8,0">
+                        <GroupBox Grid.Column="0" Header="Test Groups (approve first)" Margin="0,0,8,0">
                             <ListBox ItemsSource="{Binding AvailableGroups}"
-                                     SelectionMode="Multiple"
-                                     Height="200"
+                                     Height="180"
                                      Margin="8"
-                                     x:Name="TestGroupsList">
+                                     SelectionMode="Extended"
+                                     x:Name="TestGroupsList"
+                                     SelectionChanged="TestGroupsList_SelectionChanged">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <CheckBox Content="{Binding Name}"
-                                                  IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/>
+                                        <TextBlock Text="{Binding Name}" Padding="4,2"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
                         </GroupBox>
 
-                        <GroupBox Grid.Column="1" Header="Production Groups" Margin="8,0,0,0">
+                        <GroupBox Grid.Column="1" Header="Production Groups (promote to)" Margin="8,0,0,0">
                             <ListBox ItemsSource="{Binding AvailableGroups}"
-                                     SelectionMode="Multiple"
-                                     Height="200"
+                                     Height="180"
                                      Margin="8"
-                                     x:Name="ProdGroupsList">
+                                     SelectionMode="Extended"
+                                     x:Name="ProdGroupsList"
+                                     SelectionChanged="ProdGroupsList_SelectionChanged">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <CheckBox Content="{Binding Name}"
-                                                  IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/>
+                                        <TextBlock Text="{Binding Name}" Padding="4,2"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
                         </GroupBox>
                     </Grid>
 
-                    <GroupBox Header="Settings" Margin="0,16,0,0">
+                    <!-- Validation Message -->
+                    <TextBlock Text="{Binding ValidationMessage}"
+                               Style="{StaticResource ValidationMessage}"
+                               Visibility="{Binding ValidationMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                    <GroupBox Header="Approval Settings" Margin="0,16,0,0">
                         <StackPanel Margin="12">
                             <StackPanel Orientation="Horizontal" Margin="0,4">
-                                <TextBlock Text="Promotion delay (days):" Width="200"/>
+                                <TextBlock Text="Promotion delay (days):" Width="220"/>
                                 <TextBox Text="{Binding Task.StagedApprovalSettings.PromotionDelayDays, UpdateSourceTrigger=PropertyChanged}"
                                          Width="80"/>
+                                <TextBlock Text="(wait time before promoting to production)" Foreground="#7F8C8D" Margin="8,0,0,0"/>
                             </StackPanel>
                             <CheckBox Content="Require successful installations before promoting"
                                       IsChecked="{Binding Task.StagedApprovalSettings.RequireSuccessfulInstallations}"
                                       Margin="0,8"/>
                             <StackPanel Orientation="Horizontal" Margin="20,4,0,0">
-                                <TextBlock Text="Minimum successful:" Width="180"/>
+                                <TextBlock Text="Minimum successful installs:" Width="200"/>
                                 <TextBox Text="{Binding Task.StagedApprovalSettings.MinimumSuccessfulInstallations, UpdateSourceTrigger=PropertyChanged}"
                                          Width="80"/>
                             </StackPanel>
-                            <CheckBox Content="Abort on installation failures"
+                            <CheckBox Content="Abort promotion if any installation fails"
                                       IsChecked="{Binding Task.StagedApprovalSettings.AbortOnFailures}"
                                       Margin="0,8"/>
+                            <CheckBox Content="Decline superseded updates after approval"
+                                      IsChecked="{Binding Task.StagedApprovalSettings.DeclineSupersededUpdates}"
+                                      Margin="0,4"/>
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>
@@ -227,6 +248,54 @@
                                 <TextBlock Text="Start date:" Width="150"/>
                                 <DatePicker SelectedDate="{Binding Task.Schedule.StartDate}" Width="150"/>
                             </StackPanel>
+
+                            <!-- Validation Message -->
+                            <TextBlock Text="{Binding ValidationMessage}"
+                                       Style="{StaticResource ValidationMessage}"
+                                       Visibility="{Binding ValidationMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <!-- Cleanup Options (shown for Cleanup task type) -->
+                    <GroupBox Header="Cleanup Options" Margin="0,16,0,0"
+                              Visibility="{Binding Task.OperationType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Cleanup}">
+                        <StackPanel Margin="12">
+                            <CheckBox Content="Remove obsolete updates (superseded and not approved)"
+                                      IsChecked="{Binding Task.CleanupSettings.RemoveObsoleteUpdates}"
+                                      Margin="0,4"/>
+                            <CheckBox Content="Remove expired updates"
+                                      IsChecked="{Binding Task.CleanupSettings.RemoveExpiredUpdates}"
+                                      Margin="0,4"/>
+                            <CheckBox Content="Remove stale computers (not reporting for 30+ days)"
+                                      IsChecked="{Binding Task.CleanupSettings.RemoveObsoleteComputers}"
+                                      Margin="0,4"/>
+                            <CheckBox Content="Compress update revisions"
+                                      IsChecked="{Binding Task.CleanupSettings.CompressUpdateRevisions}"
+                                      Margin="0,4"/>
+                            <CheckBox Content="Remove unneeded content files"
+                                      IsChecked="{Binding Task.CleanupSettings.RemoveUnneededContent}"
+                                      Margin="0,4"/>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <!-- Sync Options (shown for Synchronization task type) -->
+                    <GroupBox Header="Synchronization Options" Margin="0,16,0,0"
+                              Visibility="{Binding Task.OperationType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Synchronization}">
+                        <StackPanel Margin="12">
+                            <CheckBox Content="Wait for synchronization to complete"
+                                      IsChecked="{Binding Task.SyncSettings.WaitForCompletion}"
+                                      Margin="0,4"/>
+                            <StackPanel Orientation="Horizontal" Margin="20,4,0,0">
+                                <TextBlock Text="Maximum wait time (minutes):" Width="200"/>
+                                <TextBox Text="{Binding Task.SyncSettings.MaxWaitMinutes, UpdateSourceTrigger=PropertyChanged}"
+                                         Width="80"/>
+                            </StackPanel>
+                            <CheckBox Content="Send notification on completion"
+                                      IsChecked="{Binding Task.SyncSettings.NotifyOnCompletion}"
+                                      Margin="0,8"/>
+                            <CheckBox Content="Only notify on errors"
+                                      IsChecked="{Binding Task.SyncSettings.NotifyOnErrorsOnly}"
+                                      Margin="20,4,0,0"/>
                         </StackPanel>
                     </GroupBox>
 
@@ -235,12 +304,12 @@
                         <StackPanel Margin="12">
                             <StackPanel Orientation="Horizontal" Margin="0,4">
                                 <TextBlock Text="Task name:" Width="150"/>
-                                <TextBox Text="{Binding Task.Name, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
+                                <TextBox Text="{Binding Task.Name, UpdateSourceTrigger=PropertyChanged}" Width="350"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,8">
                                 <TextBlock Text="Description:" Width="150" VerticalAlignment="Top"/>
                                 <TextBox Text="{Binding Task.Description, UpdateSourceTrigger=PropertyChanged}"
-                                         Width="300" Height="60"
+                                         Width="350" Height="60"
                                          TextWrapping="Wrap"
                                          AcceptsReturn="True"/>
                             </StackPanel>
@@ -268,8 +337,27 @@
                                 <TextBlock Text="Schedule:" Width="150" FontWeight="SemiBold"/>
                                 <TextBlock Text="{Binding Task.Schedule.DisplayText}"/>
                             </StackPanel>
+                            <StackPanel Margin="0,4" Visibility="{Binding ShowGroupsStep, Converter={StaticResource BoolToVisibility}}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Test groups:" Width="150" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding SelectedTestGroups.Count, StringFormat='{}{0} group(s) selected'}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,4">
+                                    <TextBlock Text="Production groups:" Width="150" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding SelectedProductionGroups.Count, StringFormat='{}{0} group(s) selected'}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,4">
+                                    <TextBlock Text="Promotion delay:" Width="150" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding Task.StagedApprovalSettings.PromotionDelayDays, StringFormat='{}{0} days'}"/>
+                                </StackPanel>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
+
+                    <TextBlock Text="Click 'Finish' to create the scheduled task and register it with Windows Task Scheduler."
+                               TextWrapping="Wrap"
+                               Foreground="#7F8C8D"
+                               Margin="0,16,0,0"/>
                 </StackPanel>
 
                 <!-- Step 5: Complete -->
@@ -285,11 +373,11 @@
                                FontWeight="SemiBold"
                                HorizontalAlignment="Center"
                                Margin="0,16,0,8"/>
-                    <TextBlock Text="Your scheduled task has been created and registered with Windows Task Scheduler."
+                    <TextBlock Text="Your scheduled task has been created and registered with Windows Task Scheduler. The task will run automatically according to the configured schedule."
                                TextWrapping="Wrap"
                                TextAlignment="Center"
                                Foreground="#7F8C8D"
-                               MaxWidth="400"/>
+                               MaxWidth="450"/>
                 </StackPanel>
             </Grid>
         </ScrollViewer>

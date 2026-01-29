@@ -70,6 +70,8 @@ public sealed partial class ScheduledTaskWizardViewModel : ObservableObject
     /// Gets the task being created or edited.
     /// </summary>
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowGroupsStep))]
+    [NotifyCanExecuteChangedFor(nameof(NextStepCommand))]
     private ScheduledWsusTask _task;
 
     /// <summary>
@@ -80,6 +82,9 @@ public sealed partial class ScheduledTaskWizardViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsLastStep))]
     [NotifyPropertyChangedFor(nameof(ShowGroupsStep))]
     [NotifyPropertyChangedFor(nameof(StepTitle))]
+    [NotifyPropertyChangedFor(nameof(ValidationMessage))]
+    [NotifyCanExecuteChangedFor(nameof(NextStepCommand))]
+    [NotifyCanExecuteChangedFor(nameof(FinishCommand))]
     private WizardStep _currentStep = WizardStep.SelectType;
 
     /// <summary>
@@ -110,12 +115,14 @@ public sealed partial class ScheduledTaskWizardViewModel : ObservableObject
     /// Gets or sets the selected test groups.
     /// </summary>
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(NextStepCommand))]
     private ObservableCollection<ComputerGroup> _selectedTestGroups = [];
 
     /// <summary>
     /// Gets or sets the selected production groups.
     /// </summary>
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(NextStepCommand))]
     private ObservableCollection<ComputerGroup> _selectedProductionGroups = [];
 
     /// <summary>
@@ -134,18 +141,21 @@ public sealed partial class ScheduledTaskWizardViewModel : ObservableObject
     /// Gets or sets the selected days of week.
     /// </summary>
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(NextStepCommand))]
     private ObservableCollection<DayOfWeek> _selectedDaysOfWeek = [];
 
     /// <summary>
     /// Gets or sets the schedule hour.
     /// </summary>
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(NextStepCommand))]
     private int _scheduleHour = 3;
 
     /// <summary>
     /// Gets or sets the schedule minute.
     /// </summary>
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(NextStepCommand))]
     private int _scheduleMinute = 0;
 
     /// <summary>
@@ -176,6 +186,11 @@ public sealed partial class ScheduledTaskWizardViewModel : ObservableObject
         WizardStep.Complete => "Complete",
         _ => string.Empty
     };
+
+    /// <summary>
+    /// Gets the current validation message.
+    /// </summary>
+    public string ValidationMessage => GetValidationMessage();
 
     /// <summary>
     /// Event raised when the wizard completes successfully.
@@ -290,12 +305,14 @@ public sealed partial class ScheduledTaskWizardViewModel : ObservableObject
 
         OnPropertyChanged(nameof(Task));
         OnPropertyChanged(nameof(ShowGroupsStep));
+        OnPropertyChanged(nameof(ValidationMessage));
+        NextStepCommand.NotifyCanExecuteChanged();
     }
 
     /// <summary>
     /// Moves to the next wizard step.
     /// </summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanNextStep))]
     private void NextStep()
     {
         var nextStep = GetNextStep();
@@ -303,8 +320,17 @@ public sealed partial class ScheduledTaskWizardViewModel : ObservableObject
         {
             // Update task from current step before moving
             UpdateTaskFromCurrentStep();
+
+            // Initialize settings for the task type if needed
+            EnsureSettingsInitialized();
+
             CurrentStep = nextStep.Value;
         }
+    }
+
+    private bool CanNextStep()
+    {
+        return IsCurrentStepValid();
     }
 
     /// <summary>
@@ -323,7 +349,7 @@ public sealed partial class ScheduledTaskWizardViewModel : ObservableObject
     /// <summary>
     /// Saves the task and completes the wizard.
     /// </summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanFinish))]
     private async Task FinishAsync()
     {
         try
@@ -353,6 +379,11 @@ public sealed partial class ScheduledTaskWizardViewModel : ObservableObject
         {
             IsSaving = false;
         }
+    }
+
+    private bool CanFinish()
+    {
+        return CurrentStep == WizardStep.Review && !IsSaving;
     }
 
     /// <summary>
@@ -387,6 +418,111 @@ public sealed partial class ScheduledTaskWizardViewModel : ObservableObject
             WizardStep.Review => WizardStep.ConfigureSchedule,
             _ => null
         };
+    }
+
+    private bool IsCurrentStepValid()
+    {
+        return CurrentStep switch
+        {
+            WizardStep.SelectType => true, // Always valid - a type is always selected
+            WizardStep.ConfigureGroups => ValidateGroupsStep(),
+            WizardStep.ConfigureSchedule => ValidateScheduleStep(),
+            WizardStep.Review => true,
+            _ => true
+        };
+    }
+
+    private bool ValidateGroupsStep()
+    {
+        // For staged approval, at least one test group and one production group must be selected
+        if (Task.OperationType == ScheduledTaskOperationType.StagedApproval)
+        {
+            return SelectedTestGroups.Count > 0 && SelectedProductionGroups.Count > 0;
+        }
+
+        return true;
+    }
+
+    private bool ValidateScheduleStep()
+    {
+        // Validate time
+        if (ScheduleHour < 0 || ScheduleHour > 23)
+        {
+            return false;
+        }
+
+        if (ScheduleMinute < 0 || ScheduleMinute > 59)
+        {
+            return false;
+        }
+
+        // For weekly schedule, at least one day must be selected
+        if (Task.Schedule.Frequency == ScheduleFrequency.Weekly && SelectedDaysOfWeek.Count == 0)
+        {
+            return false;
+        }
+
+        // For monthly schedule, day of month must be valid
+        if (Task.Schedule.Frequency == ScheduleFrequency.Monthly)
+        {
+            if (Task.Schedule.DayOfMonth < 1 || Task.Schedule.DayOfMonth > 31)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private string GetValidationMessage()
+    {
+        return CurrentStep switch
+        {
+            WizardStep.ConfigureGroups when SelectedTestGroups.Count == 0 =>
+                "Select at least one test group.",
+            WizardStep.ConfigureGroups when SelectedProductionGroups.Count == 0 =>
+                "Select at least one production group.",
+            WizardStep.ConfigureSchedule when ScheduleHour < 0 || ScheduleHour > 23 =>
+                "Hour must be between 0 and 23.",
+            WizardStep.ConfigureSchedule when ScheduleMinute < 0 || ScheduleMinute > 59 =>
+                "Minute must be between 0 and 59.",
+            WizardStep.ConfigureSchedule when Task.Schedule.Frequency == ScheduleFrequency.Weekly && SelectedDaysOfWeek.Count == 0 =>
+                "Select at least one day of the week.",
+            WizardStep.ConfigureSchedule when Task.Schedule.Frequency == ScheduleFrequency.Monthly && (Task.Schedule.DayOfMonth < 1 || Task.Schedule.DayOfMonth > 31) =>
+                "Day of month must be between 1 and 31.",
+            _ => string.Empty
+        };
+    }
+
+    private void EnsureSettingsInitialized()
+    {
+        switch (Task.OperationType)
+        {
+            case ScheduledTaskOperationType.StagedApproval:
+                Task.StagedApprovalSettings ??= new StagedApprovalConfig();
+                break;
+
+            case ScheduledTaskOperationType.Cleanup:
+                Task.CleanupSettings ??= new CleanupOptions
+                {
+                    RemoveObsoleteUpdates = true,
+                    RemoveExpiredUpdates = true,
+                    RemoveObsoleteComputers = true,
+                    CompressUpdateRevisions = true,
+                    RemoveUnneededContent = true
+                };
+                break;
+
+            case ScheduledTaskOperationType.Synchronization:
+                Task.SyncSettings ??= new SyncConfig
+                {
+                    WaitForCompletion = true,
+                    MaxWaitMinutes = 30,
+                    NotifyOnCompletion = false,
+                    NotifyOnErrorsOnly = true
+                };
+                break;
+        }
     }
 
     private void UpdateTaskFromCurrentStep()

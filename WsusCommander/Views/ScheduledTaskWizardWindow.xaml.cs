@@ -16,6 +16,7 @@
 
 using System.Globalization;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using WsusCommander.Interfaces;
 using WsusCommander.Models;
@@ -68,8 +69,10 @@ public sealed partial class ScheduledTaskWizardWindow : Window
         Resources["TemplateDescConverter"] = new TemplateDescConverter();
         Resources["FrequencyConverter"] = new FrequencyConverter();
         Resources["FrequencyToVisibilityConverter"] = new FrequencyToVisibilityConverter();
-        Resources["OperationTypeConverter"] = new OperationTypeConverter();
+        Resources["OperationTypeConverter"] = new WizardOperationTypeConverter();
         Resources["InverseBoolToVisibility"] = new InverseBoolToVisibilityConverter();
+        Resources["StringToVisibilityConverter"] = new StringToVisibilityConverter();
+        Resources["EnumToVisibilityConverter"] = new EnumToVisibilityConverter();
 
         Loaded += OnWindowLoaded;
     }
@@ -82,11 +85,40 @@ public sealed partial class ScheduledTaskWizardWindow : Window
     private void OnWizardCompleted(object? sender, ScheduledWsusTask task)
     {
         TaskSaved?.Invoke(this, task);
+        Close();
     }
 
     private void OnWizardCancelled(object? sender, EventArgs e)
     {
         Close();
+    }
+
+    private void TestGroupsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is not ListBox listBox)
+        {
+            return;
+        }
+
+        _viewModel.SelectedTestGroups.Clear();
+        foreach (ComputerGroup group in listBox.SelectedItems)
+        {
+            _viewModel.SelectedTestGroups.Add(group);
+        }
+    }
+
+    private void ProdGroupsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is not ListBox listBox)
+        {
+            return;
+        }
+
+        _viewModel.SelectedProductionGroups.Clear();
+        foreach (ComputerGroup group in listBox.SelectedItems)
+        {
+            _viewModel.SelectedProductionGroups.Add(group);
+        }
     }
 }
 
@@ -272,6 +304,33 @@ internal sealed class FrequencyToVisibilityConverter : IValueConverter
 }
 
 /// <summary>
+/// Converts operation type enum to display string for wizard.
+/// </summary>
+internal sealed class WizardOperationTypeConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is ScheduledTaskOperationType type)
+        {
+            return type switch
+            {
+                ScheduledTaskOperationType.StagedApproval => "Staged Approval",
+                ScheduledTaskOperationType.Cleanup => "Cleanup",
+                ScheduledTaskOperationType.Synchronization => "Synchronization",
+                _ => type.ToString()
+            };
+        }
+
+        return value?.ToString() ?? string.Empty;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotSupportedException();
+    }
+}
+
+/// <summary>
 /// Inverse boolean to visibility converter.
 /// </summary>
 internal sealed class InverseBoolToVisibilityConverter : IValueConverter
@@ -284,6 +343,54 @@ internal sealed class InverseBoolToVisibilityConverter : IValueConverter
         }
 
         return Visibility.Visible;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotSupportedException();
+    }
+}
+
+/// <summary>
+/// Converts non-empty string to Visible, empty/null to Collapsed.
+/// </summary>
+internal sealed class StringToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is string str && !string.IsNullOrEmpty(str))
+        {
+            return Visibility.Visible;
+        }
+
+        return Visibility.Collapsed;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotSupportedException();
+    }
+}
+
+/// <summary>
+/// Converts enum value to visibility based on parameter match.
+/// </summary>
+internal sealed class EnumToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is null || parameter is not string paramString)
+        {
+            return Visibility.Collapsed;
+        }
+
+        var enumType = value.GetType();
+        if (Enum.TryParse(enumType, paramString, out var targetValue))
+        {
+            return value.Equals(targetValue) ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        return Visibility.Collapsed;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
